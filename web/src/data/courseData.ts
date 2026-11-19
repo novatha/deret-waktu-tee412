@@ -10,6 +10,7 @@ export interface WeekMaterial {
   slidePdf: string;
   problemSetPdf: string;
   worksheetPdf?: string;
+  notebookUrl?: string;
   formulaLatex: string;
   codeSnippet: string;
   bloomHighlights: {
@@ -74,6 +75,7 @@ export const weeksData: WeekMaterial[] = [
     slidePdf: "/documents/ch1.pdf",
     problemSetPdf: "/documents/problem_set_ch1.pdf",
     worksheetPdf: "/documents/worksheet_ch1.pdf",
+    notebookUrl: "/notebooks/modul_01_dekomposisi.ipynb",
     formulaLatex: "y_t = T_t + S_t + C_t + I_t \\quad \\text{atau} \\quad y_t = T_t \\times S_t \\times C_t \\times I_t",
     codeSnippet: `import pandas as pd
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -105,6 +107,7 @@ res.plot()`,
     slidePdf: "/documents/ch2.pdf",
     problemSetPdf: "/documents/problem_set_ch2.pdf",
     worksheetPdf: "/documents/worksheet_ch2.pdf",
+    notebookUrl: "/notebooks/modul_02_stasioneritas_acf_pacf.ipynb",
     formulaLatex: "\\Delta y_t = \\alpha y_{t-1} + \\sum_{i=1}^p \\beta_i \\Delta y_{t-i} + \\epsilon_t, \\quad \\rho_k = \\frac{\\gamma_k}{\\gamma_0}",
     codeSnippet: `from statsmodels.tsa.stattools import adfuller, kpss
 
@@ -136,6 +139,7 @@ print(f"KPSS Stat: {kpss_res[0]:.4f}, p-value: {kpss_res[1]:.4f}")`,
     slidePdf: "/documents/ch3.pdf",
     problemSetPdf: "/documents/problem_set_ch3.pdf",
     worksheetPdf: "/documents/worksheet_ch3.pdf",
+    notebookUrl: "/notebooks/modul_03_holt_winters.ipynb",
     formulaLatex: "\\hat{y}_{t+h|t} = (\\ell_t + h b_t) s_{t+h-m(k+1)}, \\quad \\ell_t = \\alpha \\frac{y_t}{s_{t-m}} + (1-\\alpha)(\\ell_{t-1} + b_{t-1})",
     codeSnippet: `from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
@@ -167,6 +171,7 @@ pred_24 = hw_fit.forecast(24)`,
     slidePdf: "/documents/ch4.pdf",
     problemSetPdf: "/documents/problem_set_ch4.pdf",
     worksheetPdf: "/documents/worksheet_ch4.pdf",
+    notebookUrl: "/notebooks/modul_04_arma_kestabilan_z.ipynb",
     formulaLatex: "\\Phi(B) y_t = \\Theta(B) \\epsilon_t \\quad \\Longleftrightarrow \\quad \\left(1 - \\sum_{i=1}^p \\phi_i B^i\\right) y_t = \\left(1 + \\sum_{j=1}^q \\theta_j B^j\\right) \\epsilon_t",
     codeSnippet: `import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
@@ -200,6 +205,7 @@ print(f"Akar: {roots}, Stabil: {is_stable}")`,
     slidePdf: "/documents/ch5.pdf",
     problemSetPdf: "/documents/problem_set_ch5.pdf",
     worksheetPdf: "/documents/worksheet_ch5.pdf",
+    notebookUrl: "/notebooks/modul_05_sarima_box_jenkins.ipynb",
     formulaLatex: "\\Phi_P(B^s)\\phi_p(B)(1-B)^d(1-B^s)^D y_t = \\Theta_Q(B^s)\\theta_q(B)\\epsilon_t",
     codeSnippet: `import pmdarima as pm
 
@@ -232,6 +238,7 @@ fc, conf_int = auto_model.predict(n_periods=24, return_conf_int=True)`,
     slidePdf: "/documents/ch6.pdf",
     problemSetPdf: "/documents/problem_set_ch6.pdf",
     worksheetPdf: "/documents/worksheet_ch6.pdf",
+    notebookUrl: "/notebooks/modul_06_sarimax_var.ipynb",
     formulaLatex: "y_t = \\mathbf{X}_t \\boldsymbol{\\beta} + \\eta_t, \\quad \\Phi_P(B^s)\\phi_p(B)(1-B)^d(1-B^s)^D \\eta_t = \\Theta_Q(B^s)\\theta_q(B)\\epsilon_t",
     codeSnippet: `from statsmodels.tsa.statespace.sarimax import SARIMAX
 
@@ -264,6 +271,7 @@ print(res.summary())`,
     slidePdf: "/documents/ch7.pdf",
     problemSetPdf: "/documents/problem_set_ch7.pdf",
     worksheetPdf: "/documents/worksheet_ch7.pdf",
+    notebookUrl: "/notebooks/modul_07_kalman_filter.ipynb",
     formulaLatex: "\\mathbf{K}_k = \\mathbf{P}_k^- \\mathbf{H}^T (\\mathbf{H} \\mathbf{P}_k^- \\mathbf{H}^T + \\mathbf{R})^{-1}, \\quad \\hat{\\mathbf{x}}_k = \\hat{\\mathbf{x}}_k^- + \\mathbf{K}_k(\\mathbf{z}_k - \\mathbf{H}\\hat{\\mathbf{x}}_k^-)",
     codeSnippet: `class KalmanFilter1D:
     def __init__(self, A=1.0, H=1.0, Q=1e-5, R=0.04, x0=0.0, P0=1.0):
@@ -304,6 +312,7 @@ print(res.summary())`,
     slidePdf: "/documents/ch9.pdf",
     problemSetPdf: "/documents/problem_set_ch9.pdf",
     worksheetPdf: "/documents/worksheet_ch9.pdf",
+    notebookUrl: "/notebooks/modul_08_fft_wavelet.ipynb",
     formulaLatex: "X[k] = \\sum_{n=0}^{N-1} x[n] e^{-j \\frac{2\\pi}{N} k n}, \\quad \\lambda = \\sigma \\sqrt{2 \\ln(N)}",
     codeSnippet: `import pywt
 import numpy as np
@@ -342,6 +351,7 @@ clean_signal = pywt.waverec(clean_coeffs, 'db4')`,
     slidePdf: "/documents/ch10.pdf",
     problemSetPdf: "/documents/problem_set_ch10.pdf",
     worksheetPdf: "/documents/worksheet_ch10.pdf",
+    notebookUrl: "/notebooks/modul_09_feature_engineering_xgboost.ipynb",
     formulaLatex: "x_{\\sin} = \\sin\\left(\\frac{2\\pi \\cdot \\text{jam}}{24}\\right), \\quad x_{\\cos} = \\cos\\left(\\frac{2\\pi \\cdot \\text{jam}}{24}\\right), \\quad \\mathcal{L}^{(t)} = \\sum_{i=1}^n l(y_i, \\hat{y}_i^{(t-1)} + f_t(x_i)) + \\Omega(f_t)",
     codeSnippet: `import xgboost as xgb
 from sklearn.model_selection import TimeSeriesSplit
@@ -380,6 +390,7 @@ model = xgb.XGBRegressor(n_estimators=500, learning_rate=0.03, max_depth=6)`,
     slidePdf: "/documents/ch11.pdf",
     problemSetPdf: "/documents/problem_set_ch11.pdf",
     worksheetPdf: "/documents/worksheet_ch11.pdf",
+    notebookUrl: "/notebooks/modul_10_lstm_seq2seq.ipynb",
     formulaLatex: "f_t = \\sigma(W_f [h_{t-1}, x_t] + b_f), \\quad C_t = f_t \\odot C_{t-1} + i_t \\odot \\tilde{C}_t, \\quad h_t = o_t \\odot \\tanh(C_t)",
     codeSnippet: `import torch
 import torch.nn as nn
@@ -418,6 +429,7 @@ class RenewableLSTM(nn.Module):
     slidePdf: "/documents/ch12.pdf",
     problemSetPdf: "/documents/problem_set_ch12.pdf",
     worksheetPdf: "/documents/worksheet_ch12.pdf",
+    notebookUrl: "/notebooks/modul_10_lstm_seq2seq.ipynb",
     formulaLatex: "\\text{Attention}(Q, K, V) = \\text{softmax}\\left( \\frac{QK^T}{\\sqrt{d_k}} \\right) V, \\quad R_l = R_{l-1} + (K-1) \\times d_l",
     codeSnippet: `import torch
 import torch.nn as nn
@@ -457,6 +469,7 @@ class ScaledDotProductAttention(nn.Module):
     slidePdf: "/documents/ch13.pdf",
     problemSetPdf: "/documents/problem_set_ch13.pdf",
     worksheetPdf: "/documents/worksheet_ch13.pdf",
+    notebookUrl: "/notebooks/modul_11_anomaly_autoencoder.ipynb",
     formulaLatex: "\\mathcal{L}_{\\text{recon}}(t) = \\frac{1}{D} \\sum_{i=1}^D (x_{t,i} - \\hat{x}_{t,i})^2, \\quad \\tau = \\mu_{\\text{loss}} + 3 \\cdot \\sigma_{\\text{loss}}",
     codeSnippet: `from sklearn.ensemble import IsolationForest
 import numpy as np
@@ -494,6 +507,7 @@ is_anomaly = recon_error > threshold`,
     slidePdf: "/documents/ch14.pdf",
     problemSetPdf: "/documents/problem_set_ch14.pdf",
     worksheetPdf: "/documents/worksheet_ch14.pdf",
+    notebookUrl: "/notebooks/modul_12_probabilistic_bess_mpc.ipynb",
     formulaLatex: "\\mathcal{L}_\\tau(y, \\hat{y}_\\tau) = \\max\\left( \\tau(y - \\hat{y}_\\tau), (1 - \\tau)(\\hat{y}_\\tau - y) \\right), \\quad \\min \\sum_{t=1}^{24} C(t) P_{\\text{grid}}(t) \\Delta t",
     codeSnippet: `import lightgbm as lgb
 

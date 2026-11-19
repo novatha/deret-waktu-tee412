@@ -65,6 +65,11 @@ const nextWeek = currentIndex >= 0 && currentIndex < weeksData.length - 1 ? week
                 <i data-lucide="file-text"></i> Unduh Worksheet (PDF)
               </a>
             )}
+            {week.notebookUrl && (
+              <a href={getUrl(week.notebookUrl)} download class="btn btn-sm btn-outline">
+                <i data-lucide="terminal"></i> Unduh Notebook Lab (.ipynb)
+              </a>
+            )}
           </div>
         </div>
       </div>

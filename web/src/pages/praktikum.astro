@@ -82,9 +82,16 @@ const getUrl = (path: string) => `${base}${path}`;
                 <a href={getUrl(`/materi/minggu-${w.week}`)} class="lab-action-link">
                   <i data-lucide="code"></i> Lihat Kode &amp; Rumus &rarr;
                 </a>
-                <a href={getUrl(courseMetadata.labManualPdf)} target="_blank" class="btn btn-sm btn-outline">
-                  Petunjuk Modul
-                </a>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  {w.notebookUrl && (
+                    <a href={getUrl(w.notebookUrl)} download class="btn btn-sm btn-primary">
+                      <i data-lucide="download"></i> Notebook (.ipynb)
+                    </a>
+                  )}
+                  <a href={getUrl(courseMetadata.labManualPdf)} target="_blank" class="btn btn-sm btn-outline">
+                    Petunjuk PDF
+                  </a>
+                </div>
               </div>
             </div>
           </div>

@@ -20,11 +20,12 @@ latex:
 	@$(MAKE) clean
 
 sync-pdf:
-	@mkdir -p web/public/documents
+	@mkdir -p web/public/documents web/public/notebooks
 	@for f in $(PUBLIC_PDF); do \
 		if [ -f "$$f" ]; then cp "$$f" web/public/documents/; fi; \
 	done
-	@echo "Synced public PDFs to web/public/documents/ (private-exams/ excluded)."
+	@if ls labs/*.ipynb >/dev/null 2>&1; then cp labs/*.ipynb web/public/notebooks/; fi
+	@echo "Synced public PDFs & lab notebooks to web/public/ (private-exams/ excluded)."
 
 web:
 	cd web && ASTRO_TELEMETRY_DISABLED=1 npm run build

@@ -20,9 +20,10 @@ Deret Waktu/
 ├── panduan_proyek_akhir_deret_waktu.tex / .pdf  # Panduan, Template IEEE & Rubrik PjBL
 ├── private-exams/                               # [GITIGNORED] Naskah, Kunci, & Rubrik UTS/UAS
 ├── latihanbab1/                                 # Dataset & Skrip Praktikum Bab 1
-├── labs/requirements.txt                        # Dependensi Python Praktikum
-└── web/                                         # Portal Web Astro + Virtual Forecasting Studio
+├── labs/                                        # 12 Notebook Praktikum (.ipynb) & requirements.txt
+└── web/                                         # Portal Web Astro (KaTeX & Lucide lokal) + Virtual Studio
     ├── public/documents/                        # PDF publik yang dilayani portal
+    ├── public/notebooks/                        # 12 Notebook .ipynb siap Google Colab / Jupyter
     └── src/
         ├── components/                          # Navbar, Footer, WeekCard, ForecastingStudio, DocSidebar
         ├── data/courseData.ts                   # Single source of truth metadata & 13 modul

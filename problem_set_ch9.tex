@@ -1,0 +1,127 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 9: Analisis Spektral \& Dekomposisi Wavelet}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 9: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Transformasi Fourier (FFT), Spektrum Daya (PSD), dan Wavelet Diskrit (DWT)}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Tuliskan persamaan Transformasi Fourier Diskrit (\textit{Discrete Fourier Transform} - DFT) $N$-titik!
+        \item Apa perbedaan mendasar antara koefisien aproksimasi ($cA$) dan koefisien detail ($cD$) pada dekomposisi Wavelet bertingkat?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Mengapa Transformasi Fourier standar (FFT) gagal memberikan informasi temporal yang akurat ketika menganalisis gangguan transien hubung singkat (*voltage sag* 3-siklus)?
+        \item Jelaskan bagaimana \textit{Heisenberg-Gabor Uncertainty Principle} mendasari kompromi resolusi waktu vs resolusi frekuensi pada STFT dan Wavelet!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sebuah sinyal arus beban non-linier $i(t)$ disampling dengan frekuensi $f_s = 1000$ Hz sebanyak $N = 1000$ sampel (durasi 1 detik). Spektrum amplitudo FFT $|X[k]|$ menunjukkan puncak dominan pada indeks bin $k = 50$ (amplitudo 10.0 A), $k = 150$ (amplitudo 3.0 A), dan $k = 250$ (amplitudo 1.5 A).
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah frekuensi analog ($f_k$ dalam Hz) yang bersesuaian dengan ketiga bin spektral tersebut!
+        \item Tentukan frekuensi fundamental dan orde harmonisa yang muncul.
+        \item Hitung nilai \textit{Total Harmonic Distortion} (THD$_i$) dari sinyal arus tersebut:
+        \begin{equation*}
+            \text{THD}_i = \frac{\sqrt{I_3^2 + I_5^2 + \dots}}{I_1} \times 100\%
+        \end{equation*}
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sinyal getaran bantalan (*bearing*) motor induksi 3-fasa diuraikan menggunakan DWT 3-Level (Wavelet Daubechies \texttt{db4}). Hasil energi pada masing-masing sub-band dihitung sebagai berikut:
+    \begin{center}
+    \begin{tabular}{|l|c|c|c|}
+    \hline
+    \rowcolor{boxbg}
+    \textbf{Sub-Band} & \textbf{Rentang Frekuensi (Hz)} & \textbf{Kondisi Normal (Energi)} & \textbf{Kondisi Rusak (Energi)} \\ \hline
+    Aproksimasi $cA_3$ & $0 - 125$ Hz & $85.4 \text{ J}$ & $84.2 \text{ J}$ \\ \hline
+    Detail $cD_3$ & $125 - 250$ Hz & $8.2 \text{ J}$ & $9.1 \text{ J}$ \\ \hline
+    Detail $cD_2$ & $250 - 500$ Hz & $4.1 \text{ J}$ & $12.6 \text{ J}$ \\ \hline
+    Detail $cD_1$ & $500 - 1000$ Hz & $2.3 \text{ J}$ & $48.5 \text{ J}$ (Lonjakan 21x) \\ \hline
+    \end{tabular}
+    \end{center}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Pada sub-band manakah anomali kerusakan mekanis bantalan motor paling awal dan paling jelas terdeteksi?
+        \item Mengapa koefisien detail frekuensi tinggi ($cD_1$) lebih sensitif terhadap cacat mikro permukaan bantalan (*spalling/pitting*) dibandingkan koefisien aproksimasi ($cA_3$)?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Dalam pra-pemrosesan sinyal transien kualitas daya yang terkontaminasi derau putih Gaussian:
+    \begin{itemize}
+        \item \textbf{Metode A}: Filter Digital Lolos-Rendah Butterworth (IIR) Ordo-4 dengan frekuensi cut-off 200 Hz.
+        \item \textbf{Metode B}: \textit{Wavelet Denoising} dengan \textit{Soft-Thresholding} Donoho pada koefisien detail DWT.
+    \end{itemize}
+    Evaluasilah performa kedua metode dalam mempertahankan ketajaman tepi transien (*edge preserving*) saat terjadi sambaran petir surja hubung!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah program Python atau Octave mandiri untuk sistem deteksi gangguan kualitas daya berbasis \textbf{Wavelet Multi-Resolution Analysis}:
+    \begin{enumerate}[label=\alph*.]
+        \item Membaca sinyal gelombang tegangan 50 Hz berdurasi 10 siklus yang disisipi gangguan *voltage sag* pada siklus ke 4 s.d. 6.
+        \item Melakukan dekomposisi DWT hingga level 4 menggunakan basis wavelet \texttt{db4}.
+        \item Menghitung nilai ambang deteksi $\tau = \mu_{cD1} + 3\sigma_{cD1}$ untuk mengisolasi titik waktu mula (*start-time*) dan titik waktu akhir (*end-time*) gangguan secara otomatis.
+        \item Menampilkan plot 5-panel (Sinyal Asli, $cA_4, cD_3, cD_2, cD_1$) dengan penanda waktu gangguan.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

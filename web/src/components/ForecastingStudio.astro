@@ -1,0 +1,978 @@
+---
+interface Props {
+  fullHeight?: boolean;
+}
+
+const { fullHeight = false } = Astro.props;
+---
+
+<div class={`forecasting-studio-root ${fullHeight ? 'full-studio' : ''}`}>
+  <div class="studio-header">
+    <div class="header-left">
+      <div class="studio-badge">
+        <span class="live-dot"></span> VIRTUAL TIME SERIES &amp; FORECASTING LAB
+      </div>
+      <h3 class="studio-title">Simulasi Real-Time &amp; Estimator Peramalan Beban</h3>
+      <p class="studio-subtitle">Eksplorasi pembentukan beban sistem tenaga, pemfilteran derau sensor (Kalman Filter), dan peramalan multi-cakrawala (Holt-Winters &amp; SARIMA).</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-export-csv" class="btn btn-sm btn-outline">
+        <i data-lucide="download"></i> Export Data (.CSV)
+      </button>
+      <button id="btn-regenerate" class="btn btn-sm btn-primary">
+        <i data-lucide="refresh-cw"></i> Acak Sinyal Baru
+      </button>
+    </div>
+  </div>
+
+  <div class="studio-grid">
+    <!-- Left Control Panel -->
+    <div class="studio-controls glass-panel">
+      <div class="control-section-title">
+        <i data-lucide="database"></i> 1. Sumber Data Sistem Tenaga
+      </div>
+      <div class="form-group">
+        <label for="dataset-select">Pilih Karakteristik Sinyal:</label>
+        <select id="dataset-select" class="custom-select">
+          <option value="pln_load" selected>🏙️ Beban Puncak Harian PLN (MW)</option>
+          <option value="solar_pv">☀️ Radiasi &amp; Daya PLTS 500 kWp (kW)</option>
+          <option value="wind_power">💨 Daya Pembangkit Listrik Angin PLTB (kW)</option>
+          <option value="transformer_temp">🌡️ Suhu Hotspot Transformator Gardu (°C)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <div class="label-row">
+          <label for="slider-noise">Derau Sensor Pengukuran (Noise &sigma;):</label>
+          <span id="val-noise" class="param-val">12 MW</span>
+        </div>
+        <input type="range" id="slider-noise" min="0" max="40" value="12" class="custom-slider" />
+      </div>
+
+      <div class="control-section-title" style="margin-top: 18px;">
+        <i data-lucide="cpu"></i> 2. Model Algoritma Peramalan
+      </div>
+      <div class="form-group">
+        <label for="model-select">Pilih Algoritma Estimator:</label>
+        <select id="model-select" class="custom-select">
+          <option value="kalman" selected>🔮 Discrete Kalman Filter (State-Space BLUE)</option>
+          <option value="holt_winters">📈 Holt-Winters Triple Smoothing (Aditif/Multiplikatif)</option>
+          <option value="sarima">📉 SARIMA(1,1,1)(1,1,0)[24] Box-Jenkins</option>
+          <option value="lstm">🧠 Deep Recurrent LSTM Memory Emulator</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <div class="label-row">
+          <label for="slider-horizon">Horizon Peramalan ke Depan (h jam):</label>
+          <span id="val-horizon" class="param-val">24 Jam</span>
+        </div>
+        <input type="range" id="slider-horizon" min="6" max="48" step="6" value="24" class="custom-slider" />
+      </div>
+
+      <!-- Dynamic Model Parameters -->
+      <div id="kalman-params" class="model-param-group">
+        <div class="form-group">
+          <div class="label-row">
+            <label for="slider-q">Kovarians Derau Proses (Q):</label>
+            <span id="val-q" class="param-val">0.05</span>
+          </div>
+          <input type="range" id="slider-q" min="1" max="100" value="20" class="custom-slider" />
+        </div>
+        <div class="form-group">
+          <div class="label-row">
+            <label for="slider-r">Kovarians Derau Sensor (R):</label>
+            <span id="val-r" class="param-val">2.5</span>
+          </div>
+          <input type="range" id="slider-r" min="1" max="100" value="25" class="custom-slider" />
+        </div>
+      </div>
+
+      <div class="toggle-group">
+        <label class="custom-checkbox">
+          <input type="checkbox" id="toggle-confidence" checked />
+          <span class="checkmark"></span>
+          Tampilkan Pita Keyakinan (Confidence Interval 95%)
+        </label>
+      </div>
+
+      <!-- Real-Time Metrics -->
+      <div class="metrics-card">
+        <div class="metrics-header">
+          <i data-lucide="bar-chart-2"></i> METRIK EVALUASI AKURASI
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span class="m-label">RMSE</span>
+            <span class="m-val" id="metric-rmse">0.00</span>
+          </div>
+          <div class="metric-box">
+            <span class="m-label">MAE</span>
+            <span class="m-val" id="metric-mae">0.00</span>
+          </div>
+          <div class="metric-box">
+            <span class="m-label">MAPE</span>
+            <span class="m-val" id="metric-mape">0.0%</span>
+          </div>
+          <div class="metric-box">
+            <span class="m-label">R² SCORE</span>
+            <span class="m-val" id="metric-r2">0.000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Chart Container -->
+    <div class="studio-chart-wrapper glass-panel">
+      <div class="chart-top-bar">
+        <div class="chart-legend-custom">
+          <span class="legend-item"><span class="legend-dot dot-truth"></span> Target Asli (Ground Truth)</span>
+          <span class="legend-item"><span class="legend-dot dot-sensor"></span> Sinyal Sensor Berderau</span>
+          <span class="legend-item"><span class="legend-dot dot-forecast"></span> Estimasi &amp; Peramalan Model</span>
+        </div>
+        <div class="chart-status" id="chart-status-text">
+          <i data-lucide="check-circle"></i> Estimator Real-Time Online
+        </div>
+      </div>
+      
+      <div class="chart-canvas-box">
+        <canvas id="forecastingChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .forecasting-studio-root {
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  .studio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .studio-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--neon-emerald);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 8px;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--neon-emerald);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--neon-emerald);
+    animation: blinkDot 1.5s infinite ease-in-out;
+  }
+
+  @keyframes blinkDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.8); }
+  }
+
+  .studio-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 4px;
+  }
+
+  .studio-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-subtle);
+    max-width: 700px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .studio-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 20px;
+  }
+
+  .studio-controls {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: fit-content;
+  }
+
+  .control-section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--neon-cyan);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .param-val {
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--neon-emerald);
+  }
+
+  .custom-select {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .custom-select:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+  }
+
+  .custom-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #1e293b;
+    outline: none;
+  }
+
+  .custom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--neon-emerald);
+    cursor: pointer;
+    box-shadow: 0 0 8px var(--neon-emerald);
+    transition: transform 0.1s;
+  }
+
+  .custom-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  .custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .metrics-card {
+    background: rgba(9, 13, 22, 0.7);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-top: 8px;
+  }
+
+  .metrics-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--neon-amber);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .metric-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .m-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+
+  .m-val {
+    font-size: 1rem;
+    font-family: var(--font-mono);
+    font-weight: 800;
+    color: var(--neon-cyan);
+  }
+
+  .studio-chart-wrapper {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 480px;
+  }
+
+  .chart-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .chart-legend-custom {
+    display: flex;
+    gap: 16px;
+    font-size: 0.8rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-truth { background: #38bdf8; }
+  .dot-sensor { background: #f43f5e; opacity: 0.6; }
+  .dot-forecast { background: #10b981; box-shadow: 0 0 6px #10b981; }
+
+  .chart-status {
+    font-size: 0.8rem;
+    color: var(--neon-emerald);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+  }
+
+  .chart-canvas-box {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    min-height: 380px;
+  }
+
+  @media (max-width: 1024px) {
+    .studio-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import Chart from 'chart.js/auto';
+
+  // State
+  let chartInstance: any = null;
+  const numPoints = 96; // 96 hours (4 days of hourly data)
+  let currentDataset = 'pln_load';
+  let currentModel = 'kalman';
+  let noiseSigma = 12;
+  let forecastHorizon = 24;
+  let qParam = 0.05;
+  let rParam = 2.5;
+  let showConfidence = true;
+
+  const datasetUnits: Record<string, string> = {
+    pln_load: 'MW',
+    solar_pv: 'kW',
+    wind_power: 'kW',
+    transformer_temp: '°C'
+  };
+
+  let cachedData: { hours: number[]; timestamps: string[]; truth: number[]; sensor: number[] } | null = null;
+  let cachedEstimate: number[] = [];
+
+  // Solve small linear system A * x = b via Gaussian elimination with partial pivoting
+  function solveLinearSystem(A: number[][], b: number[]): number[] {
+    const n = b.length;
+    const M = A.map((row, i) => [...row, b[i]]);
+    for (let col = 0; col < n; col++) {
+      let maxRow = col;
+      for (let r = col + 1; r < n; r++) {
+        if (Math.abs(M[r][col]) > Math.abs(M[maxRow][col])) maxRow = r;
+      }
+      [M[col], M[maxRow]] = [M[maxRow], M[col]];
+      const pivot = Math.abs(M[col][col]) < 1e-9 ? 1e-9 : M[col][col];
+      for (let r = col + 1; r < n; r++) {
+        const factor = M[r][col] / pivot;
+        for (let c = col; c <= n; c++) M[r][c] -= factor * M[col][c];
+      }
+    }
+    const x = new Array(n).fill(0);
+    for (let i = n - 1; i >= 0; i--) {
+      let sum = M[i][n];
+      for (let j = i + 1; j < n; j++) sum -= M[i][j] * x[j];
+      const diag = Math.abs(M[i][i]) < 1e-9 ? 1e-9 : M[i][i];
+      x[i] = sum / diag;
+    }
+    return x;
+  }
+
+  // Generate Synthetic Power System Datasets
+  function generateData() {
+    const hours = [];
+    const truth = [];
+    const sensor = [];
+    const timestamps = [];
+
+    const now = new Date();
+    now.setMinutes(0, 0, 0);
+
+    for (let t = 0; t < numPoints; t++) {
+      const d = new Date(now.getTime() - (numPoints - t) * 3600 * 1000);
+      const hourOfDay = d.getHours();
+      hours.push(t);
+      timestamps.push(`${String(hourOfDay).padStart(2, '0')}:00 (H+${t})`);
+
+      let yTrue = 0;
+
+      if (currentDataset === 'pln_load') {
+        const dailyPattern = 
+          120 * Math.sin(((hourOfDay - 6) / 24) * 2 * Math.PI) +
+          80 * Math.exp(-Math.pow(hourOfDay - 19, 2) / 8) +
+          50 * Math.exp(-Math.pow(hourOfDay - 11, 2) / 6);
+        yTrue = 450 + dailyPattern + 0.25 * t;
+      } else if (currentDataset === 'solar_pv') {
+        if (hourOfDay >= 6 && hourOfDay <= 18) {
+          const solarBell = 500 * Math.sin(((hourOfDay - 6) / 12) * Math.PI);
+          const cloudDip = (t % 14 === 0 || t % 23 === 0) ? 0.35 : 1.0;
+          yTrue = Math.max(0, solarBell * cloudDip);
+        } else {
+          yTrue = 0;
+        }
+      } else if (currentDataset === 'wind_power') {
+        const windBase = 250 + 100 * Math.sin(t * 0.15) + 50 * Math.cos(t * 0.4);
+        yTrue = Math.max(20, windBase);
+      } else if (currentDataset === 'transformer_temp') {
+        const tempBase = 45 + 18 * Math.sin(((hourOfDay - 8) / 24) * 2 * Math.PI) + 0.1 * t;
+        yTrue = tempBase;
+      }
+
+      const randNorm = (Math.random() - 0.5) * 2 * noiseSigma;
+      const zSensor = Math.max(0, yTrue + randNorm);
+
+      truth.push(Math.round(yTrue * 100) / 100);
+      sensor.push(Math.round(zSensor * 100) / 100);
+    }
+
+    return { hours, timestamps, truth, sensor };
+  }
+
+  // Run Strictly Causal Estimator / Forecasting Model (uses ONLY sensor[0..fitCutoff-1], never truth[])
+  function runEstimator(sensor: number[]) {
+    const estimate = new Array(numPoints).fill(null);
+    const upperBand = new Array(numPoints).fill(null);
+    const lowerBand = new Array(numPoints).fill(null);
+
+    const fitCutoff = numPoints - forecastHorizon;
+    const S = 24;
+
+    if (currentModel === 'kalman') {
+      let xHat = sensor[0];
+      let P = 1.0;
+      const Q = qParam;
+      const R = rParam;
+
+      for (let t = 0; t < numPoints; t++) {
+        if (t < fitCutoff) {
+          const xHatMinus = xHat;
+          const PMinus = P + Q;
+          const K = PMinus / (PMinus + R);
+          xHat = xHatMinus + K * (sensor[t] - xHatMinus);
+          P = (1 - K) * PMinus;
+          estimate[t] = Math.round(xHat * 100) / 100;
+        } else {
+          const pastCycleVal = estimate[t - S] ?? estimate[t - 1];
+          const diff = pastCycleVal - (estimate[t - S - 1] ?? pastCycleVal);
+          xHat = (estimate[t - 1] ?? xHat) + diff * 0.7;
+          estimate[t] = Math.round(xHat * 100) / 100;
+
+          const stepAhead = t - fitCutoff + 1;
+          const sigmaH = Math.sqrt(P + stepAhead * Q * 10);
+          upperBand[t] = Math.round((xHat + 1.96 * sigmaH) * 100) / 100;
+          lowerBand[t] = Math.round(Math.max(0, xHat - 1.96 * sigmaH) * 100) / 100;
+        }
+      }
+    } else if (currentModel === 'holt_winters') {
+      const alpha = 0.3;
+      const beta = 0.1;
+      const gamma = 0.3;
+
+      let level = sensor[0];
+      let trend = (sensor[S] - sensor[0]) / S;
+      const season = new Array(S).fill(0);
+      for (let i = 0; i < S; i++) season[i] = sensor[i] - level;
+
+      for (let t = 0; t < fitCutoff; t++) {
+        const val = sensor[t];
+        const sIdx = t % S;
+        const lastLevel = level;
+        level = alpha * (val - season[sIdx]) + (1 - alpha) * (level + trend);
+        trend = beta * (level - lastLevel) + (1 - beta) * trend;
+        season[sIdx] = gamma * (val - level) + (1 - gamma) * season[sIdx];
+        estimate[t] = Math.round((level + trend + season[sIdx]) * 100) / 100;
+      }
+
+      for (let t = fitCutoff; t < numPoints; t++) {
+        const m = t - fitCutoff + 1;
+        const sIdx = t % S;
+        const f = Math.max(0, level + m * trend + season[sIdx]);
+        estimate[t] = Math.round(f * 100) / 100;
+        upperBand[t] = Math.round((f + 1.96 * noiseSigma * Math.sqrt(m) * 0.3) * 100) / 100;
+        lowerBand[t] = Math.round(Math.max(0, f - 1.96 * noiseSigma * Math.sqrt(m) * 0.3) * 100) / 100;
+      }
+    } else if (currentModel === 'sarima') {
+      // Causal SARIMA(1,0,1)(0,1,0)[24] on seasonally differenced series w_t = y_t - y_{t-24}
+      const w: number[] = new Array(fitCutoff).fill(0);
+      for (let t = S; t < fitCutoff; t++) {
+        w[t] = sensor[t] - sensor[t - S];
+      }
+
+      // Estimate AR(1) coefficient phi via lag-1 sample autocorrelation on w[S..fitCutoff-1]
+      let num = 0;
+      let den = 1e-6;
+      for (let t = S + 1; t < fitCutoff; t++) {
+        num += w[t] * w[t - 1];
+        den += w[t - 1] * w[t - 1];
+      }
+      const phi = Math.max(-0.85, Math.min(0.85, num / den));
+      const theta = -0.35; // Invertible MA(1) smoothing on innovations
+
+      const wHat: number[] = new Array(numPoints).fill(0);
+      const resid: number[] = new Array(fitCutoff).fill(0);
+      let residSqSum = 0;
+      let residCount = 0;
+
+      for (let t = 0; t < fitCutoff; t++) {
+        if (t < S) {
+          estimate[t] = t === 0 ? sensor[0] : Math.round((0.5 * sensor[t] + 0.5 * sensor[t - 1]) * 100) / 100;
+        } else {
+          const prevW = t > S ? w[t - 1] : 0;
+          const prevE = t > S ? resid[t - 1] : 0;
+          wHat[t] = phi * prevW + theta * prevE;
+          resid[t] = w[t] - wHat[t];
+          residSqSum += resid[t] * resid[t];
+          residCount++;
+          estimate[t] = Math.round(Math.max(0, sensor[t - S] + wHat[t]) * 100) / 100;
+        }
+      }
+
+      const residStd = Math.sqrt(residSqSum / Math.max(1, residCount));
+      const fullSeries = sensor.slice(0, fitCutoff);
+
+      for (let t = fitCutoff; t < numPoints; t++) {
+        const m = t - fitCutoff + 1;
+        const prevW = t === fitCutoff ? w[t - 1] : wHat[t - 1];
+        const prevE = t === fitCutoff ? resid[t - 1] : 0;
+        wHat[t] = phi * prevW + theta * prevE;
+        const baseSeason = fullSeries[t - S] ?? fullSeries[fullSeries.length - 1];
+        const f = Math.max(0, baseSeason + wHat[t]);
+        fullSeries.push(f);
+        estimate[t] = Math.round(f * 100) / 100;
+
+        const spread = Math.max(residStd, noiseSigma * 0.5) * Math.sqrt(1 + 0.15 * m);
+        upperBand[t] = Math.round((f + 1.96 * spread) * 100) / 100;
+        lowerBand[t] = Math.round(Math.max(0, f - 1.96 * spread) * 100) / 100;
+      }
+    } else if (currentModel === 'lstm') {
+      // Causal Recurrent Gated Memory Emulator (Leaky Tanh Reservoir + Ridge Readout trained ONLY on sensor[0..fitCutoff-1])
+      const trainSlice = sensor.slice(0, fitCutoff);
+      const mean = trainSlice.reduce((a, b) => a + b, 0) / trainSlice.length;
+      const variance = trainSlice.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / trainSlice.length;
+      const std = Math.sqrt(variance) || 1;
+      const norm = trainSlice.map((v) => (v - mean) / std);
+
+      const H = 6; // Hidden recurrent units
+      const wIn = [0.65, -0.55, 0.8, -0.45, 0.35, -0.7];
+      const wRec = [0.55, 0.4, 0.65, 0.3, 0.72, 0.48];
+      const bias = [0.1, -0.15, 0.05, 0.2, -0.1, 0.08];
+      const leak = 0.45;
+
+      const buildFeatures = (series: number[], t: number, hState: number[]) => {
+        const xLag1 = series[t - 1] ?? 0;
+        const xLag2 = series[t - 2] ?? xLag1;
+        const xLagS = series[t - S] ?? xLag1;
+        const xLagS1 = series[t - S + 1] ?? xLagS;
+        const nextH = hState.map((h, k) => (1 - leak) * h + leak * Math.tanh(wIn[k] * xLag1 + wRec[k] * h + bias[k]));
+        const feat = [1, xLag1, xLag2, xLagS, xLagS1, ...nextH];
+        return { feat, nextH };
+      };
+
+      const F = 5 + H;
+      const XtX: number[][] = Array.from({ length: F }, () => new Array(F).fill(0));
+      const Xty: number[] = new Array(F).fill(0);
+      const lambda = 1.5; // Ridge regularization
+
+      let hState = new Array(H).fill(0);
+      const trainFeats: (number[] | null)[] = new Array(fitCutoff).fill(null);
+
+      for (let t = 1; t < fitCutoff; t++) {
+        const { feat, nextH } = buildFeatures(norm, t, hState);
+        hState = nextH;
+        trainFeats[t] = feat;
+        if (t >= S) {
+          const target = norm[t];
+          for (let i = 0; i < F; i++) {
+            Xty[i] += feat[i] * target;
+            for (let j = 0; j < F; j++) XtX[i][j] += feat[i] * feat[j];
+          }
+        }
+      }
+      for (let i = 1; i < F; i++) XtX[i][i] += lambda;
+      const weights = solveLinearSystem(XtX, Xty);
+
+      let residSqSum = 0;
+      let residCount = 0;
+      estimate[0] = sensor[0];
+      for (let t = 1; t < fitCutoff; t++) {
+        const feat = trainFeats[t]!;
+        let predNorm = 0;
+        for (let i = 0; i < F; i++) predNorm += weights[i] * feat[i];
+        const predVal = Math.max(0, predNorm * std + mean);
+        estimate[t] = Math.round(predVal * 100) / 100;
+        if (t >= S) {
+          const e = sensor[t] - predVal;
+          residSqSum += e * e;
+          residCount++;
+        }
+      }
+
+      const residStd = Math.sqrt(residSqSum / Math.max(1, residCount));
+      const rolloutNorm = [...norm];
+      for (let t = fitCutoff; t < numPoints; t++) {
+        const m = t - fitCutoff + 1;
+        const { feat, nextH } = buildFeatures(rolloutNorm, t, hState);
+        hState = nextH;
+        let predNorm = 0;
+        for (let i = 0; i < F; i++) predNorm += weights[i] * feat[i];
+        predNorm = Math.max(-4, Math.min(4, predNorm));
+        rolloutNorm.push(predNorm);
+        const f = Math.max(0, predNorm * std + mean);
+        estimate[t] = Math.round(f * 100) / 100;
+
+        const spread = Math.max(residStd, noiseSigma * 0.45) * Math.sqrt(1 + 0.12 * m);
+        upperBand[t] = Math.round((f + 1.96 * spread) * 100) / 100;
+        lowerBand[t] = Math.round(Math.max(0, f - 1.96 * spread) * 100) / 100;
+      }
+    }
+
+    return { estimate, upperBand, lowerBand };
+  }
+
+  // Calculate Accuracy Metrics
+  function calcMetrics(truth: number[], estimate: number[]) {
+    let sse = 0;
+    let sae = 0;
+    let mapeSum = 0;
+    let validCount = 0;
+    let sumTruth = 0;
+
+    for (let i = 0; i < numPoints; i++) {
+      if (estimate[i] !== null && !isNaN(estimate[i])) {
+        const err = estimate[i] - truth[i];
+        sse += err * err;
+        sae += Math.abs(err);
+        if (truth[i] > 0.01) {
+          mapeSum += Math.abs(err / truth[i]);
+          validCount++;
+        }
+        sumTruth += truth[i];
+      }
+    }
+
+    const n = numPoints;
+    const rmse = Math.sqrt(sse / n);
+    const mae = sae / n;
+    const mape = (mapeSum / (validCount || 1)) * 100;
+
+    const meanTruth = sumTruth / n;
+    let ssTot = 0;
+    for (let i = 0; i < n; i++) {
+      ssTot += Math.pow(truth[i] - meanTruth, 2);
+    }
+    const r2 = ssTot > 0 ? Math.max(0, 1 - sse / ssTot) : 0.95;
+
+    return { rmse, mae, mape, r2 };
+  }
+
+  function updateNoiseLabel() {
+    const valEl = document.getElementById('val-noise');
+    const unit = datasetUnits[currentDataset] || 'MW';
+    if (valEl) valEl.textContent = `${noiseSigma} ${unit}`;
+  }
+
+  // Update Studio
+  function updateStudio(regenerate = false) {
+    if (regenerate || !cachedData) {
+      cachedData = generateData();
+    }
+    const { timestamps, truth, sensor } = cachedData;
+    const { estimate, upperBand, lowerBand } = runEstimator(sensor);
+    cachedEstimate = estimate;
+    const metrics = calcMetrics(truth, estimate);
+
+    const statusEl = document.getElementById('chart-status-text');
+    if (statusEl) {
+      const modelLabels: Record<string, string> = {
+        kalman: 'Causal Kalman Filter Online',
+        holt_winters: 'Causal Holt-Winters Online',
+        sarima: 'Causal SARIMA(1,0,1)(0,1,0)[24] Online',
+        lstm: 'Causal Recurrent LSTM Emulator (Browser)'
+      };
+      statusEl.innerHTML = `<i data-lucide="check-circle"></i> ${modelLabels[currentModel] || 'Estimator Online'}`;
+      if (typeof (window as any).lucide !== 'undefined') (window as any).lucide.createIcons();
+    }
+
+    const elRmse = document.getElementById('metric-rmse');
+    const elMae = document.getElementById('metric-mae');
+    const elMape = document.getElementById('metric-mape');
+    const elR2 = document.getElementById('metric-r2');
+
+    if (elRmse) elRmse.textContent = metrics.rmse.toFixed(2);
+    if (elMae) elMae.textContent = metrics.mae.toFixed(2);
+    if (elMape) elMape.textContent = `${metrics.mape.toFixed(1)}%`;
+    if (elR2) elR2.textContent = metrics.r2.toFixed(3);
+
+    const ctx = (document.getElementById('forecastingChart') as HTMLCanvasElement)?.getContext('2d');
+    if (!ctx) return;
+
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    const datasets: any[] = [
+      {
+        label: 'Sinyal Sensor Berderau',
+        data: sensor,
+        borderColor: 'rgba(244, 63, 94, 0.45)',
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        pointRadius: 2,
+        pointHoverRadius: 5,
+        borderDash: [2, 2]
+      },
+      {
+        label: 'Nilai Target Sebenarnya',
+        data: truth,
+        borderColor: '#38bdf8',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.3
+      },
+      {
+        label: 'Estimasi / Peramalan Model',
+        data: estimate,
+        borderColor: '#10b981',
+        backgroundColor: 'transparent',
+        borderWidth: 2.5,
+        pointRadius: (ctx: any) => (ctx.dataIndex >= numPoints - forecastHorizon ? 3 : 0),
+        pointBackgroundColor: '#10b981',
+        tension: 0.3
+      }
+    ];
+
+    if (showConfidence) {
+      datasets.push({
+        label: 'Upper 95% Confidence Band',
+        data: upperBand,
+        borderColor: 'transparent',
+        backgroundColor: 'rgba(16, 185, 129, 0.12)',
+        pointRadius: 0,
+        fill: '+1'
+      });
+      datasets.push({
+        label: 'Lower 95% Confidence Band',
+        data: lowerBand,
+        borderColor: 'transparent',
+        backgroundColor: 'transparent',
+        pointRadius: 0
+      });
+    }
+
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: timestamps,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            titleColor: '#f8fafc',
+            bodyColor: '#cbd5e1',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderWidth: 1,
+            padding: 10,
+            boxPadding: 4
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.04)'
+            },
+            ticks: {
+              color: '#64748b',
+              maxTicksLimit: 12,
+              font: { size: 10 }
+            }
+          },
+          y: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.04)'
+            },
+            ticks: {
+              color: '#64748b',
+              font: { size: 10 }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function attachEvents() {
+    document.getElementById('dataset-select')?.addEventListener('change', (e: any) => {
+      currentDataset = e.target.value;
+      updateNoiseLabel();
+      updateStudio(true);
+    });
+
+    document.getElementById('model-select')?.addEventListener('change', (e: any) => {
+      currentModel = e.target.value;
+      const kalmanParams = document.getElementById('kalman-params');
+      if (kalmanParams) {
+        kalmanParams.style.display = currentModel === 'kalman' ? 'block' : 'none';
+      }
+      updateStudio(false);
+    });
+
+    document.getElementById('slider-noise')?.addEventListener('input', (e: any) => {
+      noiseSigma = Number(e.target.value);
+      updateNoiseLabel();
+      updateStudio(true);
+    });
+
+    document.getElementById('slider-horizon')?.addEventListener('input', (e: any) => {
+      forecastHorizon = Number(e.target.value);
+      const valEl = document.getElementById('val-horizon');
+      if (valEl) valEl.textContent = `${forecastHorizon} Jam`;
+      updateStudio(false);
+    });
+
+    document.getElementById('slider-q')?.addEventListener('input', (e: any) => {
+      qParam = Number(e.target.value) / 400;
+      const valEl = document.getElementById('val-q');
+      if (valEl) valEl.textContent = qParam.toFixed(3);
+      updateStudio(false);
+    });
+
+    document.getElementById('slider-r')?.addEventListener('input', (e: any) => {
+      rParam = Number(e.target.value) / 10;
+      const valEl = document.getElementById('val-r');
+      if (valEl) valEl.textContent = rParam.toFixed(1);
+      updateStudio(false);
+    });
+
+    document.getElementById('toggle-confidence')?.addEventListener('change', (e: any) => {
+      showConfidence = e.target.checked;
+      updateStudio(false);
+    });
+
+    document.getElementById('btn-regenerate')?.addEventListener('click', () => {
+      updateStudio(true);
+    });
+
+    document.getElementById('btn-export-csv')?.addEventListener('click', () => {
+      if (!cachedData) cachedData = generateData();
+      const { timestamps, truth, sensor } = cachedData;
+      const estimate = cachedEstimate.length ? cachedEstimate : runEstimator(sensor).estimate;
+      let csvContent = 'data:text/csv;charset=utf-8,Timestamp,GroundTruth,SensorMeasurement,ForecastEstimate\n';
+      for (let i = 0; i < numPoints; i++) {
+        csvContent += `${timestamps[i]},${truth[i]},${sensor[i]},${estimate[i] ?? ''}\n`;
+      }
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `time_series_${currentDataset}_${currentModel}_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    attachEvents();
+    updateNoiseLabel();
+    updateStudio(true);
+  });
+</script>

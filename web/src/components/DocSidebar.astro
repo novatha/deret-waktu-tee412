@@ -1,0 +1,168 @@
+---
+import { weeksData } from '../data/courseData';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+
+interface Props {
+  activePath?: string;
+}
+
+const { activePath = "" } = Astro.props;
+
+const menuCategories = [
+  {
+    title: "📌 Pengantar & Silabus",
+    items: [
+      { label: "Overview & RPS OBE", href: getUrl("/rps") },
+      { label: "Matriks 16 Minggu", href: getUrl("/#curriculum") },
+      { label: "Panduan Praktikum (Python/Julia)", href: getUrl("/praktikum") }
+    ]
+  },
+  {
+    title: "📖 Slide Beamer & Teori (13 Modul)",
+    items: weeksData.map((w) => ({
+      label: `Minggu ${w.week}: ${w.title}`,
+      href: getUrl(`/materi/minggu-${w.week}`)
+    }))
+  },
+  {
+    title: "📝 Worksheets & Problem Sets",
+    items: [
+      { label: "Homework Problem Sets & LKM (C1–C6)", href: getUrl("/materi") },
+      { label: "Panduan Praktikum Laboratorium", href: getUrl("/praktikum") },
+      { label: "Dataset Peramalan Beban PLN", href: getUrl("/sandbox") }
+    ]
+  },
+  {
+    title: "🖥️ Live Sandbox & Simulator",
+    items: [
+      { label: "Interactive Time Series Forecasting Studio", href: getUrl("/sandbox") }
+    ]
+  }
+];
+---
+
+<aside class="doc-sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-title"><i data-lucide="trending-up"></i> Dokumentasi &amp; Modul</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    {menuCategories.map(cat => (
+      <div class="nav-group">
+        <div class="group-title">{cat.title}</div>
+        <ul class="group-list">
+          {cat.items.map(item => (
+            <li>
+              <a href={item.href} class={`nav-item ${activePath === item.href ? 'active' : ''}`}>
+                <i data-lucide="chevron-right" class="item-icon"></i>
+                <span>{item.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </nav>
+</aside>
+
+<style>
+  .doc-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid var(--border-card, rgba(255, 255, 255, 0.1));
+    padding: 24px 16px;
+    height: calc(100vh - 70px);
+    position: sticky;
+    top: 70px;
+    overflow-y: auto;
+  }
+
+  .sidebar-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-card, rgba(255, 255, 255, 0.1));
+  }
+
+  .sidebar-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-emerald, #10b981);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .group-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary, #f8fafc);
+    margin-bottom: 8px;
+    padding-left: 8px;
+  }
+
+  .group-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #94a3b8);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .item-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.5;
+    transition: transform 0.2s ease;
+  }
+
+  .nav-item:hover {
+    color: var(--accent-cyan, #06b6d4);
+    background: rgba(255, 255, 255, 0.05);
+    padding-left: 16px;
+  }
+
+  .nav-item:hover .item-icon {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  .nav-item.active {
+    color: var(--accent-emerald, #10b981);
+    background: rgba(16, 185, 129, 0.12);
+    font-weight: 600;
+  }
+
+  @media (max-width: 992px) {
+    .doc-sidebar {
+      display: none;
+    }
+  }
+</style>

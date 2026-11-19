@@ -1,0 +1,122 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 7: Discrete Kalman Filter \& State-Space}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 7: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Representasi Ruang Keadaan (State-Space) dan Algoritma Discrete Kalman Filter}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Tuliskan 2 persamaan sistem dinamis stokastik diskrit (Persamaan State dan Persamaan Pengukuran) dalam notasi matriks!
+        \item Sebutkan fungsi dari \textbf{Kalman Gain} ($K_k$) dalam proses pembaruan pengukuran (*measurement update*)!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Jelaskan apa yang terjadi pada nilai Kalman Gain $K_k$ dan hasil estimasi $\hat{x}_k$ jika variansi derau sensor pengukuran sangat besar ($R \to \infty$)?
+        \item Sebaliknya, jelaskan apa yang terjadi jika sensor pengukuran sangat presisi tanpa derau ($R \to 0$)?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sebuah sistem baterai penyimpan energi (BESS) dimodelkan untuk estimasi tegangan open-circuit $V_{\text{oc}}$:
+    \begin{align*}
+        x_k &= x_{k-1} + w_{k-1}, \quad w \sim \mathcal{N}(0, Q=0.01) \\
+        z_k &= x_k + v_k, \quad v \sim \mathcal{N}(0, R=0.16)
+    \end{align*}
+    Inisialisasi pada $k=0$: estimasi awal $\hat{x}_0 = 3.60$ V dengan kovarians error $P_0 = 1.0$. Pada langkah pertama ($k=1$), sensor mengukur tegangan baterai sebesar $z_1 = 3.85$ V.
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah estimasi \textit{a priori} $\hat{x}_1^-$ dan kovarians error prediksi $P_1^-$.
+        \item Hitunglah nilai Kalman Gain $K_1$.
+        \item Hitunglah estimasi \textit{a posteriori} $\hat{x}_1$ dan kovarians error terbarui $P_1$.
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sebuah sensor arus DC yang dipasang pada inverter PLTS menghasilkan pembacaan yang terdistorsi oleh noise frekuensi tinggi:
+    \begin{itemize}
+        \item \textbf{Uji Tuning 1}: Diset $Q = 10^{-2}, R = 10^{-4}$. Hasil estimasi Kalman Filter sangat berfluktuasi mengikuti setiap spike bising sensor.
+        \item \textbf{Uji Tuning 2}: Diset $Q = 10^{-6}, R = 1.0$. Hasil estimasi Kalman Filter sangat halus namun mengalami kelambatan respon (*phase lag*) yang parah saat arus pembangkitan PV melonjak tajam di siang hari.
+    \end{itemize}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Analisislah mengapa rasio $Q/R$ menentukan kecepatan respon dinamik vs ketahanan terhadap derau pada Kalman Filter!
+        \item Bagaimana strategi insinyur menentukan nilai optimal matriks $Q$ dan $R$ dari data empiris kalibrasi sensor dan spesifikasi transduser arus?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Untuk mengestimasi \textit{State-of-Charge} (SoC) sel baterai Lithium-ion yang memiliki kurva tegangan-SoC sangat non-linier:
+    \begin{itemize}
+        \item \textbf{Insinyur A} mengusulkan penggunaan \textit{Discrete Kalman Filter} (DKF) linier standar dengan mengasumsikan kemiringan kurva konstan.
+        \item \textbf{Insinyur B} mengusulkan penggunaan \textit{Extended Kalman Filter} (EKF) dengan linierisasi matriks Jacobian $\mathbf{F}_k = \left.\frac{\partial f}{\partial \mathbf{x}}\right|_{\hat{\mathbf{x}}}$ pada setiap titik kerja.
+    \end{itemize}
+    Evaluasilah kelebihan dan kelemahan kedua pendekatan tersebut, terutama saat baterai beroperasi pada zona tegangan datar (SoC 20\%--80\%) dan zona kurva curam (SoC $<10\%$ dan $>90\%$)!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah program Python atau Octave mandiri berorientasi objek (\textit{Class KalmanFilter}) yang mengimplementasikan Discrete Kalman Filter untuk sistem 2-Dimensi (Posisi dan Kecepatan, atau Tegangan dan Arus):
+    \begin{enumerate}[label=\alph*.]
+        \item Metode \texttt{\_\_init\_\_(self, A, B, H, Q, R, x0, P0)}.
+        \item Metode \texttt{predict(self, u=0)} untuk tahap pembaruan waktu.
+        \item Metode \texttt{update(self, z)} untuk tahap pembaruan pengukuran.
+        \item Simulasi penyaringan sinyal sensor dengan menampilkan plot perbandingan: Sinyal Asli (Ground Truth), Sinyal Sensor Bising, dan Sinyal Hasil Filter Kalman beserta kurva konvergensi kovarians $P_k$.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

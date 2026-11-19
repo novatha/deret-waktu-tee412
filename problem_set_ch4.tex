@@ -1,0 +1,137 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 4: Pemodelan Stokastik AR, MA, dan ARMA}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 4: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Proses Stokastik AR($p$), MA($q$), ARMA($p,q$), Kestabilan Bidang Z, dan AIC/BIC}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Tuliskan persamaan umum proses autoregresif orde-2 (AR(2)) dan proses moving average orde-1 (MA(1)) menggunakan notasi operator lag $B$!
+        \item Bagaimana karakteristik plot ACF dan PACF teoritis untuk model AR($p$) murni vs MA($q$) murni?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Jelaskan hubungan analogi antara model ARMA($p,q$) dalam analisis deret waktu dengan Filter Digital IIR (\textit{Infinite Impulse Response}) dalam Pengolahan Sinyal Digital!
+        \item Apa yang dimaksud dengan konsep \textit{Invertibility} pada model MA dan mengapa syarat ini penting dalam rekayasa estimasi derau?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Diberikan sebuah model sistem getaran generator induksi yang didekati dengan proses AR(2):
+    \begin{equation*}
+        y_t = 0.7 y_{t-1} - 0.1 y_{t-2} + \epsilon_t, \quad \epsilon_t \sim \mathcal{WN}(0, \sigma^2 = 1.0)
+    \end{equation*}
+    \begin{enumerate}[label=\alph*.]
+        \item Tuliskan polinomial karakteristik $\Phi(B) = 1 - 0.7B + 0.1B^2 = 0$.
+        \item Hitunglah akar-akar polinomial $B_1$ dan $B_2$, serta tentukan letak kutub-kutubnya pada bidang Z ($z = B^{-1}$).
+        \item Berdasarkan posisi kutub tersebut, buktikan apakah proses AR(2) di atas bersifat stasioner dan stabil!
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sebuah tim peneliti mengestimasi 4 kandidat model ARMA untuk data arus eksitasi generator sinkron. Hasil nilai log-likelihood ($\ln \hat{L}$), AIC, dan BIC dengan jumlah observasi $N=1000$ dirangkum dalam tabel berikut:
+    \begin{center}
+    \begin{tabular}{|l|c|c|c|c|c|}
+    \hline
+    \rowcolor{boxbg}
+    \textbf{Kandidat Model} & \textbf{Jumlah Parameter ($k$)} & $\ln \hat{L}$ & \textbf{AIC} & \textbf{BIC} & \textbf{Uji Residu (Ljung-Box $p$-val)} \\ \hline
+    Model 1: AR(1) & 2 & -1245.2 & 2494.4 & 2504.2 & $0.002$ (Ada autokorelasi) \\ \hline
+    Model 2: AR(2) & 3 & -1120.5 & 2247.0 & 2261.7 & $0.210$ (White Noise) \\ \hline
+    Model 3: ARMA(2,1) & 4 & -1119.8 & 2247.6 & 2267.2 & $0.230$ (White Noise) \\ \hline
+    Model 4: ARMA(4,4) & 9 & -1112.1 & 2242.2 & 2286.4 & $0.450$ (White Noise) \\ \hline
+    \end{tabular}
+    \end{center}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Mengapa Model 1 harus langsung dieliminasi meskipun parameternya paling sedikit?
+        \item Bandingkan Model 2 vs Model 4. Mengapa Model 4 memiliki nilai AIC lebih rendah tetapi BIC jauh lebih tinggi? Model mana yang paling parsimonius dan Anda pilih untuk implementasi mikrokontroler real-time?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Dua mahasiswa melakukan identifikasi parameter pada sistem transfer function beban listrik $y_t$:
+    \begin{itemize}
+        \item \textbf{Mahasiswa X} mendapatkan model AR(1): $y_t = 1.05 y_{t-1} + \epsilon_t$.
+        \item \textbf{Mahasiswa Y} mendapatkan model ARMA(1,1): $y_t = 0.95 y_{t-1} + \epsilon_t - 0.4 \epsilon_{t-1}$.
+    \end{itemize}
+    Evaluasilah respon impuls jangka panjang dari model Mahasiswa X vs Mahasiswa Y jika terjadi gangguan sesaat (*unit impulse shock* $\epsilon_0 = 1$). Tunjukkan mengapa model Mahasiswa X tidak stabil (*explosive*)!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah sebuah fungsi program Python atau Octave yang menghitung persamaan \textbf{Yule-Walker} untuk mengestimasi koefisien $\phi_1, \phi_2, \dots, \phi_p$ dari proses AR($p$) berdasarkan matriks autokorelasi sampel Toeplitz:
+    \begin{equation*}
+        \begin{bmatrix}
+            1 & \rho_1 & \dots & \rho_{p-1} \\
+            \rho_1 & 1 & \dots & \rho_{p-2} \\
+            \vdots & \vdots & \ddots & \vdots \\
+            \rho_{p-1} & \rho_{p-2} & \dots & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+            \phi_1 \\ \phi_2 \\ \vdots \\ \phi_p
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+            \rho_1 \\ \rho_2 \\ \vdots \\ \rho_p
+        \end{bmatrix}
+    \end{equation*}
+    Fungsi harus memvalidasi apakah sistem persamaan memiliki determinan tak nol dan memeriksa apakah akar-akar polinomial AR berada di dalam kestabilan.
+
+\end{enumerate}
+
+\end{document}

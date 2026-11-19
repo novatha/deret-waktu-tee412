@@ -1,0 +1,224 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+% Color Palette (Deep Navy & Accent Gold/Blue)
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{211, 84, 0}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+% Header & Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 1: Karakteristik \& Dekomposisi Deret Waktu}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Section format
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+% Listings setup
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{secondaryblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\begin{document}
+
+% HEADER DOKUMEN
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 1: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Materi: Karakteristik Sinyal Temporal, Komponen Dinamis, dan Dekomposisi Klasik}}
+\end{center}
+
+\vspace{0.1cm}
+
+% BOX IDENTITAS MAHASISWA & ATURAN
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\vspace{0.15cm}
+\hrule
+\vspace{0.15cm}
+\textbf{Petunjuk Umum:}
+\begin{itemize}[leftmargin=1.2em]
+    \item Soal disusun berjenjang berdasarkan \textbf{Taksonomi Bloom (Level C1 sampai C6)} untuk mengukur capaian \textbf{Sub-CPMK 1}.
+    \item Tuliskan jawaban Anda secara runtut, jelas, dan sertakan turunan matematis/langkah analitis jika diminta.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+% =============================================================
+% SOAL PROBLEM SET BERJENJANG C1 - C6
+% =============================================================
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    % ---------------------------------------------------------
+    % C1: MENGINGAT (REMEMBERING)
+    % ---------------------------------------------------------
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Sebutkan dan jelaskan secara ringkas 4 (empat) komponen dasar pembentuk deret waktu ($y_t$) dalam domain teknik elektro!
+        \item Berikan masing-masing 1 (satu) contoh fenomena fisik kelistrikan yang merepresentasikan:
+        \begin{itemize}
+            \item Pola Tren ($T_t$)
+            \item Pola Musiman Harian ($S_t$)
+            \item Pola Residu/Derau Stokastik ($R_t$)
+        \end{itemize}
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    % ---------------------------------------------------------
+    % C2: MEMAHAMI (UNDERSTANDING)
+    % ---------------------------------------------------------
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Jelaskan perbedaan mendasar antara model dekomposisi \textbf{Aditif} ($y_t = T_t + S_t + R_t$) dan model \textbf{Multiplikatif} ($y_t = T_t \times S_t \times R_t$) ditinjau dari perubahan variasi musiman terhadap level tren data!
+        \item Mengapa kita sering menerapkan transformasi logaritmik $\tilde{y}_t = \ln(y_t)$ pada model multiplikatif sebelum melakukan pemodelan statistik linier? Tunjukkan hubungan matematisnya!
+        \item Bagaimana kriteria visual untuk memilih antara model aditif vs. multiplikatif saat memeriksa grafik profil konsumsi daya listrik tahunan kawasan industri yang terus berekspansi?
+    \end{enumerate}
+
+    \newpage
+
+    % ---------------------------------------------------------
+    % C3: MENERAPKAN (APPLYING)
+    % ---------------------------------------------------------
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Tabel berikut mencatat data daya aktif (dalam MW) yang disalurkan melalui sebuah penyulang 20 kV selama 7 hari berturut-turut pada pukul 19.00 WIB:
+    
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline
+    \rowcolor{boxbg}
+    \textbf{Hari ke- ($t$)} & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\ \hline
+    \textbf{Beban $y_t$ (MW)} & 42.0 & 45.0 & 44.0 & 48.0 & 50.0 & 49.0 & 53.0 \\ \hline
+    \end{tabular}
+    \end{center}
+
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah nilai estimasi komponen tren $\hat{T}_t$ untuk hari ke-3, 4, dan 5 ($t=3, 4, 5$) menggunakan metode \textit{Simple Centered Moving Average} dengan ordo $m = 3$ ($3$-SMA):
+        \begin{equation*}
+            \hat{T}_t = \frac{1}{3}(y_{t-1} + y_t + y_{t+1})
+        \end{equation*}
+        \item Jika diasumsikan model dekomposisi bersifat \textbf{Aditif}, hitunglah nilai komponen \textit{detrended} ($D_t = y_t - \hat{T}_t$) untuk $t=3, 4, 5$.
+        \item Hitung pula nilai komponen \textit{detrended} ($D'_t = y_t / \hat{T}_t$) jika diasumsikan model \textbf{Multiplikatif}.
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    % ---------------------------------------------------------
+    % C4: MENGANALISIS (ANALYZING)
+    % ---------------------------------------------------------
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Seorang insinyur proteksi dan SCADA melakukan dekomposisi aditif klasik pada data arus saluran transmisi $I(t)$ selama 1 bulan dengan periode musiman 24 jam. Setelah tren $\hat{T}_t$ dan musiman harian $\hat{S}_t$ dihilangkan, diperoleh komponen residual $\hat{R}_t$.
+    
+    Hasil uji statistik pada residual $\hat{R}_t$ menunjukkan:
+    \begin{itemize}
+        \item Nilai rata-rata $\mu_{\hat{R}} = 0.002 \approx 0$
+        \item Plot fungsi autokorelasi (ACF) dari $\hat{R}_t$ masih menunjukkan koefisien autokorelasi yang signifikan pada $lag = 12$ ($r_{12} = 0.42 > \frac{1.96}{\sqrt{N}}$) dan $lag = 24$ ($r_{24} = 0.38$).
+        \item Terdapat 3 lonjakan magnitudo tajam ($> 4\sigma$) yang terjadi pada tanggal 12 dan 18.
+    \end{itemize}
+
+    \textbf{Pertanyaan Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Apakah komponen residual $\hat{R}_t$ di atas sudah memenuhi kriteria sebagai proses \textbf{White Noise}? Jelaskan analisis Anda berdasarkan 3 syarat matematis \textit{white noise}!
+        \item Jelaskan interpretasi fisik kelistrikan mengenai penyebab munculnya autokorelasi pada $lag = 12$ dan $lag = 24$ pada residual tersebut!
+        \item Apa rekomendasi perbaikan model dekomposisi yang harus dilakukan insinyur tersebut agar informasi periodik dapat terekstraksi secara tuntas?
+    \end{enumerate}
+
+    \newpage
+
+    % ---------------------------------------------------------
+    % C5: MENGEVALUASI (EVALUATING)
+    % ---------------------------------------------------------
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Dua kelompok mahasiswa Teknik Elektro melakukan dekomposisi peramalan pada dataset daya keluaran Pembangkit Listrik Tenaga Surya (PLTS) berkapasitas 5 MWp selama 1 tahun (pencatatan interval 1 jam).
+    \begin{itemize}
+        \item \textbf{Kelompok A} langsung menerapkan dekomposisi Aditif klasik pada seluruh deret waktu 24 jam (termasuk malam hari ketika daya bernilai 0 kW).
+        \item \textbf{Kelompok B} memisahkan data menjadi dua domain: (1) Domain Malam (18.30--05.30) diset pasti 0 kW tanpa model stokastik, dan (2) Domain Siang (06.00--18.00) dilakukan pemodelan menggunakan rasio indeks kejernihan langit (\textit{Clear-Sky Index} $k_t = P_{\text{actual}}(t) / P_{\text{clearsky}}(t)$).
+    \end{itemize}
+
+    \textbf{Tugas Evaluasi:}
+    \begin{enumerate}[label=\alph*.]
+        \item Evaluasilah kelemahan fatal pendekatan Kelompok A, terutama terkait estimasi komponen musiman $\hat{S}_t$ pada malam hari yang dapat menghasilkan nilai daya negatif yang tidak masuk akal secara fisik!
+        \item Mengapa pendekatan \textit{Clear-Sky Index} yang diterapkan Kelompok B jauh lebih superior secara keteknikan dalam mengisolasi komponen tren dan musiman matahari?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    % ---------------------------------------------------------
+    % C6: MERANCANG / MEMBUAT (CREATING)
+    % ---------------------------------------------------------
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Untuk data deret waktu dengan frekuensi jam ($m=24$), jendela pemulus berordo genap tidak simetris pada titik tengah observasi. Oleh karena itu, standar rekayasa menggunakan filter pemulus berbobot dua-tahap: $2 \times 24$-\textit{Centered Moving Average} ($2 \times 24$-CMA) yang dirumuskan sebagai:
+    \begin{equation}
+        \hat{T}_t = \frac{1}{24} \left( \frac{1}{2}y_{t-12} + y_{t-11} + \dots + y_t + \dots + y_{t+11} + \frac{1}{2}y_{t+12} \right)
+    \end{equation}
+
+    \textbf{Tugas Perancangan:}
+    Rancanglah sebuah \textbf{algoritma / pseudocode} lengkap (atau skrip Python/Octave) untuk melakukan dekomposisi aditif klasik dari awal (\textit{from scratch}) tanpa menggunakan fungsi bawaan pustaka \texttt{statsmodels.tsa}.
+    
+    Rancangan Anda harus secara eksplisit memuat:
+    \begin{enumerate}[label=\alph*.]
+        \item Inisialisasi array dan penghitungan $\hat{T}_t$ menggunakan formula $2 \times 24$-CMA dengan penanganan batas indeks (\textit{boundary padding / NaN handling}).
+        \item Tahap \textit{detrending}: $D_t = y_t - \hat{T}_t$.
+        \item Tahap kalkulasi indeks musiman rata-rata untuk setiap jam $k \in \{0, 1, \dots, 23\}$:
+        \begin{equation*}
+            \bar{S}_k = \frac{1}{N_k}\sum_{j} D_{24j+k}
+        \end{equation*}
+        dan normalisasi terpusat (\textit{centering normalization}):
+        \begin{equation*}
+            \hat{S}_k = \bar{S}_k - \frac{1}{24}\sum_{i=0}^{23}\bar{S}_i \quad \Longrightarrow \quad \sum_{k=0}^{23}\hat{S}_k = 0
+        \end{equation*}
+        \item Tahap ekstraksi residual akhir: $\hat{R}_t = y_t - \hat{T}_t - \hat{S}_t$.
+    \end{enumerate}
+
+\end{enumerate}
+
+\vspace{0.6cm}
+\begin{center}
+    \small \textit{--- Selamat Mengerjakan \& Junjung Tinggi Integritas Akademik ---}
+\end{center}
+
+\end{document}

@@ -1,0 +1,213 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 10)}]{\textbf{Feature Engineering \& Machine Learning untuk STLF}}
+\subtitle{Teknik Sliding Window, Fitur Lag/Kalender, XGBoost, dan Validasi Silang Temporal}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 10 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-10}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 9)}
+                Mahasiswa mampu merumuskan problem peramalan deret waktu ke dalam kerangka \textit{Supervised Learning}, merancang rekayasa fitur temporal, serta melatih dan memvalidasi model \textit{Gradient Boosting} (XGBoost/LightGBM).
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Formulasi Supervised Learning}
+                \item \textbf{Teknik Rekayasa Fitur Temporal}
+                \item \textbf{Encoding Kalender Siklis (Sin/Cos)}
+                \item \textbf{Algoritma Tree-Based: XGBoost \& LightGBM}
+                \item \textbf{Time Series Cross-Validation (Mencegah Data Leakage)}
+                \item \textbf{Feature Importance \& Analisis Hasil}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Mengubah Deret Waktu Menjadi Supervised Learning}
+    Menggunakan teknik \textbf{Sliding Window / Lagged Matrix}:
+    \begin{block}{Representasi Matriks Fitur ($X$) dan Target ($y$)}
+        \begin{equation}
+            \begin{bmatrix}
+                y_t \\
+                y_{t+1} \\
+                \vdots \\
+                y_{N}
+            \end{bmatrix}
+            = f\left(
+            \begin{bmatrix}
+                y_{t-1} & y_{t-2} & \dots & y_{t-p} & X_{\text{kalender}, t} & X_{\text{cuaca}, t} \\
+                y_t & y_{t-1} & \dots & y_{t-p+1} & X_{\text{kalender}, t+1} & X_{\text{cuaca}, t+1} \\
+                \vdots & \vdots & \ddots & \vdots & \vdots & \vdots \\
+                y_{N-1} & y_{N-2} & \dots & y_{N-p} & X_{\text{kalender}, N} & X_{\text{cuaca}, N}
+            \end{bmatrix}
+            \right)
+        \end{equation}
+    \end{block}
+    Keunggulan: Dapat menyerap puluhan fitur non-linier secara simultan tanpa asumsi distribusi kaku.
+\end{frame}
+
+\begin{frame}{Taksonomi Rekayasa Fitur (*Feature Engineering*)}
+    \begin{columns}[T]
+        \begin{column}{0.33\textwidth}
+            \begin{block}{1. Fitur Lag Historis}
+                \begin{itemize}
+                    \item Lag dekat: $t-1, t-2, t-3$
+                    \item Lag harian: $t-24, t-48$
+                    \item Lag mingguan: $t-168$
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{2. Statistik Bergerak}
+                \begin{itemize}
+                    \item Rolling Mean (24 jam)
+                    \item Rolling Std Dev
+                    \item Rolling Max / Min
+                    \item Exponential Weighted MA
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{3. Fitur Kalender}
+                \begin{itemize}
+                    \item Jam dalam sehari (0--23)
+                    \item Hari dalam seminggu (0--6)
+                    \item Hari Libur Nasional (Flag biner 0/1)
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+    \begin{alertblock}{Encoding Siklik (Jam \& Bulan)}
+        Nilai jam 23 dan jam 00 berdekatan secara fisik. Gunakan transformasi trigonometri:
+        $x_{\sin} = \sin(2\pi \cdot \text{jam} / 24)$ dan $x_{\cos} = \cos(2\pi \cdot \text{jam} / 24)$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Mencegah Data Leakage: Time Series Cross-Validation}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Bahaya $K$-Fold CV Acak Standar}
+                Pengacakan baris (*shuffling*) menyebabkan data masa depan bocor ke masa lalu (\textit{Lookahead Bias / Leakage}). Model tampak memiliki akurasi $99\%$ di lab namun gagal total di lapangan.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Metode Validasi yang Benar}
+                \textbf{Expanding Window (Time Series Split)}:
+                \begin{itemize}
+                    \item Fold 1: Train [Bulan 1--3] $\to$ Test [Bulan 4]
+                    \item Fold 2: Train [Bulan 1--4] $\to$ Test [Bulan 5]
+                    \item Fold 3: Train [Bulan 1--5] $\to$ Test [Bulan 6]
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: XGBoost untuk STLF}
+\begin{lstlisting}
+import xgboost as xgb
+from sklearn.metrics import mean_squared_error
+
+# 1. Pipeline Feature Engineering
+df['hour_sin'] = np.sin(2 * np.pi * df.index.hour / 24.0)
+df['hour_cos'] = np.cos(2 * np.pi * df.index.hour / 24.0)
+df['lag_24'] = df['load'].shift(24)
+df['roll_mean_24'] = df['load'].shift(1).rolling(24).mean()
+data = df.dropna()
+
+# 2. Split Berurutan Temporal
+X = data[['hour_sin', 'hour_cos', 'lag_24', 'roll_mean_24', 'temp']]
+y = data['load']
+X_train, X_test = X[:-168], X[-168:]
+y_train, y_test = y[:-168], y[-168:]
+
+# 3. Training Gradient Boosting
+model = xgb.XGBRegressor(n_estimators=1000, learning_rate=0.02, max_depth=5, subsample=0.8)
+model.fit(X_train, y_train, eval_set=[(X_test, y_test)], early_stopping_rounds=50, verbose=False)
+
+# 4. Feature Importance
+xgb.plot_importance(model, max_num_features=5)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman \& Persiapan Minggu ke-11}
+    \begin{block}{Poin Kunci Minggu 10}
+        \begin{itemize}
+            \item Rekayasa fitur (lag, rolling, calendar encoding) adalah kunci akurasi algoritma Machine Learning.
+            \item XGBoost dan LightGBM sangat tangguh menangani relasi non-linier kompleks beban sistem tenaga.
+            \item Validasi temporal yang ketat tanpa shuffling menjamin keandalan model saat diterapkan pada sistem online.
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-11)}
+        \textbf{Deep Learning Dasar untuk Deret Waktu}: Arsitektur Recurrent Neural Network (RNN), Long Short-Term Memory (LSTM), dan Gated Recurrent Unit (GRU) untuk data pembangkitan EBT.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Pertanyaan \& Diskusi Machine Learning untuk Deret Waktu}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

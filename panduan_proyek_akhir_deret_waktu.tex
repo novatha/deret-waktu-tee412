@@ -1,0 +1,125 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+\definecolor{headerrow}{RGB}{24, 43, 73}
+\definecolor{lightbg}{RGB}{232, 238, 246}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Panduan \& Rubrik Proyek Akhir (PjBL)}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\titleformat{\subsection}{\color{secondaryblue}\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\setlist{nosep}
+
+\newcommand{\hdr}[1]{\cellcolor{headerrow}\color{white}\textbf{#1}}
+
+\begin{document}
+
+\begin{center}
+    \includegraphics[width=2.2cm]{assets/logo_unib.png}\\[0.3cm]
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.08cm]
+    {\large \textbf{\color{secondaryblue}PROGRAM STUDI S1 TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PANDUAN, TEMPLATE IEEE, \& RUBRIK PROYEK AKHIR}}\\[0.1cm]
+    {\large \textbf{\color{goldaccent}ANALISIS DERET WAKTU DAN PERAMALAN (TEE-412)}}\\[0.08cm]
+    {\normalsize Pembelajaran Berbasis Proyek (\textit{Team-Based Project}) -- Minggu 15 \& 16}
+\end{center}
+
+\vspace{0.25cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Ringkasan Ketentuan Proyek Akhir (CPMK-3, CPMK-4, CPMK-5)}]
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{3.4cm}p{4.3cm}p{3.2cm}p{4.1cm}}
+\textbf{Bentuk Kerja} & : Tim (3--4 Mahasiswa) & \textbf{Total Bobot Nilai} & : \textbf{25\%} dari Nilai Akhir \\
+\textbf{Presentasi \& Demo} & : Minggu 15 (\textbf{10\%}) & \textbf{Laporan Format IEEE} & : Minggu 16 (\textbf{15\%}) \\
+\textbf{Lingkungan Kode} & : Python / Google Colab / Julia & \textbf{Repositori Wajib} & : GitHub / ZIP Reproducible \\
+\end{tabular}
+\end{tcolorbox}
+
+\section{Pilihan Tema Studi Kasus Rekayasa Kelistrikan}
+
+Setiap tim memilih satu tema nyata berikut dan menggunakan dataset riil (PLN, IEEE, UCI/Kaggle Power, BMKG, atau data pengukuran laboratorium) yang diverifikasi dosen paling lambat Minggu 11:
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.5em, itemsep=4pt]
+    \item \textbf{Sistem Tenaga \& Energi Terbarukan:} (a) \textit{Short-Term Load Forecasting} (STLF) regional dengan variabel cuaca; (b) Peramalan daya PLTS/PLTB menggunakan model hibrida Wavelet--LSTM; (c) Peramalan harga pasar energi (\textit{Locational Marginal Pricing}).
+    \item \textbf{Kualitas Daya \& Keandalan Peralatan:} (a) Deteksi \& klasifikasi harmonisa/transien gardu induk berbasis STFT dan 1D-CNN; (b) Estimasi \textit{Remaining Useful Life} (RUL) transformator berbasis data \textit{Dissolved Gas Analysis} (DGA); (c) Deteksi anomali getaran bantalan motor induksi 3-fasa.
+    \item \textbf{Smart Grid, IoT, \& Manajemen Energi:} (a) Deteksi pencurian listrik (\textit{Non-Technical Losses}) pada data \textit{smart meter} menggunakan Isolation Forest / LSTM Autoencoder; (b) Optimalisasi penjadwalan baterai BESS berbasis peramalan probabilistik (P10--P90) dan MPC.
+\end{enumerate}
+
+\section{Persyaratan Teknis \& Protokol Integritas Data}
+
+Untuk menjamin validitas ilmiah serta mencegah kesalahan metodologis umum pada proyek deret waktu, setiap tim \textbf{wajib} memenuhi 5 syarat berikut:
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{Perbandingan Multi-Paradigma:} Minimal membandingkan \textbf{1 model baseline/statistik} (mis. Seasonal Naive, Holt-Winters, atau SARIMA/SARIMAX) melawan \textbf{minimal 2 model ML/DL} (mis. XGBoost/LightGBM dan LSTM/GRU/1D-CNN).
+    \item \textbf{Bebas \textit{Data Leakage}:} Pemisahan data wajib bersifat kronologis (\textit{temporal split}), normalisasi (\texttt{StandardScaler}/\texttt{MinMaxScaler}) hanya di-\texttt{fit} pada data latih, dan seluruh fitur \textit{lag/rolling} dihitung secara kausal.
+    \item \textbf{Evaluasi Kuantitatif Lengkap:} Melaporkan minimal 3 metrik sesuai jenis tugas (Peramalan: MAE, RMSE, MAPE/WAPE, atau Pinball Loss/PICP; Anomali: Precision, Recall, F1-Score, AUROC) disertai analisis residual/kegagalan model.
+    \item \textbf{Reproduksibilitas Kode:} Menyertakan berkas \texttt{README.md}, \texttt{requirements.txt}, \textit{random seed} tetap, dan notebook \texttt{.ipynb} yang dapat dijalankan ulang dari awal hingga akhir tanpa galat.
+    \item \textbf{Kejujuran Akademik \& Deklarasi AI:} Jika menggunakan alat bantu AI untuk \textit{debugging}, tim wajib menuliskan deklarasi penggunaan dan mampu menjelaskan setiap baris kode secara lisan saat sesi demo langsung (Minggu 15).
+\end{enumerate}
+
+\section{Struktur Wajib Laporan Ilmiah (Format IEEE 2-Kolom)}
+
+Laporan diketik dalam format \textbf{IEEE Conference/Transactions (2 kolom, 6--8 halaman, PDF)} menggunakan LaTeX (\texttt{IEEEtran}) atau MS Word IEEE Template dengan sistematika berikut:
+\begin{enumerate}[label=\textbf{\Roman*.}, leftmargin=1.8em, itemsep=2pt]
+    \item \textbf{Judul, Nama Penulis, Afiliasi FT UNIB, Abstrak ($\le 200$ kata), \& Kata Kunci (4--5 istilah).}
+    \item \textbf{Pendahuluan:} Latar belakang masalah kelistrikan, rumusan masalah, tujuan, dan kontribusi singkat.
+    \item \textbf{Deskripsi Dataset \& Prapemrosesan:} Sumber data, resolusi waktu, analisis eksploratif (dekomposisi, uji ADF/ACF, penanganan \textit{missing values}/\textit{outlier}), dan skema pemisahan kronologis.
+    \item \textbf{Metodologi \& Arsitektur Model:} Formulasi matematis model pembanding, rekayasa fitur, hiperparameter, serta spesifikasi lingkungan komputasi.
+    \item \textbf{Hasil Eksperimen \& Pembahasan:} Tabel komparasi kuantitatif, grafik aktual vs. prediksi (atau kurva ROC/rekonstruksi), analisis error pada kondisi ekstrem/hari libur, serta implikasi operasional teknik elektro.
+    \item \textbf{Kesimpulan \& Saran Pengembangan} + \textbf{Daftar Pustaka} (gaya sitasi IEEE bernomor \texttt{[1]}, \texttt{[2]}, minimal 8 rujukan primer).
+\end{enumerate}
+
+\section{Rubrik Penilaian Proyek Akhir (Total Bobot 25\%)}
+
+\subsection{A. Rubrik Presentasi, Demo Kode, \& Tanya Jawab (Minggu 15 -- Bobot 10\%)}
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|p{3.0cm}|p{0.9cm}|p{3.8cm}|p{3.8cm}|p{3.5cm}|}
+\hline
+\hdr{Kriteria} & \hdr{Bobot} & \hdr{Sangat Baik (85--100)} & \hdr{Baik (70--84)} & \hdr{Kurang ($<70$)} \\ \hline
+Penguasaan Materi \& Konsep OBE & 35\% & Menjelaskan alasan matematis pemilihan model dan menjawab seluruh pertanyaan teknis dengan tepat. & Memahami alur utama metode namun sebagian jawaban konseptual masih umum. & Kesulitan menjelaskan logika model atau sekadar membaca slide. \\ \hline
+Demo Langsung \& Reproduksibilitas & 35\% & Kode/notebook berjalan mulus secara langsung, terstruktur, dan bebas \textit{data leakage}. & Kode berjalan dengan sedikit kendala minor atau dokumentasi kurang rapi. & Kode gagal dijalankan, tidak lengkap, atau terbukti ada kebocoran data. \\ \hline
+Kualitas Visualisasi \& Komunikasi Tim & 30\% & Slide ringkas, grafik terbaca jelas, alokasi waktu tepat, seluruh anggota berperan aktif. & Penyampaian cukup jelas namun pembagian peran tim belum merata. & Slide penuh teks, grafik buram, atau didominasi satu anggota saja. \\ \hline
+\end{tabular}
+}
+
+\vspace{0.25cm}
+\subsection{B. Rubrik Laporan Ilmiah Format IEEE (Minggu 16 -- Bobot 15\%)}
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|p{3.0cm}|p{0.9cm}|p{3.8cm}|p{3.8cm}|p{3.5cm}|}
+\hline
+\hdr{Kriteria} & \hdr{Bobot} & \hdr{Sangat Baik (85--100)} & \hdr{Baik (70--84)} & \hdr{Kurang ($<70$)} \\ \hline
+Ketepatan Metodologi \& Anti-Leakage & 30\% & Pipeline kronologis benar, komparasi baseline vs ML/DL adil, tuning terdokumentasi. & Metodologi tepat namun komparasi baseline atau validasi masih sederhana. & Terdapat \textit{data leakage} atau tidak ada model pembanding yang valid. \\ \hline
+Kedalaman Analisis \& Konteks Elektro & 30\% & Analisis error tajam, mengaitkan metrik dengan dampak operasi sistem tenaga secara kritis. & Hasil disajikan lengkap namun pembahasan implikasi keteknikan masih dangkal. & Hanya menempelkan tabel/grafik tanpa interpretasi analitis. \\ \hline
+Kualitas Eksperimen \& Kode Repositori & 20\% & Eksperimen menyeluruh, kode modular, terdapat \texttt{README} dan \texttt{requirements.txt}. & Eksperimen memadai namun kode masih kurang terorganisasi. & Repositori tidak dapat direproduksi atau berkas tidak lengkap. \\ \hline
+Tata Tulis \& Kepatuhan Format IEEE & 20\% & 100\% mengikuti format IEEE 2-kolom, persamaan/tabel rapi, sitasi $\ge 8$ rujukan valid. & Format IEEE diikuti dengan sedikit ketidakkonsistenan minor pada sitasi/gambar. & Tidak mengikuti format IEEE, banyak salah ketik, atau sitasi tidak valid. \\ \hline
+\end{tabular}
+}
+
+\end{document}

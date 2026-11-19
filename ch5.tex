@@ -1,0 +1,205 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 5)}]{\textbf{Model ARIMA dan SARIMA Box-Jenkins}}
+\subtitle{Metodologi 3-Tahap, Musiman Ganda, dan Diagnostik Residu Sistem Tenaga}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 5 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-5}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 5)}
+                Mahasiswa mampu merancang model ARIMA non-musiman dan SARIMA musiman menggunakan metodologi Box-Jenkins secara komprehensif, mengestimasi parameter, serta melakukan uji diagnostik residual Ljung-Box.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Formulasi ARIMA($p,d,q$)}
+                \item \textbf{Ekstensi Musiman: SARIMA($p,d,q$)($P,D,Q$)$_s$}
+                \item \textbf{Metodologi 3-Tahap Box-Jenkins}
+                \item \textbf{Uji Diagnostik Residu (Ljung-Box Test)}
+                \item \textbf{Implementasi Python: Peramalan 168 Jam}
+                \item \textbf{Evaluasi Akurasi \& Interval Prediksi}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Formulasi Umum ARIMA($p,d,q$)}
+    Menggabungkan diferensiasi ordo-$d$ dengan model ARMA($p,q$):
+    \begin{block}{Persamaan ARIMA($p,d,q$)}
+        \begin{equation}
+            \phi_p(B)(1 - B)^d y_t = c + \theta_q(B)\epsilon_t
+        \end{equation}
+        di mana $(1-B)^d y_t = w_t$ adalah data deret waktu yang telah stasioner.
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Contoh Populer:}
+            \begin{itemize}
+                \item \textbf{ARIMA(0,1,0)}: \textit{Random Walk Model} ($y_t = y_{t-1} + \epsilon_t$).
+                \item \textbf{ARIMA(1,1,0)}: Diferensiasi ordo-1 dengan korelasi AR ($y_t - y_{t-1} = \phi_1(y_{t-1} - y_{t-2}) + \epsilon_t$).
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Penentuan Ordo:}
+            \begin{itemize}
+                \item $d$: Jumlah diferensiasi agar ADF menolak $H_0$.
+                \item $p, q$: Dari correlogram ACF \& PACF $w_t$.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Model Musiman SARIMA($p,d,q$)($P,D,Q$)$_s$}
+    Untuk menangkap ketergantungan musiman berulang (misal periode harian $s=24$ jam):
+    \begin{block}{Persamaan Multiplikatif SARIMA}
+        \begin{equation}
+            \Phi_P(B^s)\phi_p(B)(1 - B)^d(1 - B^s)^D y_t = \Theta_Q(B^s)\theta_q(B)\epsilon_t
+        \end{equation}
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Komponen Reguler ($p, d, q$):}
+            Memodelkan dinamika hubungan antar-jam terdekat ($t-1, t-2$).
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Komponen Musiman ($P, D, Q$)$_s$:}
+            Memodelkan hubungan dengan jam yang sama di hari sebelumnya ($t-24, t-48$).
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+    \begin{alertblock}{Model Standar Beban Listrik (Airline Model Variant)}
+        $\text{SARIMA}(0,1,1)(0,1,1)_{24}$: $(1-B)(1-B^{24})y_t = (1+\theta_1 B)(1+\Theta_1 B^{24})\epsilon_t$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{3 Tahapan Metodologi Box-Jenkins}
+    \begin{columns}[T]
+        \begin{column}{0.33\textwidth}
+            \begin{block}{\textbf{1. Identifikasi}}
+                \begin{itemize}
+                    \item Plot deret waktu \& uji stasioneritas.
+                    \item Tentukan diferensiasi $d$ dan $D$.
+                    \item Identifikasi kandidat $p, q$ (lag awal) dan $P, Q$ (lag kelipatan musiman $s$) dari plot ACF/PACF.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{\textbf{2. Estimasi}}
+                \begin{itemize}
+                    \item Estimasi parameter menggunakan \textit{Maximum Likelihood Estimation} (MLE).
+                    \item Seleksi model terbaik berdasarkan nilai \textbf{AIC/BIC} terendah.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{\textbf{3. Diagnostik}}
+                \begin{itemize}
+                    \item Uji Ljung-Box pada residual $\hat{\epsilon}_t$.
+                    \item Periksa apakah residual independen (\textit{White Noise}) dan berdistribusi normal.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: Auto-ARIMA / SARIMA}
+\begin{lstlisting}
+import pmdarima as pm
+import pandas as pd
+
+# Load data beban per-jam
+df = pd.read_csv('grid_hourly.csv', parse_dates=['timestamp'], index_col='timestamp')
+train, test = df['load'][:-168], df['load'][-168:]
+
+# Pencarian ordo otomatis (Auto-ARIMA) dengan minimasi AIC
+auto_model = pm.auto_arima(train, seasonal=True, m=24,
+                           start_p=1, max_p=3, start_q=1, max_q=3,
+                           start_P=0, max_P=2, start_Q=0, max_Q=2,
+                           d=1, D=1, stepwise=True, trace=True)
+                           
+print(auto_model.summary()) # Menampilkan ordo terpilih & uji Ljung-Box
+
+# Peramalan 168 Jam (1 Minggu ke Depan)
+forecast_mean, conf_int = auto_model.predict(n_periods=168, return_conf_int=True, alpha=0.05)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman \& Persiapan Minggu ke-6}
+    \begin{block}{Poin Kunci Minggu 5}
+        \begin{itemize}
+            \item SARIMA merupakan model parametrik klasik paling komprehensif untuk data berulang musiman.
+            \item Siklus Box-Jenkins menjamin model yang dibangun valid secara statistik dan residunya murni acak.
+            \item Interval prediksi $95\%$ memberikan batas toleransi risiko bagi operator sistem tenaga (*dispatch planner*).
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-6)}
+        \textbf{Model Eksogen \& Multivariat (ARMAX, SARIMAX, dan VAR)}: Menghubungkan variabel beban dengan suhu cuaca luar dan menganalisis sistem multi-bus secara simultan.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Sesi Tanya Jawab \& Diskusi Metodologi Box-Jenkins}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

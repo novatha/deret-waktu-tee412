@@ -1,0 +1,234 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 3)}]{\textbf{Metode Pemulusan Data (\textit{Exponential Smoothing})}}
+\subtitle{Simple Moving Average, Holt's Linear Trend, dan Holt-Winters Seasonal}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 3 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-3}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 3)}
+                Mahasiswa mampu memformulasikan algoritma pemulusan eksponensial (SES, Holt's, Holt-Winters), mengoptimalkan parameter pemulus $(\alpha, \beta, \gamma)$, serta mengevaluasi akurasi metrik peramalan (MAE, RMSE, MAPE).
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Filosofi Pemulusan Eksponensial}
+                \item \textbf{Simple Exponential Smoothing (SES)}
+                \item \textbf{Holt's Linear Trend Method}
+                \item \textbf{Holt-Winters Seasonal (Aditif \& Multiplikatif)}
+                \item \textbf{Metrik Evaluasi Kesalahan Peramalan}
+                \item \textbf{Studi Kasus: Peramalan Beban Hari Kerja vs Libur}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Simple Exponential Smoothing (SES)}
+    Digunakan untuk data stasioner tanpa tren dan musiman yang jelas:
+    \begin{block}{Persamaan Pemulusan SES}
+        \begin{equation}
+            \hat{y}_{t+1|t} = \ell_t = \alpha y_t + (1 - \alpha)\ell_{t-1} \quad (0 \le \alpha \le 1)
+        \end{equation}
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Bentuk Ekspansi Bobot:}
+            \begin{equation*}
+                \hat{y}_{t+1|t} = \alpha y_t + \alpha(1-\alpha)y_{t-1} + \alpha(1-\alpha)^2y_{t-2} + \dots
+            \end{equation*}
+            Bobot meluruh secara eksponensial seiring bertambahnya usia data historis.
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Sensitivitas Parameter $\alpha$:}
+            \begin{itemize}
+                \item $\alpha \to 1$: Model sangat responsif terhadap perubahan instan data terbaru (cocok untuk sinyal cepat).
+                \item $\alpha \to 0$: Model sangat halus, mengabaikan fluktuasi transien (cocok untuk derau tinggi).
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Metode Holt's Linear Trend (2 Parameter: $\alpha, \beta$)}
+    Mengakomodasi data yang memiliki komponen kemiringan tren jangka panjang:
+    \begin{block}{Persamaan Holt's Linear}
+        \begin{align}
+            \text{Level: } &\ell_t = \alpha y_t + (1 - \alpha)(\ell_{t-1} + b_{t-1}) \\
+            \text{Trend: } &b_t = \beta (\ell_t - \ell_{t-1}) + (1 - \beta) b_{t-1} \\
+            \text{Peramalan $h$-langkah: } &\hat{y}_{t+h|t} = \ell_t + h b_t
+        \end{align}
+    \end{block}
+    \vspace{0.1cm}
+    \begin{alertblock}{Opsi Damped Trend ($\phi$)}
+        Dalam jangka sangat panjang ($h > 48$ jam), tren linier seringkali terlalu agresif. Parameter redaman $\phi \in (0, 1)$ digunakan: $\hat{y}_{t+h|t} = \ell_t + (\phi + \phi^2 + \dots + \phi^h)b_t$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Metode Holt-Winters Seasonal (3 Parameter: $\alpha, \beta, \gamma$)}
+    Untuk deret waktu yang memiliki tren dan pola musiman siklis (periode $m$):
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Holt-Winters Aditif}
+                \begin{align*}
+                    \ell_t &= \alpha (y_t - s_{t-m}) + (1 - \alpha)(\ell_{t-1} + b_{t-1}) \\
+                    b_t &= \beta (\ell_t - \ell_{t-1}) + (1 - \beta) b_{t-1} \\
+                    s_t &= \gamma (y_t - \ell_{t-1} - b_{t-1}) + (1 - \gamma) s_{t-m} \\
+                    \hat{y}_{t+h|t} &= \ell_t + h b_t + s_{t+h-m(k+1)}
+                \end{align*}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Holt-Winters Multiplikatif}
+                \begin{align*}
+                    \ell_t &= \alpha \left(\frac{y_t}{s_{t-m}}\right) + (1 - \alpha)(\ell_{t-1} + b_{t-1}) \\
+                    b_t &= \beta (\ell_t - \ell_{t-1}) + (1 - \beta) b_{t-1} \\
+                    s_t &= \gamma \left(\frac{y_t}{\ell_{t-1} + b_{t-1}}\right) + (1 - \gamma) s_{t-m} \\
+                    \hat{y}_{t+h|t} &= (\ell_t + h b_t) \times s_{t+h-m(k+1)}
+                \end{align*}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Double Seasonal Holt-Winters (DSHW)}
+    Beban listrik sistem tenaga hampir selalu memiliki \textbf{musiman ganda (Double Seasonality)}: siklus harian ($m_1 = 24$) dan siklus mingguan ($m_2 = 168$). Taylor (2003) memodifikasi HW untuk mengakomodasi 2 periode musiman:
+    \begin{block}{Persamaan Pemulusan DSHW Multiplikatif (Taylor, 2003)}
+        \begin{align*}
+            \ell_t &= \alpha \left(\frac{y_t}{d_{t-m_1} w_{t-m_2}}\right) + (1 - \alpha)(\ell_{t-1} + b_{t-1}) \\
+            b_t &= \beta (\ell_t - \ell_{t-1}) + (1 - \beta) b_{t-1} \\
+            d_t &= \gamma \left(\frac{y_t}{\ell_t w_{t-m_2}}\right) + (1 - \gamma) d_{t-m_1} \quad \text{(Siklus Harian, } m_1=24\text{)}\\
+            w_t &= \omega \left(\frac{y_t}{\ell_t d_{t-m_1}}\right) + (1 - \omega) w_{t-m_2} \quad \text{(Siklus Mingguan, } m_2=168\text{)}\\
+            \hat{y}_{t+h|t} &= (\ell_t + h b_t) \times d_{t+h-m_1} \times w_{t+h-m_2}
+        \end{align*}
+    \end{block}
+    DSHW secara dramatis mengurangi *error* peramalan akhir pekan yang sering gagal ditangkap oleh HW standar.
+\end{frame}
+
+\begin{frame}{Metrik Kuantitatif Evaluasi Kesalahan Peramalan}
+    Evaluasi dilakukan pada dataset uji (*test set*) yang tidak terlihat selama pelatihan:
+    \begin{table}[h!]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \rowcolor{lightbg}
+    \textbf{Metrik} & \textbf{Formulasi Matematis} & \textbf{Interpretasi Rekayasa} \\ \hline
+    \textbf{MAE} & $\frac{1}{N}\sum_{t=1}^N |y_t - \hat{y}_t|$ & Rata-rata deviasi absolut (MW) \\ \hline
+    \textbf{MSE} & $\frac{1}{N}\sum_{t=1}^N (y_t - \hat{y}_t)^2$ & Sensitif terhadap lonjakan error tajam \\ \hline
+    \textbf{RMSE} & $\sqrt{\frac{1}{N}\sum_{t=1}^N (y_t - \hat{y}_t)^2}$ & Satuan sama dengan daya asli (MW) \\ \hline
+    \textbf{MAPE} & $\frac{100\%}{N}\sum_{t=1}^N \left|\frac{y_t - \hat{y}_t}{y_t}\right|$ & Error persentase relatif (\%) \\ \hline
+    \end{tabular}
+    \end{table}
+    \begin{alertblock}{Catatan Penting untuk PLTS/EBT}
+        MAPE tidak boleh digunakan jika observasi riil dapat bernilai nol ($y_t = 0$), misal output surya saat malam hari. Gunakan \textbf{WAPE} (\textit{Weighted Absolute Percentage Error}):
+        \begin{equation*}
+            \text{WAPE} = \frac{\sum_{t=1}^N |y_t - \hat{y}_t|}{\sum_{t=1}^N y_t} \times 100\%
+        \end{equation*}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: Holt-Winters Peramalan Beban}
+\begin{lstlisting}
+import pandas as pd
+import numpy as np
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
+
+# Load data beban per jam
+df = pd.read_csv('hourly_load.csv', parse_dates=['datetime'], index_col='datetime')
+train, test = df['load'][:-24], df['load'][-24:]
+
+# Fitting Holt-Winters Multiplicative (m=24)
+hw_model = ExponentialSmoothing(train, seasonal_periods=24, trend='add', seasonal='mul',
+                                initialization_method='estimated').fit()
+
+# Forecasting 24 jam ke depan
+forecast = hw_model.forecast(24)
+
+# Evaluasi
+rmse = np.sqrt(mean_squared_error(test, forecast))
+mape = mean_absolute_percentage_error(test, forecast) * 100
+print(f"Hasil Peramalan 24 Jam -> RMSE: {rmse:.2f} MW, MAPE: {mape:.2f}%")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman \& Persiapan Minggu ke-4}
+    \begin{block}{Poin Penting Minggu 3}
+        \begin{itemize}
+            \item Pemulusan eksponensial memberikan bobot lebih besar pada observasi terkini.
+            \item Holt-Winters mengakomodasi level, tren, dan musiman secara rekursif dan sangat cepat secara komputasi.
+            \item Evaluasi metrik harus disesuaikan dengan domain fisik data kelistrikan.
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-4)}
+        \textbf{Model Stokastik Linier Klasik (AR, MA, dan ARMA)}: Representasi polinomial operator lag $B$, syarat kestabilan sistem pada bidang Z, serta seleksi ordo model optimal berbasis AIC/BIC.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Pertanyaan \& Diskusi Terkait Pemulusan Data}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

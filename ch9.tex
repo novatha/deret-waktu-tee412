@@ -1,0 +1,188 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 9)}]{\textbf{Analisis Spektral \& Dekomposisi Wavelet}}
+\subtitle{Domain Frekuensi, Transformasi Fourier (FFT), dan DWT untuk Sinyal Transien Elektro}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 9 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-9}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 8)}
+                Mahasiswa mampu menganalisis sinyal deret waktu pada domain frekuensi (FFT, PSD) dan domain waktu-frekuensi (\textit{Wavelet Transform}) untuk mendeteksi harmonisa dan anomali transien gangguan sistem tenaga.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Keterbatasan Domain Waktu Murni}
+                \item \textbf{Transformasi Fourier Diskrit (DFT / FFT)}
+                \item \textbf{Power Spectral Density (PSD)}
+                \item \textbf{Short-Time Fourier Transform (STFT)}
+                \item \textbf{Discrete Wavelet Transform (DWT)}
+                \item \textbf{Studi Kasus: Diagnostik Motor \& Denoising}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Transformasi Fourier Diskrit (DFT \& FFT)}
+    Memetakan sinyal deret waktu $x[n]$ berhingga ke domain frekuensi diskrit $X[k]$:
+    \begin{block}{Persamaan DFT \& Inverse DFT}
+        \begin{equation}
+            X[k] = \sum_{n=0}^{N-1} x[n] e^{-j \frac{2\pi}{N} k n}, \quad k = 0, 1, \dots, N-1
+        \end{equation}
+        \begin{equation}
+            x[n] = \frac{1}{N} \sum_{k=0}^{N-1} X[k] e^{j \frac{2\pi}{N} k n}, \quad n = 0, 1, \dots, N-1
+        \end{equation}
+    \end{block}
+    \begin{alertblock}{Aplikasi di Teknik Elektro}
+        Deteksi frekuensi harmonisa beban non-linier (inverter, penyearah, motor) dan perhitungan THD (\textit{Total Harmonic Distortion}).
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Dilema Fourier \& Keunggulan Wavelet}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Kelemahan Fourier Standard (FFT)}
+                \begin{itemize}
+                    \item Mengasumsikan sinyal periodik stasioner abadi.
+                    \item \textbf{Hilangnya Lokalisasi Waktu}: FFT tahu frekuensi apa yang ada, tetapi \textit{tidak tahu kapan} frekuensi itu terjadi.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Solusi: Discrete Wavelet Transform (DWT)}
+                \begin{itemize}
+                    \item Menggunakan fungsi basis gelombang singkat (*wavelet*) yang terlokalisasi di waktu dan frekuensi.
+                    \item Sangat unggul mendeteksi \textit{voltage sag}, sambaran petir, dan transien gangguan hubung singkat.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Dekomposisi Wavelet Sub-Band Bertingkat}
+    Sinyal dilewatkan melalui filter lolos-rendah (\textit{Low-Pass}) dan lolos-tinggi (\textit{High-Pass}):
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Koefisien Aproksimasi \& Detail}
+                \begin{itemize}
+                    \item \textbf{Aproksimasi ($cA_j$)}: Informasi frekuensi rendah / tren sinyal utama.
+                    \item \textbf{Detail ($cD_j$)}: Informasi frekuensi tinggi / komponen transien \& derau.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Strategi Denoising (Thresholding)}
+                Detail yang sangat kecil di bawah ambang Donoho dihilangkan (\textit{Soft Thresholding}):
+                \begin{equation}
+                    \lambda = \sigma \sqrt{2 \ln(N)}
+                \end{equation}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: DWT Denoising Sinyal Arus}
+\begin{lstlisting}
+import pywt
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Sinyal arus transien dengan derau
+signal = df['current_raw'].values
+
+# Dekomposisi Wavelet Daubechies 4 (db4) Level 3
+coeffs = pywt.wavedec(signal, 'db4', level=3)
+cA3, cD3, cD2, cD1 = coeffs
+
+# Hitung Threshold Universal Donoho
+sigma = np.median(np.abs(cD1)) / 0.6745
+threshold = sigma * np.sqrt(2 * np.log(len(signal)))
+
+# Terapkan Soft-Thresholding pada komponen detail
+clean_coeffs = [cA3] + [pywt.threshold(c, threshold, mode='soft') for c in [cD3, cD2, cD1]]
+
+# Rekonstruksi Sinyal Bersih (Inverse DWT)
+clean_signal = pywt.waverec(clean_coeffs, 'db4')
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman \& Persiapan Minggu ke-10}
+    \begin{block}{Poin Kunci Minggu 9}
+        \begin{itemize}
+            \item FFT mengekstraksi spektrum frekuensi dominan untuk analisis kualitas daya stasioner.
+            \item DWT memberikan resolusi multi-skala waktu-frekuensi yang sangat ideal untuk sinyal transien dinamis.
+            \item Dekomposisi wavelet menjadi tahap pra-pemrosesan fitur yang sangat ampuh sebelum model ML/DL.
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-10)}
+        \textbf{Feature Engineering \& Machine Learning (XGBoost/LightGBM)}: Rekayasa fitur lag, statistik jendela bergerak, dan peramalan beban jangka pendek.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Pertanyaan \& Diskusi Analisis Spektral \& Wavelet}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

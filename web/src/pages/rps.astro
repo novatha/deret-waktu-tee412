@@ -1,0 +1,453 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { courseMetadata, weeksData } from '../data/courseData';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+---
+
+<Layout title="Rencana Pembelajaran Semester (RPS OBE) | Analisis Deret Waktu FT UNIB" description="Dokumen Kurikulum & Silabus Berbasis Outcome-Based Education (OBE) S1 Teknik Elektro UNIB.">
+  <!-- Header Banner -->
+  <section class="rps-header">
+    <div class="container">
+      <div class="header-breadcrumbs">
+        <a href={getUrl('/')} class="crumb-link">&larr; Kembali ke Beranda</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-current">Silabus &amp; RPS OBE</span>
+      </div>
+
+      <div class="header-main-grid">
+        <div>
+          <span class="pill-badge">
+            <i data-lucide="shield-check"></i> DOKUMEN RESMI KURIKULUM OBE
+          </span>
+          <h1 class="header-title">
+            Rencana Pembelajaran <span class="gradient-text">Semester (RPS)</span>
+          </h1>
+          <p class="header-lead">
+            Standar Outcome-Based Education (OBE) mata kuliah Analisis Deret Waktu dan Peramalan (TEE-412 / 3 SKS), Program Studi S1 Teknik Elektro, Fakultas Teknik Universitas Bengkulu.
+          </p>
+        </div>
+
+        <div class="rps-download-card glass-panel">
+          <div class="doc-icon-header">
+            <i data-lucide="file-badge-2" class="doc-icon"></i>
+            <div>
+              <span class="doc-badge-title">Dokumen Resmi Silabus</span>
+              <span class="doc-badge-sub">Format PDF Kurikulum IABEE</span>
+            </div>
+          </div>
+          <a href={getUrl(courseMetadata.rpsPdf)} target="_blank" class="btn btn-primary btn-block">
+            <i data-lucide="download"></i> Unduh RPS Lengkap (PDF)
+          </a>
+          <a href={getUrl(courseMetadata.capstoneGuidePdf)} target="_blank" class="btn btn-outline btn-block" style="margin-top: 10px;">
+            <i data-lucide="award"></i> Panduan Proyek Akhir IEEE (PDF)
+          </a>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+            <a href={getUrl(courseMetadata.utsBlueprintPdf)} target="_blank" class="btn btn-sm btn-outline">
+              <i data-lucide="clipboard-list"></i> Kisi-Kisi UTS
+            </a>
+            <a href={getUrl(courseMetadata.uasBlueprintPdf)} target="_blank" class="btn btn-sm btn-outline">
+              <i data-lucide="clipboard-check"></i> Kisi-Kisi UAS
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Body Content -->
+  <section class="rps-body-section">
+    <div class="container">
+      <!-- Metadata Grid -->
+      <div class="meta-info-grid glass-panel">
+        <div class="meta-item">
+          <span class="meta-label">Nama Mata Kuliah</span>
+          <span class="meta-value text-emerald">{courseMetadata.courseName}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Kode &amp; Bobot</span>
+          <span class="meta-value">{courseMetadata.courseCode} / {courseMetadata.credits}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Semester / Tahun</span>
+          <span class="meta-value">{courseMetadata.semester}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Dosen Pengampu</span>
+          <span class="meta-value">{courseMetadata.lecturer.name}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Ketua Jurusan</span>
+          <span class="meta-value">{courseMetadata.headOfDept.name}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Laboratorium</span>
+          <span class="meta-value">{courseMetadata.lecturer.lab}</span>
+        </div>
+      </div>
+
+      <!-- CPMK Breakdown -->
+      <div class="section-block">
+        <h2 class="block-title">
+          <i data-lucide="target" class="text-emerald"></i> Capaian Pembelajaran Mata Kuliah (CPMK)
+        </h2>
+        <div class="cpmk-grid">
+          {courseMetadata.cpmkList.map((cpmk) => (
+            <div class="cpmk-box glass-panel">
+              <div class="cpmk-tag">{cpmk.code}</div>
+              <p class="cpmk-text">{cpmk.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 16-Week Schedule Table -->
+      <div class="section-block">
+        <h2 class="block-title">
+          <i data-lucide="calendar" class="text-cyan"></i> Matriks Jadwal Perkuliahan 16 Minggu
+        </h2>
+
+        <div class="table-responsive glass-panel">
+          <table class="rps-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">Minggu</th>
+                <th style="width: 260px;">Materi &amp; Pokok Bahasan</th>
+                <th>Sub-CPMK &amp; Indikator</th>
+                <th style="width: 140px;">Kategori</th>
+                <th style="width: 100px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {weeksData.filter((w) => w.week < 8).map((w) => (
+                <tr>
+                  <td class="td-week">Minggu {w.week}</td>
+                  <td class="td-title">
+                    <strong>{w.title}</strong>
+                    <span class="sub-topic-txt">{w.subTitle}</span>
+                  </td>
+                  <td class="td-subcpmk">{w.subCpmk}</td>
+                  <td><span class="table-cat-badge">{w.category}</span></td>
+                  <td>
+                    <a href={getUrl(`/materi/minggu-${w.week}`)} class="table-link">
+                      Detail &rarr;
+                    </a>
+                  </td>
+                </tr>
+              ))}
+              <tr>
+                <td class="td-week">Minggu 8</td>
+                <td class="td-title">
+                  <strong>Ujian Tengah Semester (UTS)</strong>
+                  <span class="sub-topic-txt">Evaluasi Materi Minggu 1 s.d. Minggu 7 (CPMK-1 &amp; CPMK-2)</span>
+                </td>
+                <td class="td-subcpmk">Ujian tertulis &amp; analisis kasus komputasi (Bobot 20%).</td>
+                <td><span class="table-cat-badge">Evaluasi UTS</span></td>
+                <td>
+                  <a href={getUrl(courseMetadata.utsBlueprintPdf)} target="_blank" class="table-link">
+                    Kisi-Kisi &rarr;
+                  </a>
+                </td>
+              </tr>
+              {weeksData.filter((w) => w.week > 8).map((w) => (
+                <tr>
+                  <td class="td-week">Minggu {w.week}</td>
+                  <td class="td-title">
+                    <strong>{w.title}</strong>
+                    <span class="sub-topic-txt">{w.subTitle}</span>
+                  </td>
+                  <td class="td-subcpmk">{w.subCpmk}</td>
+                  <td><span class="table-cat-badge">{w.category}</span></td>
+                  <td>
+                    <a href={getUrl(`/materi/minggu-${w.week}`)} class="table-link">
+                      Detail &rarr;
+                    </a>
+                  </td>
+                </tr>
+              ))}
+              <tr>
+                <td class="td-week">Minggu 15</td>
+                <td class="td-title">
+                  <strong>Presentasi &amp; Demo Proyek Akhir (PjBL)</strong>
+                  <span class="sub-topic-txt">Seminar kelas &amp; demonstrasi kode end-to-end berbasis tim</span>
+                </td>
+                <td class="td-subcpmk">Sub-CPMK 14: Mampu mempresentasikan proyek peramalan sistem elektro secara sistematis (Bobot 10%).</td>
+                <td><span class="table-cat-badge">Capstone PjBL</span></td>
+                <td>
+                  <a href={getUrl(courseMetadata.capstoneGuidePdf)} target="_blank" class="table-link">
+                    Panduan &rarr;
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-week">Minggu 16</td>
+                <td class="td-title">
+                  <strong>Ujian Akhir Semester (UAS)</strong>
+                  <span class="sub-topic-txt">Evaluasi Materi Minggu 9–14 &amp; Laporan Ilmiah Format IEEE</span>
+                </td>
+                <td class="td-subcpmk">Evaluasi CPMK-3, CPMK-4, dan CPMK-5 serta kompilasi laporan proyek akhir (Bobot 20%).</td>
+                <td><span class="table-cat-badge">Evaluasi UAS</span></td>
+                <td>
+                  <a href={getUrl(courseMetadata.uasBlueprintPdf)} target="_blank" class="table-link">
+                    Kisi-Kisi &rarr;
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .rps-header {
+    padding: 60px 0 40px;
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .header-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    font-size: 0.85rem;
+  }
+
+  .crumb-link {
+    color: var(--neon-cyan);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .crumb-link:hover {
+    text-decoration: underline;
+  }
+
+  .crumb-sep {
+    color: var(--text-dim);
+  }
+
+  .crumb-current {
+    color: var(--text-muted);
+  }
+
+  .header-main-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 0.65fr;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .header-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    margin: 14px 0 12px;
+    line-height: 1.2;
+  }
+
+  .header-lead {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 650px;
+  }
+
+  .rps-download-card {
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .doc-icon-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .doc-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--neon-emerald);
+  }
+
+  .doc-badge-title {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+
+  .doc-badge-sub {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+  }
+
+  .btn-block {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .rps-body-section {
+    padding: 50px 0 80px;
+  }
+
+  .meta-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 40px;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .meta-value {
+    font-size: 0.92rem;
+    color: var(--text-main);
+    font-weight: 700;
+  }
+
+  .text-emerald { color: var(--neon-emerald); }
+  .text-cyan { color: var(--neon-cyan); }
+
+  .section-block {
+    margin-bottom: 40px;
+  }
+
+  .block-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .cpmk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 16px;
+  }
+
+  .cpmk-box {
+    padding: 20px;
+    border-radius: var(--radius-md);
+  }
+
+  .cpmk-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--neon-emerald);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  .cpmk-text {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .table-responsive {
+    border-radius: var(--radius-lg);
+    overflow-x: auto;
+  }
+
+  .rps-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    text-align: left;
+  }
+
+  .rps-table th {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-main);
+    font-weight: 700;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .rps-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    vertical-align: middle;
+  }
+
+  .td-week {
+    font-weight: 700;
+    color: var(--neon-cyan);
+    white-space: nowrap;
+  }
+
+  .td-title strong {
+    display: block;
+    color: var(--text-main);
+    margin-bottom: 2px;
+  }
+
+  .sub-topic-txt {
+    display: block;
+    font-size: 0.76rem;
+    color: var(--text-dim);
+  }
+
+  .td-subcpmk {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+
+  .table-cat-badge {
+    font-size: 0.72rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-subtle);
+    white-space: nowrap;
+  }
+
+  .table-link {
+    color: var(--neon-emerald);
+    text-decoration: none;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .table-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 900px) {
+    .header-main-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

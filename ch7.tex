@@ -1,0 +1,226 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+\definecolor{tableheader}{RGB}{24, 43, 73}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 7)}]{\textbf{Discrete Kalman Filter untuk Estimasi dan Filtering}}
+\subtitle{Representasi Ruang Keadaan (State-Space), Denoising Sensor, dan Estimasi SoC Baterai}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 7 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-7}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 7)}
+                Mahasiswa mampu memformulasikan model sistem dinamis ke dalam ruang keadaan (\textit{State-Space}), menurunkan algoritma Discrete Kalman Filter, serta mengimplementasikannya untuk estimasi parameter dan penyaringan derau sensor elektro.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Representasi Ruang Keadaan (State-Space)}
+                \item \textbf{Derau Proses ($Q$) vs Derau Pengukuran ($R$)}
+                \item \textbf{Algoritma 2-Tahap: Prediksi dan Koreksi}
+                \item \textbf{Kalman Gain ($K_k$) dan Konvergensi Kovarians}
+                \item \textbf{Studi Kasus: Estimasi State-of-Charge (SoC)}
+                \item \textbf{Review Komprehensif Materi UTS}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Representasi Ruang Keadaan Diskrit}
+    Sistem dinamis linier stokastik dimodelkan dalam dua persamaan:
+    \begin{block}{1. Persamaan State (Model Fisik Sistem)}
+        \begin{equation}
+            \mathbf{x}_k = \mathbf{A}_k \mathbf{x}_{k-1} + \mathbf{B}_k \mathbf{u}_{k-1} + \mathbf{w}_{k-1}, \quad \mathbf{w}_k \sim \mathcal{N}(0, \mathbf{Q}_k)
+        \end{equation}
+    \end{block}
+    \begin{block}{2. Persamaan Pengukuran (Sensor)}
+        \begin{equation}
+            \mathbf{z}_k = \mathbf{H}_k \mathbf{x}_k + \mathbf{v}_k, \quad \mathbf{v}_k \sim \mathcal{N}(0, \mathbf{R}_k)
+        \end{equation}
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            $\mathbf{x}_k$: Vektor status tersembunyi (misal SoC baterai, fluks motor).\\
+            $\mathbf{z}_k$: Sinyal pengukuran nyata dari sensor yang bising.
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            $\mathbf{Q}$: Matriks kovariansi ketidakpastian model.\\
+            $\mathbf{R}$: Matriks kovariansi derau instrumen sensor.
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Algoritma Siklus 2-Tahap Discrete Kalman Filter}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Tahap 1: Prediksi (Time Update)}
+                Memproyeksikan status ke depan:
+                \begin{equation*}
+                \begin{aligned}
+                    \hat{\mathbf{x}}_k^- &= \mathbf{A}\hat{\mathbf{x}}_{k-1} + \mathbf{B}\mathbf{u}_{k-1} \\
+                    \mathbf{P}_k^- &= \mathbf{A}\mathbf{P}_{k-1}\mathbf{A}^T + \mathbf{Q}
+                \end{aligned}
+                \end{equation*}
+                $\hat{\mathbf{x}}_k^-$: Estimasi a priori.\\
+                $\mathbf{P}_k^-$: Kovariansi error prediksi.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Tahap 2: Koreksi (Measurement Update)}
+                Memperbaiki estimasi dengan data sensor:
+                \begin{equation*}
+                \begin{aligned}
+                    \mathbf{K}_k &= \mathbf{P}_k^-\mathbf{H}^T(\mathbf{H}\mathbf{P}_k^-\mathbf{H}^T + \mathbf{R})^{-1} \\
+                    \hat{\mathbf{x}}_k &= \hat{\mathbf{x}}_k^- + \mathbf{K}_k(\mathbf{z}_k - \mathbf{H}\hat{\mathbf{x}}_k^-) \\
+                    \mathbf{P}_k &= (\mathbf{I} - \mathbf{K}_k\mathbf{H})\mathbf{P}_k^-
+                \end{aligned}
+                \end{equation*}
+                $\mathbf{K}_k$: Kalman Gain penentu bobot optimal.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Perilaku Dinamis Kalman Gain}
+    Bagaimana Kalman Filter menyeimbangkan antara model teori vs data sensor?
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Kondisi 1: Sensor Sangat Akurat ($\mathbf{R} \to 0$)}
+                \begin{equation}
+                    \lim_{\mathbf{R} \to 0} \mathbf{K}_k = \mathbf{H}^{-1} \quad \Longrightarrow \quad \hat{\mathbf{x}}_k \approx \mathbf{H}^{-1}\mathbf{z}_k
+                \end{equation}
+                Filter mempercayai pembacaan sensor secara penuh dan mengabaikan model teoritis.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Kondisi 2: Model Sempurna ($\mathbf{R} \to \infty$)}
+                \begin{equation}
+                    \lim_{\mathbf{R} \to \infty} \mathbf{K}_k = 0 \quad \Longrightarrow \quad \hat{\mathbf{x}}_k \approx \hat{\mathbf{x}}_k^-
+                \end{equation}
+                Filter mengabaikan data sensor yang sangat bising dan mengandalkan perambatan model fisik.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+    \begin{center}
+        Kalman Filter adalah Best Linear Unbiased Estimator (BLUE)!
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: Kalman Filter 1-Dimensi}
+\begin{lstlisting}
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Parameter simulasi sensor tegangan
+A, H = 1.0, 1.0
+Q = 1e-5  # Derau proses rendah (tegangan sistem stabil)
+R = 0.04  # Derau sensor tinggi (standar deviasi ~ 0.2 V)
+
+# Inisialisasi
+x_hat, P = 0.0, 1.0
+estimates, raw_noisy = [], df['voltage_noisy'].values
+
+for z in raw_noisy:
+    # 1. Time Update
+    x_hat_minus = A * x_hat
+    P_minus = A * P * A + Q
+    
+    # 2. Measurement Update
+    K = P_minus * H / (H * P_minus * H + R)
+    x_hat = x_hat_minus + K * (z - H * x_hat_minus)
+    P = (1 - K * H) * P_minus
+    estimates.append(x_hat)
+
+plt.plot(raw_noisy, label='Sensor Bising (z)', alpha=0.5)
+plt.plot(estimates, label='Estimasi Kalman (x_hat)', color='red', linewidth=2)
+plt.legend(); plt.show()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman Paruh Pertama Semester (Persiapan UTS)}
+    \begin{table}[h!]
+    \centering
+    \scriptsize
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabular}{|c|l|l|}
+    \hline
+    \rowcolor{tableheader}
+    \color{white}\textbf{Minggu} & \color{white}\textbf{Fokus Materi Pokok} & \color{white}\textbf{Aplikasi Rekayasa Sistem Tenaga} \\ \hline
+    1 & Dekomposisi Deret Waktu & Pemisahan tren dan variasi musiman beban harian PLN \\ \hline
+    2 & Uji Stasioneritas & Uji ADF/KPSS dan eliminasi unit root pada daya aktif \\ \hline
+    3 & Pemulusan Eksponensial & Peramalan cepat beban jangka pendek (Holt-Winters) \\ \hline
+    4 & Pemodelan ARMA & Identifikasi sistem linier dan kestabilan bidang Z \\ \hline
+    5 & Metodologi Box-Jenkins & Model musiman SARIMA peramalan 168 jam ke depan \\ \hline
+    6 & Model Eksogen SARIMAX & Mengintegrasikan ramalan suhu/cuaca pada peramalan beban \\ \hline
+    7 & Discrete Kalman Filter & Penyaringan derau sensor telemetri dan estimasi SoC baterai \\ \hline
+    \rowcolor{lightbg}
+    \textbf{8} & \multicolumn{2}{l|}{\textbf{UJIAN TENGAH SEMESTER (UTS) -- Evaluasi Kognitif CPMK-1 dan CPMK-2}} \\ \hline
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih dan Sukses UTS}}\\[0.4cm]
+        {\large Selamat Belajar untuk Ujian Tengah Semester Minggu Depan!}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga dan Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

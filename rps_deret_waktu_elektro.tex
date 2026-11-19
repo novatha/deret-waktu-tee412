@@ -1,0 +1,331 @@
+\documentclass[9.5pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[bahasa]{babel}
+\usepackage[a4paper,top=1.8cm,bottom=1.8cm,left=1.6cm,right=1.6cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tikz}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=navyblue,citecolor=navyblue,urlcolor=navyblue]{hyperref}
+
+% Define Modern Color Palette
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{lightbg}{RGB}{245, 248, 252}
+\definecolor{bordergray}{RGB}{220, 224, 230}
+\definecolor{tableheader}{RGB}{30, 58, 95}
+\definecolor{navyblue}{RGB}{20, 70, 140}
+
+% Font & Styling Settings
+\setlist{nosep,leftmargin=1.5em}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{\small\textbf{\color{primaryblue}RPS: Analisis Deret Waktu dan Peramalan (TEE-412)}}
+\fancyhead[R]{\small\color{gray}Program Studi Teknik Elektro}
+\fancyfoot[L]{\footnotesize\color{gray}Kurikulum Berbasis Outcome-Based Education (OBE)}
+\fancyfoot[R]{\footnotesize\thepage}
+
+% Title formats
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.4em}{}[\titlerule]
+\titleformat{\subsection}{\color{secondaryblue}\normalfont\normalsize\bfseries}{\thesubsection.}{0.4em}{}
+
+% Custom column types for tables
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+\begin{document}
+
+% HEADER INSTITUSI
+\begin{center}
+    {\large \textbf{\color{primaryblue}KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI}}\\[0.1cm]
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.25cm]
+    {\LARGE \textbf{\color{primaryblue}RENCANA PEMBELAJARAN SEMESTER (RPS)}}\\[0.1cm]
+    {\normalsize \textbf{Mata Kuliah: Analisis Deret Waktu dan Peramalan (\textit{Time Series Analysis and Forecasting})}}
+    \vspace{0.2cm}
+\end{center}
+
+% SEKSI 1: IDENTITAS
+\section{Informasi Umum Mata Kuliah}
+
+\begin{table}[h!]
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|L{3.5cm}|L{5.0cm}|L{3.5cm}|L{4.8cm}|}
+\hline
+\rowcolor{lightbg}
+\textbf{Nama Mata Kuliah} & \multicolumn{3}{L{13.7cm}|}{\textbf{Analisis Deret Waktu dan Peramalan} (\textit{Time Series Analysis and Forecasting})} \\ \hline
+\textbf{Kode Mata Kuliah} & TEE-412 & \textbf{Rumpun MK} & Tenaga Listrik, Kendali, \& AI \\ \hline
+\textbf{Bobot SKS} & 3 SKS (2 Teori, 1 Praktikum) & \textbf{Semester / Sifat} & VI / VII -- Pilihan Keahlian \\ \hline
+\textbf{Mata Kuliah Prasyarat} & \multicolumn{3}{L{13.7cm}|}{1. Matematika Teknik (Aljabar Linier \& Transformasi Z) \quad 2. Probabilitas \& Statistik \newline 3. Pengolahan Sinyal Digital / Dasar Pemrograman (Python / MATLAB / Octave)} \\ \hline
+\textbf{Dosen Pengembang} & Ir. Novalio Daratha, S.T., M.Sc., Ph.D. & \textbf{Koordinator KBK} & Koordinator KBK Teknik Elektro \\ \hline
+\textbf{Ketua Jurusan / Prodi} & Ir. Afriyastuti Herawati, S.T., M.T. & \textbf{Tahun Ajaran} & 2025/2026 \\ \hline
+\end{tabular}
+\end{table}
+
+% SEKSI 2: DESKRIPSI SINGKAT
+\section{Deskripsi Singkat Mata Kuliah}
+Mata kuliah ini membahas prinsip matematis, metodologi stokastik, dan komputasi cerdas untuk memodelkan, mengestimasi, dan memprediksi data deret waktu (\textit{time series}) yang diaplikasikan pada domain teknik elektro. Fokus aplikasi mencakup peramalan beban sistem tenaga listrik (\textit{electric load forecasting}), variabilitas pembangkit energi baru terbarukan (PLTS dan PLTB), estimasi \textit{state} sensor IoT telemetri kelistrikan, deteksi gangguan kualitas daya (\textit{power quality}), serta prediksi sisa umur pakai aset (\textit{Remaining Useful Life}). Materi mencakup metode klasik Box-Jenkins (ARIMA/SARIMA/SARIMAX), \textit{Discrete Kalman Filter} dalam ruang keadaan (\textit{State-Space}), analisis spektral/Wavelet, hingga pembelajaran mesin mutakhir (\textit{Tree-Based Ensembles}, LSTM, GRU, dan arsitektur \textit{Temporal Convolutional Network}/Seq2Seq).
+
+% SEKSI 3: CPL & CPMK
+\section{Capaian Pembelajaran (CPL \& CPMK)}
+
+\subsection{Capaian Pembelajaran Lulusan (CPL) yang Dibebankan}
+\begin{itemize}
+    \item \textbf{CPL-1 (Sains \& Rekayasa):} Mampu menerapkan pengetahuan matematika rekayasa, probabilitas, dan prinsip teknik elektro untuk memformulasi serta menyelesaikan masalah pemodelan sistem dinamis dan peramalan.
+    \item \textbf{CPL-2 (Perancangan \& Eksperimen):} Mampu merancang eksperimen komputasi, mengolah data deret waktu multivariat, menguji signifikansi statistik, dan menarik inferensi rekayasa.
+    \item \textbf{CPL-3 (Penggunaan Perangkat Modern):} Mampu memanfaatkan kakas komputasi modern (Python/MATLAB/Octave, pustaka ML/DL) untuk implementasi pemrosesan sinyal dan algoritma prediktif.
+    \item \textbf{CPL-4 (Komunikasi \& Kerja Sama):} Mampu menyajikan dan mengomunikasikan hasil analisis keteknikan secara efektif dalam bentuk laporan ilmiah format standar IEEE dan presentasi tim.
+\end{itemize}
+
+\subsection{Capaian Pembelajaran Mata Kuliah (CPMK)}
+\begin{itemize}
+    \item \textbf{CPMK-1:} Mampu menganalisis karakteristik data deret waktu elektro, komponen dekomposisi, uji stasioneritas, dan korelasi sinyal (ACF/PACF).
+    \item \textbf{CPMK-2:} Mampu memformulasikan dan mengestimasi model statistik klasik (\textit{Smoothing}, ARIMA, SARIMAX) serta filter ruang keadaan (\textit{Kalman Filter}) pada sinyal sensor bising.
+    \item \textbf{CPMK-3:} Mampu melakukan analisis domain frekuensi dan waktu-frekuensi (FFT, Wavelet) untuk ekstraksi fitur serta deteksi transien sinyal elektro.
+    \item \textbf{CPMK-4:} Mampu merancang, melatih, dan mengoptimalkan model \textit{Machine Learning} (XGBoost) dan \textit{Deep Learning} (LSTM, GRU, 1D-CNN) untuk peramalan \textit{multi-step} dan deteksi anomali.
+    \item \textbf{CPMK-5:} Mampu menyelesaikan studi kasus keteknikan riil secara kolaboratif melalui proyek perancangan berbasis tim (\textit{Team-Based Project}).
+\end{itemize}
+
+\subsection{Matriks Korelasi CPL terhadap CPMK}
+\begin{table}[h!]
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|C{2.2cm}|C{3.4cm}|C{3.6cm}|C{3.6cm}|C{3.4cm}|}
+\hline
+\rowcolor{lightbg}
+\textbf{CPMK} & \textbf{CPL-1 (Sains)} & \textbf{CPL-2 (Eksperimen)} & \textbf{CPL-3 (Tools Modern)} & \textbf{CPL-4 (Komunikasi)} \\ \hline
+\textbf{CPMK-1} & $\bullet$ (Tinggi) & $\circ$ (Sedang) & -- & -- \\ \hline
+\textbf{CPMK-2} & $\bullet$ (Tinggi) & $\bullet$ (Tinggi) & $\circ$ (Sedang) & -- \\ \hline
+\textbf{CPMK-3} & $\bullet$ (Tinggi) & $\bullet$ (Tinggi) & $\circ$ (Sedang) & -- \\ \hline
+\textbf{CPMK-4} & -- & $\bullet$ (Tinggi) & $\bullet$ (Tinggi) & -- \\ \hline
+\textbf{CPMK-5} & -- & $\bullet$ (Tinggi) & $\bullet$ (Tinggi) & $\bullet$ (Tinggi) \\ \hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+% SEKSI 4: RENCANA PEMBELAJARAN MINGGUAN
+\section{Rencana Kegiatan Pembelajaran Mingguan (16 Minggu)}
+
+\begin{longtable}{|C{0.6cm}|L{3.2cm}|L{4.5cm}|L{3.8cm}|L{3.8cm}|C{0.8cm}|}
+\hline
+\rowcolor{tableheader}
+\color{white}\textbf{Mg} & \color{white}\textbf{Kemampuan Akhir (Sub-CPMK)} & \color{white}\textbf{Bahan Kajian (Materi Pokok)} & \color{white}\textbf{Bentuk \& Metode Pembelajaran [Waktu]} & \color{white}\textbf{Pengalaman Belajar / Praktikum} & \color{white}\textbf{Bobot} \\ \hline
+\endhead
+
+1 & Karakteristik deret waktu sistem elektro (Sub-CPMK 1) & 
+• Karakteristik deret waktu elektro (Beban grid, radiasi PV, telemetri IoT).\newline
+• Komponen: Tren, Musiman (harian/tahunan), Siklus, Residu.\newline
+• Model Aditif vs. Multiplikatif. & 
+• Kuliah \& Diskusi [TM: 2x50"]\newline
+• Praktikum 1: Visualisasi \& Dekomposisi Klasik [P: 1x170"] & 
+Mengunduh dataset beban PLN/IEEE, memvisualisasikan, dan mengurai komponen sinyal. & 3\% \\ \hline
+
+2 & Uji stasioneritas \& autokorelasi sinyal (Sub-CPMK 2) & 
+• Stasioneritas Kuat vs. Lemah (Kovarians).\newline
+• Uji Stasioneritas: ADF Test, KPSS.\newline
+• ACF, PACF, \& Differencing ($d$). & 
+• Kuliah \& Latihan [TM: 2x50"]\newline
+• Praktikum 2: Uji ADF \& Correlogram [P: 1x170"] & 
+Menguji stasioneritas daya aktif gardu induk dan menentukan ordo differencing. & 4\% \\ \hline
+
+3 & Pemulusan data untuk peramalan cepat (Sub-CPMK 3) & 
+• SMA, WMA, Simple Exponential Smoothing.\newline
+• Holt’s Linear \& Holt-Winters (Aditif/Multiplikatif).\newline
+• Evaluasi: MAE, MSE, RMSE, MAPE. & 
+• Kuliah Interaktif [TM: 2x50"]\newline
+• Praktikum 3: Peramalan Beban Singkat [P: 1x170"] & 
+Membandingkan akurasi peramalan beban hari kerja vs. hari libur dengan Holt-Winters. & 4\% \\ \hline
+
+4 & Pemodelan AR, MA, dan ARMA stokastik (Sub-CPMK 4) & 
+• Formulasi AR($p$), MA($q$), dan ARMA($p,q$).\newline
+• Operator lag $B$ \& kestabilan pada bidang Z.\newline
+• Kriteria seleksi: AIC, AICc, BIC. & 
+• Kuliah \& Problem Solving [TM: 2x50"]\newline
+• Praktikum 4: Estimasi Ordo ARMA [P: 1x170"] & 
+Menentukan ordo optimal model sensor getaran berdasarkan kriteria AIC/BIC minimum. & 5\% \\ \hline
+
+5 & Perancangan model ARIMA/SARIMA Box-Jenkins (Sub-CPMK 5) & 
+• ARIMA($p,d,q$) dan Musiman SARIMA($p,d,q$)($P,D,Q$)$_s$.\newline
+• Metodologi 3-Tahap Box-Jenkins.\newline
+• Uji Residu White Noise (Ljung-Box). & 
+• Kuliah \& Studi Kasus [TM: 2x50"]\newline
+• Praktikum 5: Pipeline SARIMA untuk Data Listrik [P: 1x170"] & 
+Meramalkan profil beban per-jam untuk 168 jam (1 minggu) dan uji diagnostik residu. & 5\% \\ \hline
+
+6 & Model eksogen (ARMAX/SARIMAX \& VAR) (Sub-CPMK 6) & 
+• Formulasi SARIMAX dengan variabel luar.\newline
+• Analisis Cross-Correlation Function (CCF) untuk suhu, radiasi, dan kelembaban.\newline
+• Konsep dasar VAR (Vector AutoRegression). & 
+• Kuliah \& Diskusi [TM: 2x50"]\newline
+• Praktikum 6: SARIMAX dengan Pengaruh Suhu [P: 1x170"] & 
+Mengintegrasikan data temperatur cuaca untuk peramalan beban pendingin gedung. & 5\% \\ \hline
+
+7 & Kalman Filter ruang keadaan (Sub-CPMK 7) & 
+• Representasi Ruang Keadaan (\textit{State-Space}).\newline
+• Discrete Kalman Filter: Tahap Time Update (Prediksi) \& Measurement Update (Koreksi).\newline
+• Matriks Kovariansi Derau ($Q$ dan $R$). & 
+• Kuliah \& Simulasi [TM: 2x50"]\newline
+• Praktikum 7: Filtrasi Sinyal Sensor Bising [P: 1x170"] & 
+Mengembangkan algoritma Kalman Filter untuk estimasi SoC baterai \& denoising sensor arus. & 6\% \\ \hline
+
+\rowcolor{lightbg}
+\textbf{8} & \multicolumn{4}{L{16cm}|}{\textbf{UJIAN TENGAH SEMESTER (UTS)} -- Evaluasi Komprehensif CPMK-1 \& CPMK-2} & \textbf{20\%} \\ \hline
+
+9 & Analisis domain frekuensi \& Wavelet (Sub-CPMK 8) & 
+• FFT \& Power Spectral Density (PSD).\newline
+• Kelemahan Fourier pada sinyal transien.\newline
+• DWT (Discrete Wavelet Transform) \& Denoising. & 
+• Kuliah [TM: 2x50"]\newline
+• Praktikum 8: Ekstraksi Fitur Spektral [P: 1x170"] & 
+Mendeteksi harmonisa beban non-linier dan dekomposisi transien gangguan arus motor. & 4\% \\ \hline
+
+10 & Feature Engineering \& Machine Learning (Sub-CPMK 9) & 
+• Sliding window, Lag features, rolling statistics.\newline
+• Encoding kalender siklik (sin/cos).\newline
+• Tree Ensembles: Random Forest, XGBoost.\newline
+• Time Series Cross-Validation. & 
+• Kuliah [TM: 2x50"]\newline
+• Praktikum 9: STLF dengan XGBoost [P: 1x170"] & 
+Membangun pipeline regresi XGBoost lengkap dengan rekayasa fitur temporal tanpa \textit{lookahead leakage}. & 5\% \\ \hline
+
+11 & Deep Learning RNN, LSTM, dan GRU (Sub-CPMK 10) & 
+• Masalah Vanishing Gradient pada RNN biasa.\newline
+• Arsitektur LSTM (Forget, Input, Output Gate).\newline
+• Gated Recurrent Unit (GRU).\newline
+• Penskalaan sekuensial (Min-Max 3D Tensor). & 
+• Kuliah \& Analisis [TM: 2x50"]\newline
+• Praktikum 10: Peramalan EBT Surya dengan LSTM [P: 1x170"] & 
+Melatih jaringan LSTM menggunakan PyTorch/TensorFlow untuk prediksi daya PLTS harian. & 5\% \\ \hline
+
+12 & Model sekuensial lanjut: 1D-CNN \& Seq2Seq (Sub-CPMK 11) & 
+• 1D Temporal CNN untuk fitur lokal.\newline
+• Arsitektur Encoder-Decoder (Seq2Seq).\newline
+• Pengenalan Attention Mechanism \& Transformer. & 
+• Kuliah Interaktif [TM: 2x50"]\newline
+• Praktikum 11: Multi-Step Ahead Forecasting [P: 1x170"] & 
+Merancang arsitektur peramalan simultan 24-step ahead profil tegangan multi-bus. & 5\% \\ \hline
+
+13 & Deteksi anomali sinyal kelistrikan (Sub-CPMK 12) & 
+• Point, contextual, \& collective anomalies.\newline
+• Isolation Forest, LSTM Autoencoder.\newline
+• Deteksi pencurian listrik / Non-Technical Loss. & 
+• Kuliah Kasus [TM: 2x50"]\newline
+• Praktikum 12: Anomaly Detection Smart Meter [P: 1x170"] & 
+Membangun LSTM Autoencoder untuk deteksi manipulasi konsumsi energi smart meter. & 4\% \\ \hline
+
+14 & Integrasi peramalan ke operasi daya (Sub-CPMK 13) & 
+• Integrasi pada Unit Commitment \& MPC.\newline
+• Probabilistic Forecasting: Quantile Regression.\newline
+• Studi Kasus: Penjadwalan BESS Mikrogrid. & 
+• Kuliah Terapan [TM: 2x50"]\newline
+• Simulasi: Manajemen Daya BESS [P: 1x170"] & 
+Menghitung interval kepercayaan 90\% dan simulasi operasi pengisian baterai mikrogrid. & 4\% \\ \hline
+
+15 & Presentasi Proyek Akhir Berbasis Tim (Sub-CPMK 14) & 
+\textbf{Seminar \& Demonstrasi Capstone Project}\newline
+Presentasi hasil pemodelan end-to-end pada dataset riil sistem kelistrikan / industri. & 
+• Presentasi \& Demo Program [TM: 2x50" + P: 1x170"] & 
+Setiap kelompok memaparkan metodologi, komparasi model (Klasik vs ML/DL), dan analisis error. & \textbf{10\%} \\ \hline
+
+\rowcolor{lightbg}
+\textbf{16} & \multicolumn{4}{L{16cm}|}{\textbf{UJIAN AKHIR SEMESTER (UAS)} -- Laporan Ilmiah Format IEEE \& Evaluasi Capstone} & \textbf{20\%} \\ \hline
+
+\end{longtable}
+
+\newpage
+
+% SEKSI 5: SISTEM EVALUASI
+\section{Sistem Evaluasi dan Penilaian Hasil Belajar}
+
+\subsection{Bobot Komponen Penilaian}
+\begin{table}[h!]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|C{1cm}|L{7.5cm}|C{4.5cm}|C{2.5cm}|}
+\hline
+\rowcolor{tableheader}
+\color{white}\textbf{No} & \color{white}\textbf{Komponen Evaluasi} & \color{white}\textbf{CPMK yang Dinilai} & \color{white}\textbf{Bobot (\%)} \\ \hline
+1 & Aktivitas Partisipatif \& Kuis LMS & CPMK-1, CPMK-2 & 10\% \\ \hline
+2 & Tugas Praktikum \& Laporan Mingguan & CPMK-1, CPMK-2, CPMK-3, CPMK-4 & 25\% \\ \hline
+3 & Ujian Tengah Semester (UTS) & CPMK-1, CPMK-2 & 20\% \\ \hline
+4 & Presentasi \& Demonstrasi Proyek Tim & CPMK-4, CPMK-5 & 10\% \\ \hline
+5 & Laporan Ilmiah Proyek Akhir (Format IEEE) \& UAS & CPMK-3, CPMK-4, CPMK-5 & 35\% \\ \hline
+\rowcolor{lightbg}
+\multicolumn{3}{|r|}{\textbf{Total}} & \textbf{100\%} \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Standar Konversi Nilai}
+\begin{table}[h!]
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|C{3cm}|C{2.5cm}|C{2.5cm}|L{6cm}|}
+\hline
+\rowcolor{lightbg}
+\textbf{Rentang Nilai ($N$)} & \textbf{Nilai Huruf} & \textbf{Bobot Angka} & \textbf{Kategori Kelulusan} \\ \hline
+$N \ge 85$ & \textbf{A} & 4.00 & Sangat Baik (Istimewa) \\ \hline
+$80 \le N < 85$ & \textbf{A-} & 3.70 & Sangat Baik \\ \hline
+$75 \le N < 80$ & \textbf{B+} & 3.30 & Baik \\ \hline
+$70 \le N < 75$ & \textbf{B} & 3.00 & Baik \\ \hline
+$65 \le N < 70$ & \textbf{B-} & 2.70 & Cukup Baik \\ \hline
+$60 \le N < 65$ & \textbf{C+} & 2.30 & Cukup \\ \hline
+$55 \le N < 60$ & \textbf{C} & 2.00 & Cukup \\ \hline
+$45 \le N < 55$ & \textbf{D} & 1.00 & Kurang (Tidak Lulus) \\ \hline
+$N < 45$ & \textbf{E} & 0.00 & Gagal \\ \hline
+\end{tabular}
+\end{table}
+
+% SEKSI 6: TEMA PROYEK
+\section{Topik Pilihan Proyek Capstone Mahasiswa}
+Mahasiswa secara berkelompok (3--4 orang) wajib memilih salah satu studi kasus riil berikut:
+\begin{enumerate}
+    \item \textbf{Short-Term Load Forecasting (STLF):} Peramalan beban sistem interkoneksi regional 24 jam ke depan dengan membandingkan model SARIMAX, XGBoost, dan LSTM.
+    \item \textbf{Solar/Wind Power Forecasting:} Peramalan daya keluaran pembangkit EBT fluktuatif berbasis data iradiasi matahari dan kecepatan angin.
+    \item \textbf{Power Quality Disturbance Detection:} Deteksi dan segmentasi anomali \textit{voltage sag/swell} dan harmonisa menggunakan DWT dan 1D-CNN.
+    \item \textbf{Remaining Useful Life (RUL) Transformer:} Estimasi usia pakai isolasi transformator tenaga berbasis deret waktu konsentrasi gas DGA (\textit{Dissolved Gas Analysis}).
+    \item \textbf{Electricity Theft Detection:} Deteksi kecurangan konsumsi energi pada jutaan titik \textit{Smart Meter} menggunakan arsitektur \textit{Autoencoder}.
+\end{enumerate}
+
+% SEKSI 7: REFERENSI
+\section{Daftar Pustaka}
+\begin{enumerate}
+    \item Box, G. E. P., Jenkins, G. M., Reinsel, G. C., \& Ljung, G. M. (2015). \textit{Time Series Analysis: Forecasting and Control} (5th ed.). John Wiley \& Sons.
+    \item Hyndman, R. J., \& Athanasopoulos, G. (2021). \textit{Forecasting: Principles and Practice} (3rd ed.). OTexts: Melbourne, Australia. \url{https://otexts.com/fpp3/}
+    \item Fei, S., \& He, Y. (2020). \textit{Load Forecasting in Electric Power Systems: Models and Methods}. Springer.
+    \item Grewal, M. S., \& Andrews, A. P. (2014). \textit{Kalman Filtering: Theory and Practice with MATLAB} (4th ed.). Wiley-IEEE Press.
+    \item Benidis, K., et al. (2022). Deep Learning for Time Series: A Survey. \textit{IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI)}, 45(6), 8037--8055.
+    \item Mallat, S. (2008). \textit{A Wavelet Tour of Signal Processing: The Sparse Way} (3rd ed.). Academic Press.
+\end{enumerate}
+
+\vspace{0.8cm}
+
+% TANDA TANGAN PENGESAHAN
+\begin{table}[h!]
+\centering
+\begin{tabular}{C{7.5cm}C{1cm}C{7.5cm}}
+Mengetahui, & & Bengkulu, 14 Februari 2026 \\
+Ketua Jurusan Teknik Elektro & & Dosen Pengampu / Pengembang RPS \\[1.8cm]
+\textbf{\underline{( Ir. Afriyastuti Herawati, S.T., M.T. )}} & & \textbf{\underline{( Ir. Novalio Daratha, S.T., M.Sc., Ph.D. )}} \\
+NIP. 197404162000032001 & & NIP. 197811102003121002
+\end{tabular}
+\end{table}
+
+\end{document}

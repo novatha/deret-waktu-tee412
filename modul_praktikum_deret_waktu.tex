@@ -1,0 +1,648 @@
+\documentclass[11pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=mainblue,citecolor=mainblue,urlcolor=mainblue]{hyperref}
+
+% Definisi Palet Warna Modern
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{secblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{211, 84, 0}
+\definecolor{boxbg}{RGB}{248, 250, 252}
+\definecolor{codebg}{RGB}{243, 245, 248}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+
+% Konfigurasi Listing Kode
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\footnotesize\color{darkgray},
+    keywordstyle=\bfseries\color{secblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=leftline,
+    framerule=2pt,
+    rulecolor=\color{secblue},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=8pt,
+    tabsize=4
+}
+
+% Konfigurasi Header & Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{mainblue}\textbf{Modul Praktikum: Analisis Deret Waktu \& Peramalan}}
+\fancyhead[R]{\small\color{gray}Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Format Judul Bab & Seksi
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries\color{mainblue}}{\chaptertitlename\ \thechapter}{15pt}{\Huge}[\vspace{2pt}\titlerule]
+\titleformat{\section}{\color{mainblue}\normalfont\Large\bfseries}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\color{secblue}\normalfont\large\bfseries}{\thesubsection}{0.5em}{}
+
+\tcbset{
+    colback=boxbg,
+    colframe=mainblue,
+    arc=2mm,
+    fonttitle=\bfseries
+}
+
+\begin{document}
+
+% =============================================================
+% HALAMAN JUDUL
+% =============================================================
+\begin{titlepage}
+    \begin{center}
+        \vspace*{0.5cm}
+        {\LARGE \textbf{\color{mainblue}KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI}}\\[0.2cm]
+        {\Large \textbf{\color{mainblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.2cm]
+        {\large \textbf{\color{secblue}JURUSAN TEKNIK ELEKTRO}}\\[2.5cm]
+
+        {\Huge \textbf{\color{mainblue}BUKU PETUNJUK PRAKTIKUM}}\\[0.4cm]
+        {\LARGE \textbf{\color{secblue}ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.2cm]
+        {\large \textit{Time Series Analysis and Forecasting in Electrical Engineering}}\\[2cm]
+
+        \begin{tcolorbox}[width=13cm,colback=boxbg,colframe=secblue,center]
+            \centering
+            \textbf{Dosen Pengampu:}\\[0.1cm]
+            \textbf{\Large Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}\\[0.1cm]
+            \small NIP. 197811102003121002\\[0.3cm]
+            \textbf{Laboratorium Sistem Tenaga Listrik \& Komputasi Cerdas}
+        \end{tcolorbox}
+
+        \vfill
+        {\large \textbf{BENGKULU}}\\[0.1cm]
+        {\large \textbf{2026}}
+    \end{center}
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+% =============================================================
+% PETUNJUK UMUM PRAKTIKUM
+% =============================================================
+\chapter*{Petunjuk Umum \& Lingkungan Komputasi}
+\addcontentsline{toc}{chapter}{Petunjuk Umum \& Lingkungan Komputasi}
+
+\section*{Tujuan Praktikum}
+Praktikum Komputasi Analisis Deret Waktu bertujuan untuk membekali mahasiswa S1 Teknik Elektro dengan keterampilan teknis praktis dalam:
+\begin{enumerate}
+    \item Mengolah dan memanipulasi dataset temporal skala besar sistem tenaga listrik, sensor IoT, serta pembangkit EBT.
+    \item Membangun \textit{pipeline} pemodelan deret waktu dari metode klasik hingga \textit{Deep Learning}.
+    \item Menginterpretasikan performa algoritma secara kuantitatif sesuai kaidah saintifik rekayasa elektro.
+\end{enumerate}
+
+\section*{Kebutuhan Perangkat Lunak}
+Setiap mahasiswa diharapkan menggunakan lingkungan Python 3.10+ (atau GNU Octave / MATLAB) dengan pustaka standar berikut:
+\begin{lstlisting}
+# Instalasi pustaka utama via terminal/command prompt
+pip install numpy pandas scipy matplotlib statsmodels scikit-learn xgboost torch filterpy pywavelets
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 1
+% =============================================================
+\chapter{Dekomposisi Sinyal Deret Waktu Kelistrikan}
+
+\begin{tcolorbox}[title=Informasi Modul 1]
+\textbf{Sub-CPMK 1}: Mampu mengidentifikasi komponen tren, musiman, siklis, dan residu pada data kelistrikan serta memvisualisasikannya secara komputasional.\\
+\textbf{Alokasi Waktu}: 170 Menit (Praktikum Mandiri \& Asistensi Lab)\\
+\textbf{Dataset}: Data beban listrik historis per-jam (\texttt{load\_grid\_hourly.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Deret waktu keteknikan $y_t$ dapat didekomposisi menjadi tiga komponen deterministik dan satu komponen stokastik:
+\begin{equation}
+    \text{Model Aditif: } y_t = T_t + S_t + R_t \qquad \text{Model Multiplikatif: } y_t = T_t \times S_t \times R_t
+\end{equation}
+di mana $T_t$ adalah tren, $S_t$ adalah musiman dengan periode $m$ (misal $m=24$ untuk data jam), dan $R_t$ adalah residual (\textit{irregular/noise}).
+
+\section{Langkah Praktikum \& Kode Implementasi}
+\begin{lstlisting}
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# 1. Membaca dataset beban gardu induk
+df = pd.read_csv('load_grid_hourly.csv', parse_dates=['timestamp'], index_col='timestamp')
+
+# 2. Dekomposisi Klasik (Periode harian: 24 jam)
+decomp = seasonal_decompose(df['load_mw'], model='additive', period=24)
+
+# 3. Plot 4-Panel (Observed, Trend, Seasonal, Residual)
+fig, axes = plt.subplots(4, 1, figsize=(12, 8), sharex=True)
+decomp.observed.plot(ax=axes[0], color='navy', title='Observed Load (MW)')
+decomp.trend.plot(ax=axes[1], color='darkred', title='Trend Component')
+decomp.seasonal.plot(ax=axes[2], color='darkgreen', title='Daily Seasonality')
+decomp.resid.plot(ax=axes[3], color='black', title='Residual / Noise')
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\section{Tugas \& Laporan Praktikum 1}
+\begin{enumerate}
+    \item Hitunglah nilai variansi residual $\mathrm{Var}(R_t)$ dan periksa apakah residual memiliki nilai rata-rata mendekati nol!
+    \item Lakukan dekomposisi multiplikatif pada data yang sama. Bandingkan nilai residual antara kedua model dan tentukan model mana yang paling cocok!
+\end{enumerate}
+
+\newpage
+
+% =============================================================
+% MODUL 2
+% =============================================================
+\chapter{Uji Stasioneritas, Diferensiasi, dan Correlogram}
+
+\begin{tcolorbox}[title=Informasi Modul 2]
+\textbf{Sub-CPMK 2}: Mampu menghitung ACF/PACF, menguji stasioneritas (ADF, KPSS), dan melakukan transformasi diferensiasi data.\\
+\textbf{Dataset}: Profil daya aktif transmisi (\texttt{active\_power.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Sebagian besar model statistik linier mengasumsikan sinyal berada dalam keadaan stasioner kovarians:
+\begin{equation}
+    \mathbb{E}[y_t] = \mu, \quad \mathrm{Var}(y_t) = \sigma^2, \quad \mathrm{Cov}(y_t, y_{t-k}) = \gamma_k
+\end{equation}
+Uji \textit{Augmented Dickey-Fuller} (ADF) menguji hipotesis nol ($H_0$) bahwa data memiliki \textit{unit root} (non-stasioner), sedangkan uji \textit{KPSS} menguji hipotesis nol ($H_0$) bahwa data stasioner di sekitar tren. Kombinasi keduanya memastikan apakah sinyal bersifat \textit{Difference-Stationary} (DSP) atau \textit{Trend-Stationary} (TSP).
+
+\section{Kode Implementasi Python}
+\begin{lstlisting}
+from statsmodels.tsa.stattools import adfuller, kpss
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import matplotlib.pyplot as plt
+
+def check_stationarity_full(series, label="Sinyal"):
+    s = series.dropna()
+    adf_res = adfuller(s, autolag='AIC')
+    kpss_res = kpss(s, regression='c', nlags='auto')
+    
+    print(f"=== Uji Stasioneritas: {label} ===")
+    print(f"ADF Stat: {adf_res[0]:.4f}, p-value: {adf_res[1]:.4e}")
+    print(f"KPSS Stat: {kpss_res[0]:.4f}, p-value: {kpss_res[1]:.4f}")
+    
+    if adf_res[1] < 0.05 and kpss_res[1] > 0.05:
+        print("Status: STASIONER MURNI (Kuadran I)")
+    elif adf_res[1] > 0.05 and kpss_res[1] < 0.05:
+        print("Status: NON-STASIONER (DSP) -> Wajib Diferensiasi")
+    elif adf_res[1] > 0.05 and kpss_res[1] > 0.05:
+        print("Status: TREND-STATIONARY (TSP) -> Butuh Detrending")
+    else:
+        print("Status: PERINGATAN (Structural Break Terdeteksi)")
+
+# Uji data asli vs diferensiasi ordo-1
+check_stationarity_full(df['power'], "Data Mentah")
+
+df['diff_1'] = df['power'].diff()
+check_stationarity_full(df['diff_1'], "Setelah Diferensiasi (d=1)")
+
+# Plot ACF dan PACF
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+plot_acf(df['diff_1'].dropna(), lags=40, ax=axes[0], title='Autocorrelation (ACF)')
+plot_pacf(df['diff_1'].dropna(), lags=40, ax=axes[1], title='Partial ACF (PACF)')
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 3
+% =============================================================
+\chapter{Metode Pemulusan Data (Holt-Winters)}
+
+\begin{tcolorbox}[title=Informasi Modul 3]
+\textbf{Sub-CPMK 3}: Mampu menerapkan metode pemulusan (*Moving Average*, Holt-Winters aditif/multiplikatif) untuk peramalan beban jangka pendek.\\
+\textbf{Dataset}: Profil konsumsi listrik mingguan (\texttt{weekly\_load.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Metode Holt-Winters mengakomodasi level ($\ell_t$), tren ($b_t$), dan musiman ($s_t$):
+\begin{align}
+    \ell_t &= \alpha (y_t - s_{t-m}) + (1 - \alpha)(\ell_{t-1} + b_{t-1}) \\
+    b_t &= \beta (\ell_t - \ell_{t-1}) + (1 - \beta) b_{t-1} \\
+    s_t &= \gamma (y_t - \ell_{t-1} - b_{t-1}) + (1 - \gamma) s_{t-m} \\
+    \hat{y}_{t+h|t} &= \ell_t + h b_t + s_{t+h-m}
+\end{align}
+
+\section{Kode Implementasi Python}
+\begin{lstlisting}
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
+import numpy as np
+
+# Split Train dan Test (24 jam terakhir sebagai test set)
+train, test = df['load'][:-24], df['load'][-24:]
+
+# Fitting Model Holt-Winters Aditif
+model = ExponentialSmoothing(train, seasonal_periods=24, trend='add', seasonal='add').fit()
+forecast = model.forecast(24)
+
+# Evaluasi Performa
+rmse = np.sqrt(mean_squared_error(test, forecast))
+mape = mean_absolute_percentage_error(test, forecast) * 100
+print(f'RMSE: {rmse:.2f} MW | MAPE: {mape:.2f}%')
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 4
+% =============================================================
+\chapter{Estimasi Parameter ARMA dan Analisis Kestabilan Bidang-Z}
+
+\begin{tcolorbox}[title=Informasi Modul 4]
+\textbf{Sub-CPMK 4}: Mampu menyelesaikan matriks Yule-Walker, memplot akar karakteristik pada lingkaran satuan (Bidang Z), dan melakukan grid-search AIC.\\
+\textbf{Dataset}: Sinyal getaran generator (\texttt{vibration\_signal.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Estimasi parameter model AR($p$) secara analitik menggunakan persamaan Yule-Walker: $\mathbf{R} \boldsymbol{\phi} = \mathbf{r}$. Kestabilan model ARMA dinilai dari lokasi akar polinomial karakteristik terhadap lingkaran satuan.
+
+\section{Kode Implementasi Python}
+\begin{lstlisting}
+import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.stattools import acf
+from statsmodels.tsa.arima.model import ARIMA
+
+# 1. Yule-Walker untuk AR(2)
+lag_acf = acf(train_signal, nlags=2)
+r1, r2 = lag_acf[1], lag_acf[2]
+R = np.array([[1, r1], [r1, 1]])
+r = np.array([r1, r2])
+phi = np.linalg.inv(R).dot(r)
+print(f"Estimasi phi_1: {phi[0]:.4f}, phi_2: {phi[1]:.4f}")
+
+# 2. Plot Akar Kestabilan Polinomial AR
+model = ARIMA(train_signal, order=(2,0,0)).fit()
+ar_roots = model.arroots
+plt.scatter(ar_roots.real, ar_roots.imag)
+circle = plt.Circle((0,0), 1, color='red', fill=False)
+plt.gca().add_patch(circle)
+plt.title("Inverse AR Roots (Z-plane)")
+plt.show()
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 5
+% =============================================================
+\chapter{Pemodelan SARIMA Metodologi Box-Jenkins}
+
+\begin{tcolorbox}[title=Informasi Modul 5]
+\textbf{Sub-CPMK 5}: Mampu menyusun ordo $p, d, q, P, D, Q$ dan mengestimasi model SARIMA untuk data berkala musiman serta memvalidasi residual.\\
+\textbf{Dataset}: Data time series gardu distribusi (\texttt{substation\_load.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Model SARIMA disimbolkan dengan $(p,d,q) \times (P,D,Q)_s$:
+\begin{equation}
+    \Phi_P(B^s)\phi_p(B)(1-B)^d(1-B^s)^D y_t = \Theta_Q(B^s)\theta_q(B)\epsilon_t
+\end{equation}
+
+\section{Kode Implementasi Python}
+\begin{lstlisting}
+import pmdarima as pm
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 1. Pencarian Ordo Otomatis (Auto-ARIMA)
+print("Memulai Auto-ARIMA Grid Search...")
+auto_model = pm.auto_arima(train_load, seasonal=True, m=24,
+                           start_p=1, max_p=3, start_q=1, max_q=3,
+                           d=1, D=1, stepwise=True, trace=True)
+
+# Menampilkan hasil seleksi (termasuk Uji Ljung-Box secara otomatis)
+print(auto_model.summary())
+
+# 2. Prediksi 168 jam (1 Minggu)
+n_periods = 168
+fc, conf_int = auto_model.predict(n_periods=n_periods, return_conf_int=True, alpha=0.05)
+
+# 3. Visualisasi
+plt.figure(figsize=(10,5))
+plt.plot(test_load.index[:n_periods], test_load[:n_periods], label='Aktual')
+plt.plot(test_load.index[:n_periods], fc, color='red', label='Forecast SARIMA')
+plt.fill_between(test_load.index[:n_periods], conf_int[:, 0], conf_int[:, 1], 
+                 color='red', alpha=0.2, label='95% CI')
+plt.legend()
+plt.title("Peramalan Beban 168 Jam dengan Auto-ARIMA")
+plt.show()
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 6
+% =============================================================
+\chapter{Model Eksogen Cuaca: SARIMAX dan CCF}
+
+\begin{tcolorbox}[title=Informasi Modul 6]
+\textbf{Sub-CPMK 6}: Mampu membangun model SARIMAX dengan mengintegrasikan variabel eksogen cuaca dan mengimplementasikan sistem multivariat VAR.\\
+\textbf{Dataset}: Beban gedung \& data stasiun cuaca (\texttt{hvac\_weather.csv}), serta Sinyal kualitas daya 3-kanal (\texttt{power\_quality.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Variabel eksogen $X_t$ (seperti temperatur) mempengaruhi konsumsi daya AC secara langsung:
+\begin{equation}
+    y_t = \beta X_t + \frac{\Theta(B)}{\Phi(B)}\epsilon_t
+\end{equation}
+
+\section{Kode Implementasi Python}
+\begin{lstlisting}
+# Integrasi variabel temperatur (X_train & X_test)
+sarimax_model = SARIMAX(train['load'], exog=train[['temperature', 'humidity']],
+                        order=(1, 1, 1), seasonal_order=(1, 1, 0, 24))
+res_exog = sarimax_model.fit(disp=False)
+
+# Prediksi menggunakan fitur eksogen masa depan
+forecast_exog = res_exog.forecast(steps=24, exog=test[['temperature', 'humidity']])
+\end{lstlisting}
+
+\section{Implementasi Vector AutoRegression (VAR)}
+\begin{lstlisting}
+from statsmodels.tsa.api import VAR
+
+# Memodelkan Tegangan, Arus, dan Beban secara bersamaan
+model_var = VAR(train_multivariate)
+results_var = model_var.fit(maxlags=15, ic='aic')
+
+print(f"Ordo VAR terpilih berdasarkan AIC: {results_var.k_ar}")
+
+# Plot Impulse Response Function (IRF)
+irf = results_var.irf(10)
+irf.plot(impulse='arus', response='tegangan')
+plt.title("Respon Tegangan terhadap Impuls Arus")
+plt.show()
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 7
+% =============================================================
+\chapter{Discrete Kalman Filter untuk Sinyal Sensor Bising}
+
+\begin{tcolorbox}[title=Informasi Modul 7]
+\textbf{Sub-CPMK 7}: Mampu memformulasikan model State-Space dan menerapkan Discrete Kalman Filter untuk memulihkan sinyal sensor bising.\\
+\textbf{Dataset}: Sinyal telemetri arus DC dan tegangan (\texttt{noisy\_sensor.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Persamaan Ruang Keadaan Diskrit:
+\begin{align}
+    x_k &= A x_{k-1} + B u_{k-1} + w_{k-1}, \quad w \sim \mathcal{N}(0, Q) \\
+    z_k &= H x_k + v_k, \quad v \sim \mathcal{N}(0, R)
+\end{align}
+Algoritma Kalman Filter bekerja dalam 2 fase: \textbf{Time Update (Prediksi)} dan \textbf{Measurement Update (Koreksi)}.
+
+\section{Kode Implementasi Python Berorientasi Objek (Matriks)}
+\begin{lstlisting}
+import numpy as np
+import matplotlib.pyplot as plt
+
+class KalmanFilter:
+    def __init__(self, A, B, H, Q, R, x0, P0):
+        self.A, self.B, self.H = A, B, H
+        self.Q, self.R = Q, R
+        self.x, self.P = x0, P0
+
+    def predict(self, u=np.zeros((1,1))):
+        # Time Update (Prediksi)
+        self.x = self.A @ self.x + self.B @ u
+        self.P = self.A @ self.P @ self.A.T + self.Q
+        return self.x
+
+    def update(self, z):
+        # Measurement Update (Koreksi)
+        S = self.H @ self.P @ self.H.T + self.R
+        K = self.P @ self.H.T @ np.linalg.inv(S)
+        y = z - self.H @ self.x # Inovasi (Error)
+        self.x = self.x + K @ y
+        I = np.eye(self.P.shape[0])
+        self.P = (I - K @ self.H) @ self.P
+        return self.x
+
+# Contoh Penggunaan untuk Sistem 2-Dimensi (Posisi & Kecepatan)
+# x = [Posisi, Kecepatan]^T
+dt = 1.0
+A = np.array([[1.0, dt], [0.0, 1.0]])
+B = np.array([[0.5 * dt**2], [dt]])
+H = np.array([[1.0, 0.0]]) # Hanya posisi yang disensor
+Q = np.eye(2) * 1e-4
+R = np.array([[0.1]]) # Variansi sensor
+x0 = np.array([[0.0], [0.0]])
+P0 = np.eye(2) * 1.0
+
+kf = KalmanFilter(A, B, H, Q, R, x0, P0)
+
+estimates = []
+for z_meas in df['sensor_posisi'].values:
+    kf.predict()
+    x_est = kf.update(np.array([[z_meas]]))
+    estimates.append(x_est[0, 0]) # Simpan estimasi posisi
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 8
+% =============================================================
+\chapter{Analisis Spektral FFT dan Dekomposisi Wavelet}
+
+\begin{tcolorbox}[title=Informasi Modul 8]
+\textbf{Sub-CPMK 8}: Mampu menganalisis spektrum frekuensi sinyal deret waktu menggunakan FFT dan dekomposisi Wavelet untuk deteksi transien/harmonisa.\\
+\textbf{Dataset}: Sinyal getaran motor induksi \& arus transien (\texttt{motor\_vibration.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Transformasi Wavelet Diskrit (\textit{Discrete Wavelet Transform} - DWT) menguraikan sinyal ke dalam koefisien aproksimasi ($cA$) dan detail ($cD$):
+\begin{equation}
+    y(t) = \sum_k cA_{J,k} \phi_{J,k}(t) + \sum_{j=1}^J \sum_k cD_{j,k} \psi_{j,k}(t)
+\end{equation}
+
+\section{Kode Implementasi Python}
+\begin{lstlisting}
+import pywt
+import numpy as np
+
+signal = df['current_transient'].values
+
+# Dekomposisi Wavelet 3 Level menggunakan wavelet Daubechies (db4)
+coeffs = pywt.wavedec(signal, 'db4', level=3)
+cA3, cD3, cD2, cD1 = coeffs
+
+# Denoising dengan Soft Thresholding pada koefisien detail
+threshold = np.median(np.abs(cD1)) / 0.6745 * np.sqrt(2 * np.log(len(signal)))
+coeffs_thresh = [cA3] + [pywt.threshold(c, threshold, mode='soft') for c in [cD3, cD2, cD1]]
+
+# Rekonstruksi Sinyal Bersih
+clean_signal = pywt.waverec(coeffs_thresh, 'db4')
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 9
+% =============================================================
+\chapter{Feature Engineering dan Machine Learning (XGBoost)}
+
+\begin{tcolorbox}[title=Informasi Modul 9]
+\textbf{Sub-CPMK 9}: Mampu merancang rekayasa fitur temporal dan menerapkan algoritma XGBoost/LightGBM untuk peramalan beban listrik jangka pendek.\\
+\textbf{Dataset}: Dataset beban listrik multivariat (\texttt{power\_features.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Mengubah masalah peramalan sekuensial menjadi regresi terawasi (\textit{Supervised Learning}) melalui pembuatan fitur:
+\begin{equation}
+    y_t = f(y_{t-1}, y_{t-2}, y_{t-24}, \bar{y}_{\text{roll\_24}}, \sin(2\pi \cdot \text{hour}/24), \cos(2\pi \cdot \text{hour}/24), \dots)
+\end{equation}
+
+\section{Kode Implementasi Python}
+\begin{lstlisting}
+import xgboost as xgb
+
+# 1. Feature Engineering
+def create_features(df):
+    df['hour'] = df.index.hour
+    df['dayofweek'] = df.index.dayofweek
+    df['lag_1'] = df['load'].shift(1)
+    df['lag_24'] = df['load'].shift(24)
+    df['lag_168'] = df['load'].shift(168)
+    df['rolling_mean_24'] = df['load'].shift(1).rolling(window=24).mean()
+    return df.dropna()
+
+df_feat = create_features(df)
+X = df_feat[['hour', 'dayofweek', 'lag_1', 'lag_24', 'lag_168', 'rolling_mean_24']]
+y = df_feat['load']
+
+# 2. Training XGBoost Regressor
+X_train, X_test = X[:-168], X[-168:]
+y_train, y_test = y[:-168], y[-168:]
+
+model_xgb = xgb.XGBRegressor(n_estimators=500, learning_rate=0.03, max_depth=6)
+model_xgb.fit(X_train, y_train, eval_set=[(X_test, y_test)], early_stopping_rounds=30, verbose=False)
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 10 & 11
+% =============================================================
+\chapter{Deep Learning: Arsitektur LSTM dan Seq2Seq}
+
+\begin{tcolorbox}[title=Informasi Modul 10 \& 11]
+\textbf{Sub-CPMK 10 \& 11}: Mampu merancang tensor 3D sekuensial dan melatih arsitektur LSTM / Seq2Seq untuk peramalan daya pembangkit surya (PV).\\
+\textbf{Dataset}: Data radiasi \& daya PLTS (\texttt{solar\_pv\_generation.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Jaringan \textit{Long Short-Term Memory} (LSTM) mengatur aliran memori dengan tiga gerbang utama: \textit{Forget Gate} ($f_t$), \textit{Input Gate} ($i_t$), dan \textit{Output Gate} ($o_t$).
+
+\section{Kode Implementasi PyTorch}
+\begin{lstlisting}
+import torch
+import torch.nn as nn
+
+class LSTMForecaster(nn.Module):
+    def __init__(self, input_dim=4, hidden_dim=64, num_layers=2, output_dim=24):
+        super(LSTMForecaster, self).__init__()
+        self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers, batch_first=True, dropout=0.2)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+        
+    def forward(self, x):
+        # x shape: (batch_size, seq_length, input_dim)
+        out, (hn, cn) = self.lstm(x)
+        # Ambil hidden state terakhir
+        out = self.fc(out[:, -1, :])
+        return out
+
+# Inisialisasi Model, Loss, dan Optimizer
+model = LSTMForecaster()
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 12
+% =============================================================
+\chapter{Deteksi Anomali Konsumsi Energi Berbasis Autoencoder}
+
+\begin{tcolorbox}[title=Informasi Modul 12]
+\textbf{Sub-CPMK 12}: Mampu membangun model rekonstruksi LSTM Autoencoder untuk deteksi pencurian listrik dan anomali sensor meter pintar.\\
+\textbf{Dataset}: Profil konsumsi Smart Meter (\texttt{smartmeter\_anomaly.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Autoencoder dilatih hanya pada data operasi normal. Ketika anomali terjadi, galat rekonstruksi (\textit{Reconstruction Error} $\mathcal{L}$) akan melonjak melampaui ambang batas $\tau$:
+\begin{equation}
+    \mathcal{L}(x_t, \hat{x}_t) = \| x_t - \hat{x}_t \|^2 > \tau
+\end{equation}
+
+\section{Kode Implementasi Python}
+\begin{lstlisting}
+# Menghitung Reconstruction Error (MSE per sampel deret waktu)
+reconstructed = autoencoder.predict(X_test)
+mse_errors = np.mean(np.power(X_test - reconstructed, 2), axis=(1, 2))
+
+# Menentukan ambang batas anomali (Threshold = Mean + 3*Std)
+threshold = np.mean(mse_train_errors) + 3 * np.std(mse_train_errors)
+anomalies = mse_errors > threshold
+
+print(f'Jumlah titik anomali terdeteksi: {np.sum(anomalies)} dari {len(mse_errors)} jendela waktu')
+\end{lstlisting}
+
+\newpage
+
+% =============================================================
+% MODUL 13 & 14
+% =============================================================
+\chapter{Integrasi Peramalan pada Operasi Sistem Tenaga}
+
+\begin{tcolorbox}[title=Informasi Modul 13 \& 14]
+\textbf{Sub-CPMK 13}: Mampu mengintegrasikan peramalan beban \& EBT ke dalam simulasi penjadwalan baterai (BESS) pada microgrid berbasis ketidakpastian.\\
+\textbf{Dataset}: Profil gabungan PV, Beban, dan Tarif Listrik (\texttt{microgrid\_dispatch.csv})
+\end{tcolorbox}
+
+\section{Dasar Teori}
+Keseimbangan daya pada mikrogrid dengan sistem penyimpanan baterai (BESS):
+\begin{equation}
+    P_{\text{grid}}(t) = \hat{P}_{\text{load}}(t) - \hat{P}_{\text{PV}}(t) + P_{\text{charge}}(t) - P_{\text{discharge}}(t)
+\end{equation}
+Tujuan optimasi adalah meminimalkan biaya pembelian energi listrik dari jaringan utama dengan memanfaatkan perkiraan daya surya saat jam puncak.
+
+\section{Tugas Simulasi Mandiri}
+\begin{enumerate}
+    \item Bangun model peramalan probabilistik (Quantile Regression 10\%, 50\%, dan 90\%) untuk membatasi ketidakpastian daya fotovoltaik.
+    \item Simulasikan strategi operasi BESS (*Peak Shaving*) selama 24 jam dan hitung penghematan biaya listrik yang diperoleh!
+\end{enumerate}
+
+\end{document}

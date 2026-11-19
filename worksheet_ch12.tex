@@ -1,0 +1,96 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Lembar Kerja Mahasiswa \& Problem Set (Minggu 12)}}
+\fancyhead[R]{\small\color{gray}Analisis Deret Waktu -- Teknik Elektro}
+\fancyfoot[L]{\footnotesize\color{gray}Program Studi Teknik Elektro FT UNIB}
+\fancyfoot[R]{\footnotesize\thepage}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.25cm]
+    {\LARGE \textbf{\color{primaryblue}LEMBAR KERJA \& PROBLEM SET MINGGU 12}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Machine Learning Tabular (XGBoost/LightGBM) untuk Peramalan}}
+\end{center}
+
+\vspace{0.2cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.5cm}p{5.5cm}p{2.5cm}p{4.5cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Kelas/Kelompok} & : \dotfill & \textbf{Tanggal} & : \dotfill \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\section{Panduan Pengerjaan}
+Problem set ini dirancang berjenjang berdasarkan Taksonomi Bloom (Level C1 sampai C6) untuk mengukur capaian \textbf{Sub-CPMK 12}. Kerjakan secara mandiri, rapi, dan sistematis.
+
+\section{Problem Set (Level C1 -- C6)}
+
+\begin{enumerate}[leftmargin=1.8em, label=\textbf{Soal \arabic*.}]
+    
+    % C1 - Remembering
+    \item \textbf{[C1 -- Mengingat / \textit{Remembering}]} \\
+    Apa pengertian dari model ensemble \textit{Gradient Boosting Decision Trees} (GBDT) yang menjadi fondasi dasar dari algoritma XGBoost dan LightGBM?
+    \vspace{2.2cm}
+
+    % C2 - Understanding
+    \item \textbf{[C2 -- Memahami / \textit{Understanding}]} \\
+    Jelaskan bagaimana cara mengubah data deret waktu murni (runtun waktu 1D) menjadi format tabel (tabular data) menggunakan teknik \textit{Sliding Window} (fitur \textit{lag}) agar dapat dilatih oleh algoritma ML berbasis pohon.
+    \vspace{2.8cm}
+
+    % C3 - Applying
+    \item \textbf{[C3 -- Menerapkan / \textit{Applying}]} \\
+    Diketahui urutan data beban: $L = [10, 15, 20, 25, 30]$. Buatlah dataset regresi \textit{sliding window} berukuran jendela historis (lag) = 3 untuk memprediksi nilai waktu (T) berikutnya, berapakah jumlah baris (\textit{samples}) yang terbentuk secara maksimal?
+    \vspace{2.8cm}
+
+    \newpage
+
+    % C4 - Analyzing
+    \item \textbf{[C4 -- Menganalisis / \textit{Analyzing}]} \\
+    Analisis fitur unggulan XGBoost dalam hal penanganan nilai yang hilang (\textit{missing value}) pada data deret waktu yang terekam dari sensor IoT cerdas. Mengapa algoritma XGBoost dapat secara otomatis menangani \textit{Sparsity-aware Split Finding}?
+    \vspace{3.5cm}
+
+    % C5 - Evaluating
+    \item \textbf{[C5 -- Mengevaluasi / \textit{Evaluating}]} \\
+    Evaluasi kinerja algoritma pemodelan runtun waktu klasik seperti ARIMA dibandingkan algoritma GBDT (LightGBM) pada dataset \textit{smart meter} perumahan yang berjumlah sangat besar (jutaan observasi) dan memiliki pola musiman non-linier tinggi. Apa kelemahan utama model pohon dalam melakukan ekstrapolasi tren masa depan di luar rentang data pelatihan?
+    \vspace{3.5cm}
+
+    % C6 - Creating
+    \item \textbf{[C6 -- Merancang / \textit{Creating}]} \\
+    Rancanglah alur \textit{feature engineering} (rekayasa fitur) yang komprehensif bagi algoritma XGBoost untuk memprediksi daya \textit{solar farm} esok hari secara jam-jaman, dengan mengkombinasikan minimal 5 fitur teknis turunan waktu (lags, datetime variables, dll) dan fitur data prakiraan cuaca eksternal.
+    \vspace{4.5cm}
+
+\end{enumerate}
+
+\end{document}

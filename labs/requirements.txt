@@ -1,0 +1,32 @@
+# Dependensi Praktikum Analisis Deret Waktu & Peramalan (TEE-412)
+# Kompatibel untuk Python 3.10 - 3.12 (Lokal & Google Colab)
+
+# Komputasi Numerik & Data
+numpy>=1.26,<2.1
+pandas>=2.1,<2.3
+scipy>=1.11,<1.15
+matplotlib>=3.8,<3.10
+seaborn>=0.13,<0.14
+
+# Pemodelan Statistik Klasik & State-Space (Minggu 1-7)
+statsmodels>=0.14,<0.15
+pmdarima>=2.0.4,<2.1
+filterpy>=1.4.5
+
+# Analisis Spektral & Wavelet (Minggu 9)
+PyWavelets>=1.5,<1.8
+
+# Machine Learning & Deteksi Anomali (Minggu 10 & 13)
+scikit-learn>=1.4,<1.6
+xgboost>=2.0,<2.2
+lightgbm>=4.3,<4.6
+
+# Deep Learning Sekuensial (Minggu 11-13)
+torch>=2.2,<2.6
+
+# Optimasi BESS / MPC Mikrogrid (Minggu 14)
+cvxpy>=1.4,<1.6
+
+# Lingkungan Interaktif
+jupyter>=1.0
+ipykernel>=6.29

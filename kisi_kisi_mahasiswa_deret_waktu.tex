@@ -1,0 +1,116 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+\definecolor{headerrow}{RGB}{24, 43, 73}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Kisi-Kisi Persiapan UTS}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Mata Kuliah: Analisis Deret Waktu dan Peramalan}
+\fancyfoot[R]{\footnotesize Halaman \thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\newcommand{\hdr}[1]{\cellcolor{headerrow}\color{white}\textbf{#1}}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}KISI-KISI UJIAN TENGAH SEMESTER (UTS)}}\\[0.15cm]
+    {\Large \textbf{\color{goldaccent}ANALISIS DERET WAKTU DAN PERAMALAN (TEE-412)}}\\[0.1cm]
+    {\normalsize Program Studi S1 Teknik Elektro -- Universitas Bengkulu}
+\end{center}
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Pelaksanaan Ujian}]
+\small
+\begin{itemize}[leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{Cakupan Materi:} Pertemuan Minggu 1 s.d. Minggu 7.
+    \item \textbf{Durasi Pengerjaan:} 120 Menit.
+    \item \textbf{Sifat Ujian:} Ujian Tertulis. Mahasiswa diperbolehkan membawa \textbf{1 (satu) lembar kertas A4 (bolak-balik)} berisi catatan/rumus tulisan tangan (tidak boleh hasil \textit{print} atau fotokopi).
+    \item \textbf{Peralatan Tambahan:} Mahasiswa diwajibkan membawa \textbf{Kalkulator Ilmiah} (*Scientific Calculator*). Dilarang menggunakan kalkulator dari ponsel pintar.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.4cm}
+\section{Panduan Belajar \& Topik Ujian}
+
+Soal UTS terdiri dari 7 butir pertanyaan yang dirancang untuk menguji pemahaman konsep teoritis hingga kemampuan analisis dan perancangan (Taksonomi Bloom C1-C6). Berikut adalah topik-topik yang perlu dikuasai untuk persiapan ujian:
+
+\vspace{0.2cm}
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.5em, itemsep=8pt]
+    \item \textbf{Konsep Dasar Deret Waktu Kelistrikan}
+    \begin{itemize}[label=$\circ$]
+        \item Memahami 4 komponen utama deret waktu (Tren, Musiman, Siklik, dan Residu/Noise).
+        \item Mengetahui perbedaan matematis dan kondisi penggunaan antara model \textbf{Aditif} dan model \textbf{Multiplikatif}.
+    \end{itemize}
+
+    \item \textbf{Stasioneritas Data}
+    \begin{itemize}[label=$\circ$]
+        \item Memahami konsep dan interpretasi dari uji stasioneritas formal (\textbf{ADF Test} dan \textbf{KPSS Test}), termasuk hipotesis nol ($H_0$) pada masing-masing uji.
+        \item Mampu melakukan perhitungan diferensiasi data secara manual (orde ke-$d$) untuk menstasionerkan data.
+    \end{itemize}
+
+    \item \textbf{Metode Pemulusan (Smoothing) \& Evaluasi Error}
+    \begin{itemize}[label=$\circ$]
+        \item Mampu melakukan perhitungan prediksi manual satu langkah ke depan menggunakan metode \textbf{\textit{Simple Exponential Smoothing} (SES)}.
+        \item Mampu menghitung dan menginterpretasikan metrik kesalahan peramalan: \textbf{MAE} (*Mean Absolute Error*), \textbf{RMSE} (*Root Mean Square Error*), dan \textbf{MAPE} (*Mean Absolute Percentage Error*).
+    \end{itemize}
+
+    \item \textbf{Pemodelan AR, MA, dan ARMA}
+    \begin{itemize}[label=$\circ$]
+        \item Mengidentifikasi pola dan menentukan kandidat ordo model (\textit{p, q}) berdasarkan bentuk visual dari fungsi autokorelasi (\textbf{ACF}) dan autokorelasi parsial (\textbf{PACF}).
+        \item Memilih model terbaik berdasarkan kriteria informasi (\textbf{AIC}).
+        \item Menguji \textbf{kestabilan model} dengan mencari akar-akar persamaan polinomial karakteristik pada bidang-$Z$.
+    \end{itemize}
+
+    \item \textbf{Evaluasi \& Diagnostik Model SARIMA}
+    \begin{itemize}[label=$\circ$]
+        \item Mampu membaca dan menginterpretasikan hasil output signifikansi parameter model regresi ($p$-value).
+        \item Memahami kegunaan \textbf{Uji Ljung-Box} untuk mengevaluasi apakah residual model sudah memenuhi asumsi keacakan (*white noise*).
+    \end{itemize}
+
+    \item \textbf{Pemodelan dengan Variabel Eksogen (SARIMAX)}
+    \begin{itemize}[label=$\circ$]
+        \item Mengevaluasi signifikansi dampak variabel eksternal (misalnya pengaruh suhu udara terhadap beban listrik) melalui Fungsi Korelasi Silang (\textbf{CCF}).
+        \item Menganalisis perbandingan performa antara model tanpa variabel eksogen (SARIMA) vs. dengan variabel eksogen (SARIMAX), serta menganalisis efek *overfitting* pada perbedaan cakupan horizon peramalan jangka panjang vs jangka pendek.
+    \end{itemize}
+
+    \item \textbf{Model \textit{State-Space} \& \textit{Discrete Kalman Filter}}
+    \begin{itemize}[label=$\circ$]
+        \item Merumuskan masalah kelistrikan (misalnya estimasi \textit{State-of-Charge} baterai) ke dalam bentuk persamaan \textbf{Ruang Keadaan (\textit{State-Space formulation})}.
+        \item Memahami alur kerja algoritma Kalman Filter yang meliputi tahap \textbf{Prediksi (\textit{Time Update})} dan tahap \textbf{Koreksi (\textit{Measurement Update})}.
+        \item Memahami fungsi fisik dari matriks kovariansi derau sistem ($Q$) dan matriks derau pengukuran ($R$) dalam menentukan sensitivitas respons *filter*.
+    \end{itemize}
+\end{enumerate}
+
+\vspace{0.3cm}
+\begin{center}
+    \colorbox{goldaccent}{\parbox{0.92\textwidth}{\centering\textbf{\color{white}Pesan Dosen:}\\ \small Fokuslah pada pemahaman "Mengapa" dan "Bagaimana", bukan sekadar menghafal rumus. Pastikan Anda berlatih melakukan perhitungan matematis secara mandiri dan cermat.}}
+\end{center}
+
+\end{document}

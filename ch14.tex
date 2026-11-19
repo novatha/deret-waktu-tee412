@@ -1,0 +1,188 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+\definecolor{tableheader}{RGB}{24, 43, 73}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 14)}]{\textbf{Integrasi Peramalan pada Operasi Sistem Tenaga}}
+\subtitle{Kuantisasi Ketidakpastian, Optimasi BESS Mikrogrid, dan Model Predictive Control}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 14 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-14}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 13)}
+                Mahasiswa mampu memformulasikan peramalan probabilistik untuk mengkuantisasi ketidakpastian EBT, serta mengintegrasikan profil ramalan ke dalam strategi operasi sistem penyimpanan baterai (BESS) dan manajemen energi mikrogrid.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Dari Point Forecast ke Probabilistic Forecast}
+                \item \textbf{Quantile Regression \& Prediction Intervals}
+                \item \textbf{Integrasi pada Unit Commitment (UC)}
+                \item \textbf{Model Predictive Control (MPC) pada BESS}
+                \item \textbf{Studi Kasus: Peak Shaving \& Arbitrase Tarif}
+                \item \textbf{Review Akhir \& Pengarahan Capstone Project}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Kuantisasi Ketidakpastian: Peramalan Probabilistik}
+    Peramalan satu titik (*Point Forecast*) tidak cukup untuk operasi grid yang aman:
+    \begin{block}{Quantile Loss Function ($\rho_\tau$)}
+        \begin{equation}
+            \mathcal{L}_\tau(y, \hat{y}_\tau) = \max\left( \tau(y - \hat{y}_\tau), (1 - \tau)(\hat{y}_\tau - y) \right)
+        \end{equation}
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Pita Ketidakpastian (P10 -- P90)}
+                \begin{itemize}
+                    \item $\hat{y}_{0.10}$ (P10): Skenario pesimis (radiasi surya rendah).
+                    \item $\hat{y}_{0.50}$ (P50): Skenario median paling mungkin.
+                    \item $\hat{y}_{0.90}$ (P90): Skenario optimis.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{alertblock}{Manfaat Operasi}
+                Menentukan cadangan putar (*Spinning Reserve*) generator secara efisien tanpa pemborosan bahan bakar fosil.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Integrasi Peramalan pada Manajemen Daya Mikrogrid}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Persamaan Keseimbangan Daya}
+                \begin{equation}
+                    P_{\text{grid}}(t) = \hat{P}_{\text{load}}(t) - \hat{P}_{\text{PV}}(t) + P_{\text{ch}}(t) - P_{\text{dis}}(t)
+                \end{equation}
+            \end{block}
+            \begin{block}{Batasan Fisik Baterai (BESS)}
+                \begin{align*}
+                    \text{SoC}_{\min} &\le \text{SoC}(t) \le \text{SoC}_{\max} \\
+                    0 \le P_{\text{ch}}(t) &\le P_{\text{ch}}^{\max}, \quad 0 \le P_{\text{dis}}(t) \le P_{\text{dis}}^{\max}
+                \end{align*}
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Fungsi Objektif Ekonomi}
+                Meminimalkan total biaya pembelian energi listrik dari jaringan PLN dengan tarif dinamis $C(t)$:
+                \begin{equation}
+                    \min \sum_{t=1}^{24} C(t) \cdot P_{\text{grid}}(t) \cdot \Delta t
+                \end{equation}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: Quantile Regression LightGBM}
+\begin{lstlisting}
+import lightgbm as lgb
+import numpy as np
+
+# Melatih 3 model kuantil: P10 (Bawah), P50 (Median), P90 (Atas)
+models = {}
+for q in [0.10, 0.50, 0.90]:
+    params = {'objective': 'quantile', 'alpha': q, 'learning_rate': 0.05, 'max_depth': 6}
+    models[q] = lgb.train(params, train_data, num_boost_round=300)
+
+# Peramalan Pita Ketidakpastian 24 Jam
+p10_pred = models[0.10].predict(X_test_24)
+p50_pred = models[0.50].predict(X_test_24)
+p90_pred = models[0.90].predict(X_test_24)
+
+# Plot Visualisasi Pita 80% Confidence Interval (P10 - P90)
+plt.fill_between(range(24), p10_pred, p90_pred, alpha=0.3, label='Pita Ketidakpastian 80%')
+plt.plot(p50_pred, label='Median Forecast (P50)', color='blue')
+plt.legend(); plt.show()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman Keseluruhan Mata Kuliah}
+    \begin{center}
+        \textbf{Roadmap Kompetensi Analisis Deret Waktu Mahasiswa Teknik Elektro:}
+    \end{center}
+    \begin{table}[h!]
+    \centering
+    \tiny
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \rowcolor{tableheader}
+    \color{white}\textbf{Fase Pembelajaran} & \color{white}\textbf{Metodologi Utama} & \color{white}\textbf{Studi Kasus Keteknikan} \\ \hline
+    Fase 1: Dasar & Dekomposisi, Uji ADF/KPSS, ACF/PACF & Analisis stabilitas sinyal gardu induk \\ \hline
+    Fase 2: Klasik & Holt-Winters, ARIMA, SARIMAX, Kalman Filter & STLF beban PLN \& Denoising sensor baterai \\ \hline
+    Fase 3: Spektral & FFT, Wavelet DWT Denoising & Diagnostik getaran motor \& Harmonisa kualitas daya \\ \hline
+    Fase 4: Machine Learning & XGBoost, LightGBM, TimeSeriesSplit & Rekayasa fitur kalender/suhu untuk peramalan beban \\ \hline
+    Fase 5: Deep Learning & LSTM, GRU, 1D-CNN, Attention, Autoencoder & Peramalan daya PLTS/PLTB \& Deteksi pencurian listrik \\ \hline
+    Fase 6: Operasi Daya & Probabilistic Forecasting, BESS MPC & Manajemen energi mikrogrid berbasis ketidakpastian \\ \hline
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih \& Sukses Capstone}}\\[0.4cm]
+        {\large Sampai Jumpa di Sesi Seminar Proyek Akhir (Minggu 15) \& UAS!}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

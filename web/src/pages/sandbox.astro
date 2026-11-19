@@ -1,0 +1,246 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ForecastingStudio from '../components/ForecastingStudio.astro';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+---
+
+<Layout title="Virtual Time Series & Forecasting Studio | Lab Komputasi Cerdas UNIB" description="Laboratorium Virtual Interaktif untuk Simulasi Sinyal Beban Listrik, State Estimation Kalman Filter, dan Peramalan Multi-Cakrawala.">
+  <!-- Studio Header -->
+  <section class="sandbox-page-header">
+    <div class="container">
+      <div class="header-breadcrumbs">
+        <a href={getUrl('/')} class="crumb-link">&larr; Kembali ke Beranda</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-current">Virtual Forecasting Studio</span>
+      </div>
+
+      <div class="header-content-box">
+        <span class="pill-badge">
+          <i data-lucide="activity"></i> VIRTUAL COMPUTATIONAL LABORATORY
+        </span>
+        <h1 class="page-title">
+          Virtual Time Series &amp; <span class="gradient-text">Forecasting Studio</span>
+        </h1>
+        <p class="page-desc">
+          Eksplorasi interaktif pembentukan deret waktu sistem tenaga, pengujian ketahanan estimator terhadap derau sensor (*sensor noise filtering*), serta simulasi peramalan beban jangka pendek (*Short-Term Load Forecasting*) menggunakan model parametrik dan Deep Learning.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Studio Interactive Workspace -->
+  <section class="studio-workspace-section">
+    <div class="container">
+      <ForecastingStudio fullHeight={true} />
+    </div>
+  </section>
+
+  <!-- Mathematical Theory Guide Section -->
+  <section class="theory-guide-section">
+    <div class="container">
+      <div class="section-title-wrap">
+        <span class="pill-badge-cyan">
+          <i data-lucide="book-open"></i> PANDUAN TEORITIS
+        </span>
+        <h2 class="section-heading">
+          Landasan Matematis <span class="gradient-text-cyan">Algoritma Estimator</span>
+        </h2>
+        <p class="section-subheading">
+          Penjelasan formulasi matematis di balik model yang disimulasikan pada Virtual Studio.
+        </p>
+      </div>
+
+      <div class="theory-cards-grid">
+        <!-- Kalman Filter -->
+        <div class="theory-card glass-panel">
+          <div class="t-badge">Algoritma 1</div>
+          <h3 class="t-title">Discrete Kalman Filter (BLUE)</h3>
+          <p class="t-desc">
+            Estimator linear kuadratik rekursif optimal untuk sistem stokastik berderau Gaussian.
+          </p>
+          <div class="t-formula-box" is:raw>
+            $$\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k (z_k - H \hat{x}_{k|k-1})$$
+            $$K_k = P_{k|k-1} H^T (H P_{k|k-1} H^T + R)^{-1}$$
+          </div>
+          <ul class="t-points">
+            <li><strong>Time Update (Prediksi):</strong> Proyeksikan status ke depan menggunakan model proses.</li>
+            <li><strong>Measurement Update (Koreksi):</strong> Hitung Kalman Gain dan perbarui kovarians galat.</li>
+          </ul>
+        </div>
+
+        <!-- Holt-Winters -->
+        <div class="theory-card glass-panel">
+          <div class="t-badge">Algoritma 2</div>
+          <h3 class="t-title">Holt-Winters Triple Smoothing</h3>
+          <p class="t-desc">
+            Model peramalan eksponensial adaptif dengan komponen Level, Tren, dan Musiman.
+          </p>
+          <div class="t-formula-box" is:raw>
+            $$\hat{y}_{t+h|t} = (\ell_t + h b_t) s_{t+h-m(k+1)}$$
+          </div>
+          <ul class="t-points">
+            <li>Mampu menangkap siklus musiman harian 24 jam dengan komputasi ultra-cepat.</li>
+            <li>Sangat handal untuk *baseline forecasting* sistem SCADA/EMS gardu induk.</li>
+          </ul>
+        </div>
+
+        <!-- SARIMA -->
+        <div class="theory-card glass-panel">
+          <div class="t-badge">Algoritma 3</div>
+          <h3 class="t-title">SARIMA Box-Jenkins</h3>
+          <p class="t-desc">
+            Seasonal Autoregressive Integrated Moving Average (p,d,q)(P,D,Q)_s.
+          </p>
+          <div class="t-formula-box" is:raw>
+            $$\Phi_P(B^s) \phi_p(B) (1-B)^d (1-B^s)^D y_t = \Theta_Q(B^s) \theta_q(B) \epsilon_t$$
+          </div>
+          <ul class="t-points">
+            <li>Diferensiasi reguler dan musiman untuk mencapai kestasioneran kovarians.</li>
+            <li>Diagnostik kelayakan residu menggunakan uji Ljung-Box Q-test.</li>
+          </ul>
+        </div>
+
+        <!-- Deep LSTM -->
+        <div class="theory-card glass-panel">
+          <div class="t-badge">Algoritma 4</div>
+          <h3 class="t-title">Deep LSTM Memory Gates</h3>
+          <p class="t-desc">
+            Jaringan saraf tiruan rekuren dengan gerbang memori Forget, Input, dan Output.
+          </p>
+          <div class="t-formula-box" is:raw>
+            $$f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f)$$
+            $$C_t = f_t * C_{t-1} + i_t * \tilde{C}_t$$
+          </div>
+          <ul class="t-points">
+            <li>Menghindari masalah *vanishing gradient* pada dependensi temporal jangka panjang.</li>
+            <li>Sangat unggul untuk pola non-linear fluktuasi cuaca dan pembangkitan PLTS/PLTB.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .sandbox-page-header {
+    padding: 60px 0 30px;
+    background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .header-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    font-size: 0.85rem;
+  }
+
+  .crumb-link {
+    color: var(--neon-cyan);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .crumb-link:hover {
+    text-decoration: underline;
+  }
+
+  .crumb-sep {
+    color: var(--text-dim);
+  }
+
+  .crumb-current {
+    color: var(--text-muted);
+  }
+
+  .page-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    margin: 14px 0 12px;
+    line-height: 1.2;
+  }
+
+  .page-desc {
+    font-size: 1rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 760px;
+  }
+
+  .studio-workspace-section {
+    padding: 40px 0 60px;
+  }
+
+  .theory-guide-section {
+    padding: 60px 0 90px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .theory-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+  }
+
+  .theory-card {
+    padding: 26px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .t-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .t-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+
+  .t-desc {
+    font-size: 0.85rem;
+    color: var(--text-subtle);
+    line-height: 1.5;
+  }
+
+  .t-formula-box {
+    background: rgba(9, 13, 22, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 0.9rem;
+    color: #e2e8f0;
+    overflow-x: auto;
+  }
+
+  .t-points {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .t-points li {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+
+  .t-points strong {
+    color: var(--neon-emerald);
+  }
+</style>

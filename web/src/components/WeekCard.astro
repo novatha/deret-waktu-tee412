@@ -1,0 +1,298 @@
+---
+import type { WeekMaterial } from '../data/courseData';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+
+interface Props {
+  week: WeekMaterial;
+}
+
+const { week } = Astro.props;
+
+const categoryClasses: Record<string, string> = {
+  'Foundation': 'cat-foundation',
+  'Classical Models': 'cat-classical',
+  'Spectral Analysis': 'cat-spectral',
+  'Machine Learning': 'cat-ml',
+  'Deep Learning': 'cat-dl',
+  'Power Operations': 'cat-power'
+};
+
+const catClass = categoryClasses[week.category] || 'cat-foundation';
+---
+
+<article 
+  class={`week-card card ${catClass}`} 
+  data-category={week.category} 
+  data-week={week.week} 
+  data-title={week.title.toLowerCase()}
+  data-topics={week.theoryTopics.join(' ').toLowerCase()}
+>
+  <div class="card-inner-top">
+    <div class="card-header-meta">
+      <span class="week-number-pill">
+        <i data-lucide="calendar"></i> Minggu {week.week}
+      </span>
+      <span class="category-badge">
+        {week.category}
+      </span>
+    </div>
+
+    <h3 class="card-title">
+      <a href={getUrl(`/materi/minggu-${week.week}`)}>
+        {week.title}
+      </a>
+    </h3>
+
+    <p class="card-subtitle">
+      {week.subTitle}
+    </p>
+
+    <div class="subcpmk-pill">
+      <i data-lucide="check-circle-2" class="cpmk-icon"></i>
+      <span>{week.subCpmk}</span>
+    </div>
+
+    <div class="topics-tags-wrap">
+      {week.theoryTopics.map(topic => (
+        <span class="topic-tag">{topic}</span>
+      ))}
+    </div>
+
+    {week.formulaLatex && (
+      <div class="formula-preview-box">
+        <span class="formula-label">Persamaan Utama:</span>
+        <div class="math-expr">
+          $${week.formulaLatex}$$
+        </div>
+      </div>
+    )}
+  </div>
+
+  <div class="card-inner-bottom">
+    <div class="download-action-grid">
+      <a href={getUrl(week.slidePdf)} target="_blank" class="doc-btn doc-btn-slide">
+        <i data-lucide="presentation"></i> Slide (ch{week.week}.pdf)
+      </a>
+      <a href={getUrl(week.problemSetPdf)} target="_blank" class="doc-btn doc-btn-soal">
+        <i data-lucide="file-question"></i> Soal C1–C6
+      </a>
+      {week.worksheetPdf && (
+        <a href={getUrl(week.worksheetPdf)} target="_blank" class="doc-btn doc-btn-worksheet">
+          <i data-lucide="file-text"></i> Worksheet
+        </a>
+      )}
+      <a href={getUrl(`/materi/minggu-${week.week}`)} class="doc-btn doc-btn-detail">
+        Detail &amp; Code &rarr;
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .week-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-inner-top {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card-header-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .week-number-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--neon-cyan);
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.04em;
+  }
+
+  .category-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--cat-bg, rgba(255, 255, 255, 0.06));
+    color: var(--cat-color, var(--text-muted));
+    border: 1px solid var(--cat-border, rgba(255, 255, 255, 0.1));
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.35;
+    margin: 4px 0 0;
+  }
+
+  .card-title a {
+    color: var(--text-main);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .card-title a:hover {
+    color: var(--neon-emerald);
+  }
+
+  .card-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-subtle);
+    line-height: 1.5;
+  }
+
+  .subcpmk-pill {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: #93c5fd;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .cpmk-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .topics-tags-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .topic-tag {
+    font-size: 0.72rem;
+    color: var(--text-subtle);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .formula-preview-box {
+    background: rgba(9, 13, 22, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-top: 6px;
+    font-size: 0.82rem;
+  }
+
+  .formula-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--neon-amber);
+    margin-bottom: 4px;
+    letter-spacing: 0.04em;
+  }
+
+  .math-expr {
+    overflow-x: auto;
+    color: #e2e8f0;
+  }
+
+  .card-inner-bottom {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .download-action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+  }
+
+  .doc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .doc-btn-slide {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--neon-emerald);
+    border-color: rgba(16, 185, 129, 0.25);
+  }
+
+  .doc-btn-slide:hover {
+    background: var(--neon-emerald);
+    color: #04121e;
+  }
+
+  .doc-btn-soal {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--neon-cyan);
+    border-color: rgba(6, 182, 212, 0.25);
+  }
+
+  .doc-btn-soal:hover {
+    background: var(--neon-cyan);
+    color: #04121e;
+  }
+
+  .doc-btn-worksheet {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--neon-amber);
+    border-color: rgba(245, 158, 11, 0.25);
+  }
+
+  .doc-btn-worksheet:hover {
+    background: var(--neon-amber);
+    color: #04121e;
+  }
+
+  .doc-btn-detail {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-main);
+  }
+
+  .doc-btn-detail:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+  }
+</style>

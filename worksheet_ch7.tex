@@ -1,0 +1,96 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Lembar Kerja Mahasiswa \& Problem Set (Minggu 7)}}
+\fancyhead[R]{\small\color{gray}Analisis Deret Waktu -- Teknik Elektro}
+\fancyfoot[L]{\footnotesize\color{gray}Program Studi Teknik Elektro FT UNIB}
+\fancyfoot[R]{\footnotesize\thepage}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.25cm]
+    {\LARGE \textbf{\color{primaryblue}LEMBAR KERJA \& PROBLEM SET MINGGU 7}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Model SARIMA Musiman dan SARIMAX}}
+\end{center}
+
+\vspace{0.2cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.5cm}p{5.5cm}p{2.5cm}p{4.5cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Kelas/Kelompok} & : \dotfill & \textbf{Tanggal} & : \dotfill \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\section{Panduan Pengerjaan}
+Problem set ini dirancang berjenjang berdasarkan Taksonomi Bloom (Level C1 sampai C6) untuk mengukur capaian \textbf{Sub-CPMK 7}. Kerjakan secara mandiri, rapi, dan sistematis.
+
+\section{Problem Set (Level C1 -- C6)}
+
+\begin{enumerate}[leftmargin=1.8em, label=\textbf{Soal \arabic*.}]
+    
+    % C1 - Remembering
+    \item \textbf{[C1 -- Mengingat / \textit{Remembering}]} \\
+    Jelaskan kepanjangan dan struktur parameter lengkap dari model SARIMA $(p,d,q) \times (P,D,Q)_s$. Apa makna dari parameter $s$ dan berikan contoh nilainya untuk data jam-jaman (\textit{hourly})!
+    \vspace{2.2cm}
+
+    % C2 - Understanding
+    \item \textbf{[C2 -- Memahami / \textit{Understanding}]} \\
+    Jelaskan perbedaan antara diferensiasi biasa (reguler) dengan diferensiasi musiman (seasonal differencing). Mengapa keduanya mungkin dibutuhkan secara bersamaan?
+    \vspace{2.8cm}
+
+    % C3 - Applying
+    \item \textbf{[C3 -- Menerapkan / \textit{Applying}]} \\
+    Sebuah model konsumsi AC kampus dimodelkan dengan SARIMAX(1,0,0)(0,1,1)12. Jika variabel eksogen $X_t$ adalah suhu ruangan ($^\circ$C) dengan koefisien regresi $\beta = 2.5$, tuliskan bentuk prediksi persamaannya secara konseptual!
+    \vspace{2.8cm}
+
+    \newpage
+
+    % C4 - Analyzing
+    \item \textbf{[C4 -- Menganalisis / \textit{Analyzing}]} \\
+    Analisis pengaruh penambahan variabel eksogen (seperti suhu, kelembaban) ke dalam model SARIMA menjadi SARIMAX. Bagaimana cara matematis model menangani variabel eksterna ini dibandingkan dengan error murni ARIMA?
+    \vspace{3.5cm}
+
+    % C5 - Evaluating
+    \item \textbf{[C5 -- Mengevaluasi / \textit{Evaluating}]} \\
+    Dalam meramalkan beban listrik harian, Model 1 menggunakan model SARIMA murni berdasar histori beban, sedangkan Model 2 menggunakan model regresi linier biasa (MLR) namun menggunakan 10 variabel cuaca. Evaluasilah kondisi operasional di mana Model 1 akan mengalahkan Model 2, dan sebaliknya.
+    \vspace{3.5cm}
+
+    % C6 - Creating
+    \item \textbf{[C6 -- Merancang / \textit{Creating}]} \\
+    Rancanglah sebuah spesifikasi teknis pemodelan SARIMAX komprehensif untuk memprediksi produksi energi Pembangkit Listrik Tenaga Mikro Hidro (PLTMH). Tentukan variabel respons, variabel eksogen yang relevan (minimal 3), orde musiman $s$, serta bentuk pra-pemrosesan data yang diperlukan.
+    \vspace{4.5cm}
+
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,105 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import WeekCard from '../../components/WeekCard.astro';
+import { weeksData } from '../../data/courseData';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+---
+
+<Layout title="Katalog 13 Modul, Slide & Problem Sets | Analisis Deret Waktu FT UNIB">
+  <!-- Header Banner -->
+  <section class="materi-header-section">
+    <div class="container">
+      <div class="header-breadcrumbs">
+        <a href={getUrl('/')} class="crumb-link">&larr; Kembali ke Beranda</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-current">Katalog Modul Perkuliahan</span>
+      </div>
+
+      <div class="header-content">
+        <span class="pill-badge">
+          <i data-lucide="book-marked"></i> REPOSITORI LENGKAP BAHAN AJAR
+        </span>
+        <h1 class="header-title">
+          13 Modul, Slide &amp; <span class="gradient-text">Problem Sets C1–C6</span>
+        </h1>
+        <p class="header-lead">
+          Kumpulan lengkap materi perkuliahan Analisis Deret Waktu dan Peramalan. Terdiri dari slide presentasi Beamer (PDF), bank soal ujian terstruktur level Bloom C1–C6, dan lembar kerja praktikum laboratorium komputasi cerdas.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter & Catalog Grid -->
+  <section class="catalog-section">
+    <div class="container">
+      <div class="weeks-grid-container" id="weeks-grid">
+        {weeksData.map((week) => (
+          <WeekCard week={week} />
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .materi-header-section {
+    padding: 60px 0 40px;
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .header-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    font-size: 0.85rem;
+  }
+
+  .crumb-link {
+    color: var(--neon-cyan);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .crumb-link:hover {
+    text-decoration: underline;
+  }
+
+  .crumb-sep {
+    color: var(--text-dim);
+  }
+
+  .crumb-current {
+    color: var(--text-muted);
+  }
+
+  .header-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    margin: 14px 0 12px;
+    line-height: 1.2;
+  }
+
+  .header-lead {
+    font-size: 1rem;
+    color: var(--text-muted);
+    max-width: 740px;
+    line-height: 1.6;
+  }
+
+  .catalog-section {
+    padding: 50px 0 80px;
+  }
+
+  .weeks-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 24px;
+  }
+</style>

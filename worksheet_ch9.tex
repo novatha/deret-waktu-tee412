@@ -1,0 +1,96 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Lembar Kerja Mahasiswa \& Problem Set (Minggu 9)}}
+\fancyhead[R]{\small\color{gray}Analisis Deret Waktu -- Teknik Elektro}
+\fancyfoot[L]{\footnotesize\color{gray}Program Studi Teknik Elektro FT UNIB}
+\fancyfoot[R]{\footnotesize\thepage}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.25cm]
+    {\LARGE \textbf{\color{primaryblue}LEMBAR KERJA \& PROBLEM SET MINGGU 9}}\\[0.1cm]
+    {\normalsize \textbf{Topik: State-Space Modeling dan Discrete Kalman Filter}}
+\end{center}
+
+\vspace{0.2cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.5cm}p{5.5cm}p{2.5cm}p{4.5cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Kelas/Kelompok} & : \dotfill & \textbf{Tanggal} & : \dotfill \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\section{Panduan Pengerjaan}
+Problem set ini dirancang berjenjang berdasarkan Taksonomi Bloom (Level C1 sampai C6) untuk mengukur capaian \textbf{Sub-CPMK 9}. Kerjakan secara mandiri, rapi, dan sistematis.
+
+\section{Problem Set (Level C1 -- C6)}
+
+\begin{enumerate}[leftmargin=1.8em, label=\textbf{Soal \arabic*.}]
+    
+    % C1 - Remembering
+    \item \textbf{[C1 -- Mengingat / \textit{Remembering}]} \\
+    Sebutkan dan jelaskan secara singkat dua persamaan fundamental yang menyusun model State-Space linier.
+    \vspace{2.2cm}
+
+    % C2 - Understanding
+    \item \textbf{[C2 -- Memahami / \textit{Understanding}]} \\
+    Jelaskan siklus dua langkah dari algoritma Discrete Kalman Filter (Tahap Prediksi / Time Update dan Tahap Koreksi / Measurement Update).
+    \vspace{2.8cm}
+
+    % C3 - Applying
+    \item \textbf{[C3 -- Menerapkan / \textit{Applying}]} \\
+    Diberikan matriks transisi state $A = 1$, matriks pengamatan $H = 1$, dan varians noise proses $Q = 0.5$. Jika kovarians estimasi apriori $P_k^- = 2$, hitunglah \textit{Kalman Gain} ($K_k$) jika varians noise pengukuran $R = 1$.
+    \vspace{2.8cm}
+
+    \newpage
+
+    % C4 - Analyzing
+    \item \textbf{[C4 -- Menganalisis / \textit{Analyzing}]} \\
+    Analisis pengaruh parameter kovarians noise pengukuran matriks $R$ yang terlalu besar (relatif terhadap matriks $Q$) terhadap kinerja dan respons dari sistem Kalman Filter saat memfilter data sensor tegangan yang kotor.
+    \vspace{3.5cm}
+
+    % C5 - Evaluating
+    \item \textbf{[C5 -- Mengevaluasi / \textit{Evaluating}]} \\
+    Bandingkan efektivitas antara \textit{Exponential Moving Average} (EMA) dan Kalman Filter dalam memuluskan (\textit{smoothing}) data kecepatan angin turbin yang memiliki \textit{outlier} dinamis. Apa keunggulan mutlak Kalman Filter dalam mengestimasi status yang tidak terukur?
+    \vspace{3.5cm}
+
+    % C6 - Creating
+    \item \textbf{[C6 -- Merancang / \textit{Creating}]} \\
+    Rancang sebuah arsitektur pemodelan algoritma Kalman Filter (tentukan vektor status $x$, ukuran matriks transisi $A$, matriks pengamatan $H$, dll.) untuk memantau nilai Tegangan, Frekuensi, dan Laju Perubahan Frekuensi pada bus kelistrikan berdasarkan pengukuran sensor PMU yang mengandung noise.
+    \vspace{4.5cm}
+
+\end{enumerate}
+
+\end{document}

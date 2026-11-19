@@ -1,0 +1,96 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Lembar Kerja Mahasiswa \& Problem Set (Minggu 11)}}
+\fancyhead[R]{\small\color{gray}Analisis Deret Waktu -- Teknik Elektro}
+\fancyfoot[L]{\footnotesize\color{gray}Program Studi Teknik Elektro FT UNIB}
+\fancyfoot[R]{\footnotesize\thepage}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.25cm]
+    {\LARGE \textbf{\color{primaryblue}LEMBAR KERJA \& PROBLEM SET MINGGU 11}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Analisis Multiresolusi Wavelet (DWT)}}
+\end{center}
+
+\vspace{0.2cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.5cm}p{5.5cm}p{2.5cm}p{4.5cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Kelas/Kelompok} & : \dotfill & \textbf{Tanggal} & : \dotfill \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\section{Panduan Pengerjaan}
+Problem set ini dirancang berjenjang berdasarkan Taksonomi Bloom (Level C1 sampai C6) untuk mengukur capaian \textbf{Sub-CPMK 11}. Kerjakan secara mandiri, rapi, dan sistematis.
+
+\section{Problem Set (Level C1 -- C6)}
+
+\begin{enumerate}[leftmargin=1.8em, label=\textbf{Soal \arabic*.}]
+    
+    % C1 - Remembering
+    \item \textbf{[C1 -- Mengingat / \textit{Remembering}]} \\
+    Definisikan apa itu Transformasi Wavelet Diskrit (DWT) dan jelaskan fungsi dari sinyal gelombang induk (Mother Wavelet).
+    \vspace{2.2cm}
+
+    % C2 - Understanding
+    \item \textbf{[C2 -- Memahami / \textit{Understanding}]} \\
+    Jelaskan konsep dekomposisi multiresolusi menggunakan DWT berdasar bank filter (Low-pass filter dan High-pass filter). Apa itu komponen Aproksimasi (A) dan Detail (D)?
+    \vspace{2.8cm}
+
+    % C3 - Applying
+    \item \textbf{[C3 -- Menerapkan / \textit{Applying}]} \\
+    Jika data masukan sensor memiliki panjang vektor 1024 sampel, berapa jumlah sampel pada koefisien Aproksimasi level 1 (A1) dan Detail level 1 (D1) setelah dilakukan \textit{downsampling} dengan faktor 2?
+    \vspace{2.8cm}
+
+    \newpage
+
+    % C4 - Analyzing
+    \item \textbf{[C4 -- Menganalisis / \textit{Analyzing}]} \\
+    Analisis bagaimana Analisis Wavelet mengatasi masalah kelemahan Transformasi Fourier dalam mendeteksi lokasi kemunculan (\textit{timing}) \textit{transient fault} pada saluran transmisi listrik. Jelaskan berdasarkan resolusi waktu dan resolusi frekuensi!
+    \vspace{3.5cm}
+
+    % C5 - Evaluating
+    \item \textbf{[C5 -- Mengevaluasi / \textit{Evaluating}]} \\
+    Dalam deteksi anomali \textit{partial discharge} pada isolator tegangan tinggi, pilihlah keluarga \textit{mother wavelet} mana (misal: Haar, Daubechies 4, atau Symlet) yang secara teoritis lebih cocok untuk menangkap puncak-puncak pulsa tajam yang tidak simetris. Berikan justifikasi kuat atas pilihan Anda.
+    \vspace{3.5cm}
+
+    % C6 - Creating
+    \item \textbf{[C6 -- Merancang / \textit{Creating}]} \\
+    Rancanglah diagram blok sistem pendeteksian dan lokalisasi cacat pada jaringan distribusi kabel bawah tanah berdasarkan analisis \textit{Traveling Wave} (Gelombang Berjalan) yang menggunakan koefisien DWT level ke-3.
+    \vspace{4.5cm}
+
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,123 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 11: Deep Learning Sekuensial (LSTM \& GRU)}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 11: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Arsitektur Recurrent Neural Network, LSTM, GRU, dan Peramalan Daya EBT}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Sebutkan dan jelaskan fungsi dari 3 gerbang utama pada arsitektur \textit{Long Short-Term Memory} (LSTM): \textit{Forget Gate, Input Gate,} dan \textit{Output Gate}!
+        \item Apa yang dimaksud dengan dimensi Tensor 3D $(N, T, D)$ pada framework PyTorch / TensorFlow saat menyiapkan dataset sekuensial deret waktu?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Jelaskan secara matematis mengapa jaringan RNN sederhana (*Simple Vanilla RNN*) mengalami fenomena \textbf{Vanishing Gradient} saat dilatih menggunakan algoritma \textit{Backpropagation Through Time} (BPTT) pada data sekuensial yang sangat panjang!
+        \item Bagaimana jalur \textit{Cell State} pada LSTM ($C_t = f_t \odot C_{t-1} + i_t \odot \tilde{C}_t$) mampu mencegah masalah kelenyapan gradien tersebut?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Pada sebuah sel LSTM sederhana satu dimensi, pada langkah waktu $t$ diketahui:
+    \begin{itemize}
+        \item Cell state sebelumnya: $C_{t-1} = 2.0$, Hidden state sebelumnya: $h_{t-1} = 0.5$
+        \item Nilai aktivasi Forget Gate: $f_t = \sigma(W_f [h_{t-1}, x_t] + b_f) = 0.8$
+        \item Nilai aktivasi Input Gate: $i_t = \sigma(W_i [h_{t-1}, x_t] + b_i) = 0.6$
+        \item Nilai kandidat memori baru: $\tilde{C}_t = \tanh(W_c [h_{t-1}, x_t] + b_c) = 0.5$
+        \item Nilai aktivasi Output Gate: $o_t = \sigma(W_o [h_{t-1}, x_t] + b_o) = 0.9$
+    \end{itemize}
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah nilai \textit{Cell State} yang baru ($C_t$).
+        \item Hitunglah nilai \textit{Hidden State} yang baru ($h_t = o_t \odot \tanh(C_t)$).
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Dua model deep learning dilatih untuk meramalkan daya keluaran Pembangkit Listrik Tenaga Bayu (PLTB) 10 MW yang sangat fluktuatif berbasis data kecepatan angin dan arah angin:
+    \begin{itemize}
+        \item \textbf{Model LSTM-2 Layer} (Hidden units: 128): Waktu training = 45 menit, Nilai RMSE Validasi = 0.42 MW.
+        \item \textbf{Model GRU-2 Layer} (Hidden units: 128): Waktu training = 28 menit (38\% lebih cepat), Nilai RMSE Validasi = 0.43 MW.
+    \end{itemize}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Analisislah mengapa model GRU mampu mencapai performa akurasi yang hampir identik dengan LSTM namun dengan efisiensi waktu komputasi yang jauh lebih cepat!
+        \item Tinjau perbedaan kompleksitas jumlah matriks bobot ($W$) yang harus diperbarui oleh optimizer pada gerbang GRU vs LSTM!
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Dalam pra-pemrosesan normalisasi data iradiasi matahari ($0 - 1200 \text{ W/m}^2$) untuk jaringan LSTM:
+    \begin{itemize}
+        \item \textbf{Skema A}: Menerapkan \texttt{MinMaxScaler(feature\_range=(0, 1))} pada seluruh data fitur.
+        \item \textbf{Skema B}: Menerapkan \texttt{StandardScaler} (Mean 0, Std 1).
+    \end{itemize}
+    Evaluasilah kelebihan Skema A vs Skema B mengingat data radiasi matahari memiliki batas fisik minimum tegas bernilai tepat 0 pada malam hari. Mengapa penskalaan (0, 1) lebih disukai untuk fungsi aktivasi sigmoid pada gerbang LSTM?
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah sebuah arsitektur model \textbf{Bidirectional LSTM (BiLSTM)} menggunakan PyTorch atau Keras untuk memprediksi profil tegangan gardu distribusi 24-jam ke depan:
+    \begin{enumerate}[label=\alph*.]
+        \item Lapisan 1: BiLSTM (Input features: 5, Hidden size: 64, Dropout: 0.2).
+        \item Lapisan 2: Unidirectional LSTM (Hidden size: 32).
+        \item Lapisan 3: Fully Connected (Linear) Output Layer berdimensi 24 titik prediksi.
+        \item Tuliskan fungsi \textit{Data Loader} untuk membuat sliding window sekuensial dengan panjang input $T_{\text{in}} = 72$ jam dan target peramalan $T_{\text{out}} = 24$ jam.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

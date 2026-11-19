@@ -1,0 +1,119 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 3: Metode Pemulusan Eksponensial}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 3: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Simple Exponential Smoothing, Holt's Trend, Holt-Winters, dan Evaluasi Metrik}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Tuliskan persamaan peramalan rekursif dari metode \textit{Simple Exponential Smoothing} (SES) beserta rentang parameter pemulus $\alpha$!
+        \item Sebutkan 3 parameter yang dioptimalkan pada metode Holt-Winters Musiman dan jelaskan peran masing-masing parameter!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Jelaskan apa yang terjadi pada respon peramalan SES jika nilai $\alpha = 0.95$ dibandingkan jika $\alpha = 0.05$ ketika terjadi gangguan transien singkat pada beban listrik!
+        \item Mengapa metrik MAPE (\textit{Mean Absolute Percentage Error}) tidak dapat digunakan secara langsung untuk mengevaluasi kinerja peramalan daya keluaran pembangkit surya fotovoltaik (PLTS)? Berikan alternatif metrik yang lebih tepat dan tuliskan formulasi matematisnya!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Diberikan deret waktu beban puncak harian (dalam MW) selama 4 hari pertama:
+    $y_1 = 100, y_2 = 110, y_3 = 105, y_4 = 115$.
+    Inisialisasi level awal $\ell_0 = 100$ dan nilai parameter pemulus $\alpha = 0.4$.
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah nilai estimasi level $\ell_1, \ell_2, \ell_3,$ dan $\ell_4$ menggunakan metode SES secara manual!
+        \item Hitunglah ramalan beban untuk hari ke-5 ($\hat{y}_{5|4}$) dan hari ke-6 ($\hat{y}_{6|4}$).
+        \item Jika realisasi beban hari ke-5 adalah $y_5 = 112$ MW, hitunglah nilai kesalahan peramalan instan $e_5 = y_5 - \hat{y}_{5|4}$ dan persentase errornya ($APE_5$).
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Tabel berikut menyajikan hasil komparasi 3 model pemulusan yang diuji pada profil beban 168 jam (1 minggu) subsistem distribusi:
+    \begin{center}
+    \begin{tabular}{|l|c|c|c|c|}
+    \hline
+    \rowcolor{boxbg}
+    \textbf{Model} & \textbf{MAE (MW)} & \textbf{RMSE (MW)} & \textbf{MAPE (\%)} & \textbf{Keterangan} \\ \hline
+    Model A (SES, $\alpha=0.3$) & 8.50 & 12.40 & 7.8\% & Baseline \\ \hline
+    Model B (Holt's Linear, $\alpha=0.4, \beta=0.2$) & 7.10 & 10.20 & 6.4\% & Tren linier \\ \hline
+    Model C (Holt-Winters Mul, $m=24$) & 2.30 & 3.10 & 1.9\% & Musiman harian \\ \hline
+    \end{tabular}
+    \end{center}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Mengapa Model C menghasilkan penurunan drastis pada nilai RMSE dan MAPE dibandingkan Model A dan B?
+        \item Analisislah rasio $\text{RMSE} / \text{MAE}$ pada ketiga model. Apa makna fisis jika nilai rasio tersebut mendekati 1.0 vs jika nilainya jauh lebih besar dari 1.0?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Sebuah sistem mikrogrid pulau terisolasi memiliki profil konsumsi daya yang sangat dipengaruhi oleh pariwisata akhir pekan (Sabtu-Minggu lonjakan beban naik 60\% dibanding hari kerja).
+    \begin{itemize}
+        \item \textbf{Opsi 1}: Menerapkan Holt-Winters dengan periode musiman tunggal $m=24$ (harian).
+        \item \textbf{Opsi 2}: Menerapkan Holt-Winters dengan periode musiman mingguan $m=168$ jam ($7 \times 24$ jam).
+        \item \textbf{Opsi 3}: Menerapkan \textit{Double Seasonal Holt-Winters} (DSHW) (Taylor, 2003).
+    \end{itemize}
+    Evaluasilah kelebihan dan kelemahan Opsi 1 vs Opsi 2 dalam hal kebutuhan memori penyimpan bobot musiman dan kecepatan adaptasi. Kemudian, tuliskan persamaan pemulusan \textbf{Opsi 3} secara lengkap dan jelaskan mengapa opsi tersebut merupakan solusi paling optimal untuk mengatasi lonjakan beban akhir pekan!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah algoritma optimasi parameter pemulusan Holt-Winters $(\alpha, \beta, \gamma)$ berbasis \textbf{Grid Search / Nelder-Mead} untuk meminimalkan fungsi objektif RMSE pada data latih. Tuliskan dalam bentuk fungsi terstruktur (Python / Octave) yang mengembalikan parameter terbaik $(\alpha^*, \beta^*, \gamma^*)$ serta plot peramalan 48 jam ke depan bersama pita batas kepercayaan 95\%.
+\end{enumerate}
+
+\end{document}

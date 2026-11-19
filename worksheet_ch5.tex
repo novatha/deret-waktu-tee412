@@ -1,0 +1,96 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Lembar Kerja Mahasiswa \& Problem Set (Minggu 5)}}
+\fancyhead[R]{\small\color{gray}Analisis Deret Waktu -- Teknik Elektro}
+\fancyfoot[L]{\footnotesize\color{gray}Program Studi Teknik Elektro FT UNIB}
+\fancyfoot[R]{\footnotesize\thepage}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.25cm]
+    {\LARGE \textbf{\color{primaryblue}LEMBAR KERJA \& PROBLEM SET MINGGU 5}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Model ARMA Campuran dan Kriteria AIC/BIC}}
+\end{center}
+
+\vspace{0.2cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.5cm}p{5.5cm}p{2.5cm}p{4.5cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Kelas/Kelompok} & : \dotfill & \textbf{Tanggal} & : \dotfill \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\section{Panduan Pengerjaan}
+Problem set ini dirancang berjenjang berdasarkan Taksonomi Bloom (Level C1 sampai C6) untuk mengukur capaian \textbf{Sub-CPMK 5}. Kerjakan secara mandiri, rapi, dan sistematis.
+
+\section{Problem Set (Level C1 -- C6)}
+
+\begin{enumerate}[leftmargin=1.8em, label=\textbf{Soal \arabic*.}]
+    
+    % C1 - Remembering
+    \item \textbf{[C1 -- Mengingat / \textit{Remembering}]} \\
+    Tuliskan persamaan lengkap dari model campuran Autoregressive Moving Average, ARMA(p,q). Komponen mana yang merepresentasikan memori terhadap data historis dan mana yang merepresentasikan kejutan (shock) historis?
+    \vspace{2.2cm}
+
+    % C2 - Understanding
+    \item \textbf{[C2 -- Memahami / \textit{Understanding}]} \\
+    Jelaskan prinsip dasar dari \textit{Akaike Information Criterion} (AIC) dan \textit{Bayesian Information Criterion} (BIC). Mengapa kedua kriteria ini memberikan penalti terhadap kompleksitas model?
+    \vspace{2.8cm}
+
+    % C3 - Applying
+    \item \textbf{[C3 -- Menerapkan / \textit{Applying}]} \\
+    Sebuah model diprediksi menghasilkan persamaan ARMA(1,1): $y_t = 0.5 y_{t-1} + \epsilon_t - 0.3 \epsilon_{t-1}$. Jika $y_{t-1} = 100$ dan $\epsilon_{t-1} = 2$, hitung prediksi titik $y_t$ (dengan asumsi $\epsilon_t = 0$).
+    \vspace{2.8cm}
+
+    \newpage
+
+    % C4 - Analyzing
+    \item \textbf{[C4 -- Menganalisis / \textit{Analyzing}]} \\
+    Analisis kesulitan mengidentifikasi orde p dan q secara manual pada proses ARMA hanya dengan melihat plot ACF dan PACF. Mengapa pola plot-plot ini tidak memberikan informasi orde yang tegas layaknya proses murni AR atau MA?
+    \vspace{3.5cm}
+
+    % C5 - Evaluating
+    \item \textbf{[C5 -- Mengevaluasi / \textit{Evaluating}]} \\
+    Diberikan hasil \textit{grid search} pemilihan model pemakaian daya trafo: Model A memiliki MSE lebih rendah dari Model B, namun Model B memiliki AIC yang lebih rendah dari Model A. Evaluasilah mana model yang sebaiknya dipilih untuk implementasi pada \textit{edge device} sistem tenaga yang memori komputasinya terbatas.
+    \vspace{3.5cm}
+
+    % C6 - Creating
+    \item \textbf{[C6 -- Merancang / \textit{Creating}]} \\
+    Susun sebuah algoritma pemilihan orde ARMA terbaik menggunakan pendekatan heuristik komputasional (seperti iterasi loop) berbasis nilai BIC terkecil untuk $p \in [0, 5]$ dan $q \in [0, 5]$, serta sertakan mitigasi jika terjadi ketidakstabilan numerik saat mengestimasi parameter.
+    \vspace{4.5cm}
+
+\end{enumerate}
+
+\end{document}

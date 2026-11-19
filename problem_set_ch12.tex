@@ -1,0 +1,123 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 12: Arsitektur Sekuensial Lanjut (CNN/Seq2Seq)}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 12: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Temporal Convolutional Networks (1D-CNN), Seq2Seq, dan Attention Mechanism}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Apa yang dimaksud dengan sifat \textit{Causality} pada operasi konvolusi 1D temporal (\textit{Causal Convolutions})?
+        \item Tuliskan persamaan matematis dasar \textit{Scaled Dot-Product Attention} dengan variabel Query ($Q$), Key ($K$), dan Value ($V$)!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Jelaskan bagaimana \textit{Dilated Convolutions} mampu memperluas bidang pandang reseptif (\textit{Receptive Field}) secara eksponensial tanpa meningkatkan jumlah parameter bobot jaringan!
+        \item Apa kelemahan arsitektur Encoder-Decoder (Seq2Seq) tanpa mekanisme Attention ketika panjang deret waktu input mencapai lebih dari 168 langkah waktu (1 minggu)?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sebuah jaringan konvolusi 1D temporal (1D-CNN) 3-layer memiliki ukuran kernel $K = 3$ pada setiap layer dengan faktor dilatasi bertingkat: $d_1 = 1, d_2 = 2, d_3 = 4$.
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah bidang pandang reseptif efektif (\textit{Effective Receptive Field} - ERF) dari layer 1 ($R_1$), layer 2 ($R_2$), dan layer 3 ($R_3$) menggunakan formula:
+        \begin{equation*}
+            R_l = R_{l-1} + (K - 1) \times d_l, \quad \text{dengan } R_0 = 1
+        \end{equation*}
+        \item Berdasarkan nilai $R_3$, berapa jam riwayat data masa lalu yang sanggup dicakup oleh satu neuron output di layer ke-3 jika interval sampling adalah 1 jam?
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Hasil visualisasi matriks bobot Attention (\textit{Attention Weights Heatmap}) dari model Transformer yang meramalkan beban puncak jam 19.00 WIB pada hari Jumat menyajikan profil atensi berikut terhadap 72 jam input sebelumnya:
+    \begin{itemize}
+        \item Bobot Atensi tertinggi ($w > 0.35$) terfokus pada: $t-24$ (Kamis jam 19.00), $t-48$ (Rabu jam 19.00), dan $t-72$ (Selasa jam 19.00).
+        \item Bobot Atensi menengah ($w \approx 0.15$) terfokus pada: jam 12.00--14.00 di hari yang sama (pola beban siang hari).
+        \item Bobot Atensi pada jam-jam dini hari ($01.00 - 05.00$) mendekati 0.
+    \end{itemize}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Berikan interpretasi fisis kelistrikan mengapa mekanisme self-attention secara otomatis memberikan pembobotan tinggi pada jam yang sama di hari-hari sebelumnya!
+        \item Mengapa representasi atensi ini jauh lebih mudah diinterpretasikan oleh operator sistem transmisi (*Explainable AI*) dibandingkan model black-box RNN standar?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Untuk memprediksi profil tegangan pada 50 bus sistem transmisi secara simultan selama 24 jam ke depan:
+    \begin{itemize}
+        \item \textbf{Model A (Autoregressive LSTM)}: Membutuhkan 24 kali langkah inferensi sekuensial rekursif.
+        \item \textbf{Model B (PatchTST / Transformer Multi-Output)}: Menghasilkan 24 langkah peramalan secara paralel langsung dalam satu lintasan *forward pass*.
+    \end{itemize}
+    Evaluasilah komparasi latensi komputasi *real-time dispatching* (eksekusi setiap 5 menit) antara Model A vs Model B!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah sebuah arsitektur hibrida **CNN-LSTM dengan Bahdanau Attention** menggunakan PyTorch untuk peramalan multi-step:
+    \begin{enumerate}[label=\alph*.]
+        \item Blok 1: 1D-CNN untuk mengekstraksi fitur gelombang lokal frekuensi tinggi.
+        \item Blok 2: BiLSTM Encoder untuk menangkap ketergantungan temporal jangka panjang.
+        \item Blok 3: Attention Layer yang menghitung skor kesesuaian antara decoder state dan encoder hidden states:
+        \begin{equation*}
+            e_{t,i} = \mathbf{v}_a^T \tanh(\mathbf{W}_a s_{t-1} + \mathbf{U}_a h_i)
+        \end{equation*}
+        \item Tuliskan kode kelas model PyTorch secara lengkap beserta forward pass-nya.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

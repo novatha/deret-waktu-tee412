@@ -1,0 +1,224 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 6)}]{\textbf{Pemodelan Eksogen \& Multivariat: SARIMAX \& VAR}}
+\subtitle{Korelasi Silang (CCF), Pengaruh Cuaca pada Beban Listrik, dan Sistem Multi-Kanal}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 6 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-6}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 6)}
+                Mahasiswa mampu mengintegrasikan variabel luar (eksogen) seperti cuaca/temperatur ke dalam model SARIMAX, menganalisis korelasi silang (CCF), serta memformulasikan sistem multivariat Vector AutoRegression (VAR).
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Urgensi Variabel Eksogen di Sistem Tenaga}
+                \item \textbf{Fungsi Korelasi Silang (CCF)}
+                \item \textbf{Formulasi Model SARIMAX}
+                \item \textbf{Model Transfer Function dan Distributed Lag}
+                \item \textbf{Pengantar Vector AutoRegression (VAR)}
+                \item \textbf{Implementasi Python: Beban vs Suhu Udara}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Mengapa Membutuhkan Variabel Eksogen ($X_t$)?}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Faktor Fisik Pembentuk Beban Listrik}
+                \begin{itemize}
+                    \item \textbf{Temperatur Udara}: Saat cuaca panas, penggunaan AC pendingin ruangan melonjak drastis (\textit{Cooling Degree Days}).
+                    \item \textbf{Radiasi Matahari}: Mempengaruhi keluaran daya fotovoltaik (PV) di atap gedung.
+                    \item \textbf{Kalender \& Hari Libur}: Perbedaan pola hari kerja, akhir pekan, dan hari libur nasional.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{alertblock}{Keterbatasan SARIMA Murni}
+                SARIMA univariat hanya berasumsi bahwa masa depan dibentuk oleh masa lalu sinyal itu sendiri ($y_t = f(y_{t-k})$). Jika ada gelombang panas (*heatwave*) mendadak, SARIMA murni akan terlambat merespons.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Cross-Correlation Function (CCF)}
+    Sebelum memasukkan variabel eksogen, kita menganalisis keterlambatan efek (*lagged relationship*) menggunakan CCF:
+    \begin{block}{Definisi Matematis CCF}
+        \begin{equation}
+            r_{xy}(k) = \frac{\sum_{t=1}^{N-k} (x_t - \bar{x})(y_{t+k} - \bar{y})}{\sqrt{\sum_{t=1}^N (x_t - \bar{x})^2 \sum_{t=1}^N (y_t - \bar{y})^2}}
+        \end{equation}
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Interpretasi Lag Positif ($k > 0$):}
+            Perubahan suhu pada waktu $t$ baru mempengaruhi lonjakan konsumsi beban AC pada waktu $t+k$ (efek inersia termal bangunan, misal $k=2$ jam).
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Pra-syarat Prewhitening:}
+            Kedua sinyal harus di-\textit{prewhiten} agar korelasi tidak palsu (*spurious correlation*) akibat tren bersama.
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Formulasi Matematis SARIMAX}
+    Menggabungkan regresi linier dengan derau terstruktur SARIMA:
+    \begin{block}{Persamaan SARIMAX}
+        \begin{equation}
+            y_t = \sum_{j=1}^m \beta_j X_{j,t} + \eta_t
+        \end{equation}
+        di mana galat $\eta_t$ mengikuti proses SARIMA musiman:
+        \begin{equation}
+            \Phi_P(B^s)\phi_p(B)(1 - B)^d(1 - B^s)^D \eta_t = \Theta_Q(B^s)\theta_q(B)\epsilon_t
+        \end{equation}
+    \end{block}
+    \begin{alertblock}{Keunggulan}
+        Koefisien $\beta_j$ merefleksikan elastisitas fisik: misal kenaikan $1^\circ\text{C}$ suhu meningkatkan beban sebesar $15.4$ MW.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Pengantar Vector AutoRegression (VAR)}
+    Jika terdapat beberapa variabel kelistrikan yang saling mempengaruhi secara timbal balik (misal Tegangan Bus $V_1, V_2, V_3$ pada gardu transmisi):
+    \begin{block}{Persamaan Model VAR($p$)}
+        \begin{equation}
+            \mathbf{Y}_t = \mathbf{c} + \mathbf{A}_1 \mathbf{Y}_{t-1} + \mathbf{A}_2 \mathbf{Y}_{t-2} + \dots + \mathbf{A}_p \mathbf{Y}_{t-p} + \boldsymbol{\epsilon}_t
+        \end{equation}
+        di mana $\mathbf{Y}_t = [y_{1,t}, y_{2,t}, \dots, y_{k,t}]^T$ adalah vektor observasi $k$-dimensi, dan $\mathbf{A}_i$ adalah matriks koefisien $k \times k$.
+    \end{block}
+    \vspace{0.1cm}
+    \begin{center}
+        \textbf{Uji Kausalitas Granger}: Menguji apakah riwayat sinyal $X$ secara statistik membantu meramalkan sinyal $Y$.
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: SARIMAX dengan Data Suhu}
+\begin{lstlisting}
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+import pandas as pd
+
+# Load data beban & temperatur
+df = pd.read_csv('load_weather.csv', parse_dates=['time'], index_col='time')
+train, test = df[:-24], df[-24:]
+
+# Definisikan variabel eksogen (X: suhu, radiasi)
+exog_train = train[['temperature', 'solar_irradiance']]
+exog_test = test[['temperature', 'solar_irradiance']]
+
+# Fitting Model SARIMAX(1,1,1)(1,1,0)_24
+sarimax = SARIMAX(train['load_mw'], exog=exog_train,
+                  order=(1, 1, 1), seasonal_order=(1, 1, 0, 24)).fit(disp=False)
+
+print(sarimax.summary())
+
+# Forecasting 24 Jam ke Depan dengan Ramalan Cuaca
+pred_24 = sarimax.forecast(steps=24, exog=exog_test)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: Vector AutoRegression (VAR)}
+\begin{lstlisting}
+from statsmodels.tsa.api import VAR
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load dataset sistem 3-variabel (Tegangan, Arus, THD)
+df_multi = pd.read_csv('power_quality.csv', index_col='time')
+
+# Inisialisasi dan pencarian ordo optimal VAR (minimasi AIC)
+model_var = VAR(df_multi)
+results = model_var.fit(maxlags=15, ic='aic')
+print(f"Ordo VAR terpilih: {results.k_ar}")
+print(results.summary())
+
+# Analisis Impulse Response Function (IRF)
+# Melihat respon variabel lain jika ada lonjakan sesaat di 'Arus'
+irf = results.irf(10) # 10 langkah ke depan
+irf.plot(impulse='Arus', response='THD')
+plt.title("Respon THD terhadap Impuls Arus")
+plt.show()
+
+# Peramalan sistem multivariat
+forecast_var = results.forecast(df_multi.values[-results.k_ar:], steps=5)
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}{Rangkuman \& Persiapan Minggu ke-7}
+    \begin{block}{Poin Kunci Minggu 6}
+        \begin{itemize}
+            \item SARIMAX memperluas kemampuan peramalan dengan menyerap informasi kausal fisik eksternal.
+            \item Analisis CCF mendeteksi jeda waktu inersia termal sistem kelistrikan.
+            \item VAR memodelkan dinamika interaksi multi-bus secara simultan tanpa asumsi searah.
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-7)}
+        \textbf{Estimasi State \& Kalman Filter}: Representasi ruang keadaan (\textit{State-Space}), algoritma Discrete Kalman Filter, dan peredaman derau pengukuran sensor telemetri.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Sesi Tanya Jawab \& Diskusi Model Eksogen}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

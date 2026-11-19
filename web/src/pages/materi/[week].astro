@@ -1,0 +1,508 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { weeksData, type WeekMaterial } from '../../data/courseData';
+
+export function getStaticPaths() {
+  return weeksData.map((week) => ({
+    params: { week: `minggu-${week.week}` },
+    props: { week }
+  }));
+}
+
+interface Props {
+  week: WeekMaterial;
+}
+
+const { week } = Astro.props;
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+
+const currentIndex = weeksData.findIndex(w => w.week === week.week);
+const prevWeek = currentIndex > 0 ? weeksData[currentIndex - 1] : undefined;
+const nextWeek = currentIndex >= 0 && currentIndex < weeksData.length - 1 ? weeksData[currentIndex + 1] : undefined;
+---
+
+<Layout title={`Minggu ${week.week}: ${week.title} | Deret Waktu FT UNIB`} description={week.summary}>
+  <!-- Module Header Banner -->
+  <section class="module-header">
+    <div class="container">
+      <div class="header-nav-row">
+        <a href={getUrl('/')} class="back-link">
+          <i data-lucide="arrow-left"></i> Kembali ke Beranda
+        </a>
+        <div class="header-cat-pill">
+          <span class="category-badge">{week.category}</span>
+        </div>
+      </div>
+
+      <div class="header-main-grid">
+        <div class="header-title-box">
+          <div class="week-pill-top">
+            <i data-lucide="calendar"></i> MODUL PERKULIAHAN MINGGU KE-{week.week}
+          </div>
+          <h1 class="mod-title">{week.title}</h1>
+          <p class="mod-subtitle">{week.subTitle}</p>
+        </div>
+
+        <!-- Download Action Hub -->
+        <div class="header-download-hub glass-panel">
+          <div class="hub-title">
+            <i data-lucide="download-cloud"></i> Berkas &amp; Bahan Ajar
+          </div>
+          <div class="hub-buttons-list">
+            <a href={getUrl(week.slidePdf)} target="_blank" class="btn btn-sm btn-primary">
+              <i data-lucide="presentation"></i> Unduh Slide (ch{week.week}.pdf)
+            </a>
+            <a href={getUrl(week.problemSetPdf)} target="_blank" class="btn btn-sm btn-outline">
+              <i data-lucide="file-question"></i> Unduh Soal C1–C6 (PDF)
+            </a>
+            {week.worksheetPdf && (
+              <a href={getUrl(week.worksheetPdf)} target="_blank" class="btn btn-sm btn-outline">
+                <i data-lucide="file-text"></i> Unduh Worksheet (PDF)
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Body -->
+  <section class="module-body-section">
+    <div class="container">
+      <div class="body-layout-grid">
+        <!-- Left: Deep Content -->
+        <div class="body-main-content">
+          <!-- Sub-CPMK Box -->
+          <div class="detail-card glass-panel">
+            <div class="card-icon-header">
+              <i data-lucide="target" class="icon-emerald"></i>
+              <h3>Capaian Pembelajaran Khusus (Sub-CPMK)</h3>
+            </div>
+            <p class="cpmk-text-highlight">
+              {week.subCpmk}
+            </p>
+            <p class="summary-text">
+              {week.summary}
+            </p>
+          </div>
+
+          <!-- Mathematical Formula & Theory Core -->
+          {week.formulaLatex && (
+            <div class="detail-card glass-panel">
+              <div class="card-icon-header">
+                <i data-lucide="sigma" class="icon-cyan"></i>
+                <h3>Formulasi Matematis &amp; Persamaan Inti</h3>
+              </div>
+              <div class="formula-display-container">
+                <div class="formula-latex-box">
+                  $${week.formulaLatex}$$
+                </div>
+              </div>
+            </div>
+          )}
+
+          <!-- Bloom's Taxonomy Alignment (C1-C6) -->
+          <div class="detail-card glass-panel">
+            <div class="card-icon-header">
+              <i data-lucide="award" class="icon-amber"></i>
+              <h3>Pemetaan Taksonomi Bloom (C1–C6)</h3>
+            </div>
+            <div class="bloom-grid">
+              <div class="bloom-box">
+                <div class="bloom-level-badge c1">C1–C2 (Mengingat &amp; Memahami)</div>
+                <p class="bloom-desc">{week.bloomHighlights.c1_c2}</p>
+              </div>
+              <div class="bloom-box">
+                <div class="bloom-level-badge c3">C3–C4 (Menerapkan &amp; Menganalisis)</div>
+                <p class="bloom-desc">{week.bloomHighlights.c3_c4}</p>
+              </div>
+              <div class="bloom-box">
+                <div class="bloom-level-badge c5">C5–C6 (Mengevaluasi &amp; Berkreasi)</div>
+                <p class="bloom-desc">{week.bloomHighlights.c5_c6}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Code Snippet -->
+          {week.codeSnippet && (
+            <div class="detail-card glass-panel">
+              <div class="card-icon-header code-header">
+                <div class="code-title-left">
+                  <i data-lucide="code" class="icon-violet"></i>
+                  <h3>Implementasi Komputasi (Python / Statsmodels)</h3>
+                </div>
+                <button id="copy-code-btn" class="btn btn-sm btn-outline">
+                  <i data-lucide="copy"></i> Salin Kode
+                </button>
+              </div>
+              <pre class="code-block"><code id="code-snippet-raw">{week.codeSnippet}</code></pre>
+            </div>
+          )}
+        </div>
+
+        <!-- Right: Module Meta & Topics -->
+        <div class="body-sidebar">
+          <div class="sidebar-sticky-card glass-panel">
+            <h4 class="sidebar-heading">
+              <i data-lucide="list"></i> Topik Bahasan Teori
+            </h4>
+            <ul class="theory-topics-list">
+              {week.theoryTopics.map(topic => (
+                <li class="topic-item">
+                  <i data-lucide="check" class="topic-check-icon"></i>
+                  <span>{topic}</span>
+                </li>
+              ))}
+            </ul>
+
+            <h4 class="sidebar-heading" style="margin-top: 24px;">
+              <i data-lucide="terminal"></i> Praktikum Terkait
+            </h4>
+            <div class="lab-topic-badge">
+              {week.labTopic}
+            </div>
+
+            <!-- Prev / Next Navigation -->
+            <div class="module-nav-pagination">
+              {prevWeek ? (
+                <a href={getUrl(`/materi/minggu-${prevWeek.week}`)} class="nav-page-btn prev">
+                  &larr; Minggu {prevWeek.week}
+                </a>
+              ) : <div></div>}
+              {nextWeek && (
+                <a href={getUrl(`/materi/minggu-${nextWeek.week}`)} class="nav-page-btn next">
+                  Minggu {nextWeek.week} &rarr;
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .module-header {
+    padding: 60px 0 40px;
+    background: radial-gradient(circle at 30% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .header-nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--neon-cyan);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: #38bdf8;
+    text-decoration: underline;
+  }
+
+  .category-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--neon-emerald);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+
+  .header-main-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .week-pill-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--neon-emerald);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  .mod-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .mod-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .header-download-hub {
+    padding: 20px;
+    border-radius: var(--radius-lg);
+  }
+
+  .hub-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--neon-amber);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .hub-buttons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Body */
+  .module-body-section {
+    padding: 50px 0 80px;
+  }
+
+  .body-layout-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 0.65fr;
+    gap: 30px;
+  }
+
+  .body-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .detail-card {
+    padding: 26px;
+    border-radius: var(--radius-lg);
+  }
+
+  .card-icon-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .card-icon-header h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+  }
+
+  .icon-emerald { color: var(--neon-emerald); }
+  .icon-cyan { color: var(--neon-cyan); }
+  .icon-amber { color: var(--neon-amber); }
+  .icon-violet { color: var(--neon-violet); }
+
+  .cpmk-text-highlight {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--neon-cyan);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .summary-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  .formula-display-container {
+    background: rgba(9, 13, 22, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 20px;
+  }
+
+  .formula-latex-box {
+    font-size: 1.1rem;
+    color: var(--text-main);
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  .bloom-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .bloom-box {
+    background: rgba(9, 13, 22, 0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+  }
+
+  .bloom-level-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .bloom-level-badge.c1 { background: rgba(6, 182, 212, 0.15); color: var(--neon-cyan); }
+  .bloom-level-badge.c3 { background: rgba(16, 185, 129, 0.15); color: var(--neon-emerald); }
+  .bloom-level-badge.c5 { background: rgba(245, 158, 11, 0.15); color: var(--neon-amber); }
+
+  .bloom-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .code-header {
+    justify-content: space-between;
+  }
+
+  .code-title-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .code-block {
+    background: #070a12;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #38bdf8;
+    overflow-x: auto;
+  }
+
+  /* Sidebar */
+  .sidebar-sticky-card {
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    position: sticky;
+    top: 90px;
+  }
+
+  .sidebar-heading {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .theory-topics-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .topic-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+
+  .topic-check-icon {
+    width: 14px;
+    height: 14px;
+    color: var(--neon-emerald);
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .lab-topic-badge {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    color: #c4b5fd;
+    font-size: 0.82rem;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    line-height: 1.45;
+  }
+
+  .module-nav-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .nav-page-btn {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-page-btn:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 992px) {
+    .header-main-grid, .body-layout-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.getElementById('copy-code-btn')?.addEventListener('click', () => {
+    const codeEl = document.getElementById('code-snippet-raw');
+    if (codeEl) {
+      navigator.clipboard.writeText(codeEl.textContent || '').then(() => {
+        const btn = document.getElementById('copy-code-btn');
+        if (btn) {
+          btn.innerHTML = '<i data-lucide="check"></i> Tersalin!';
+          setTimeout(() => {
+            btn.innerHTML = '<i data-lucide="copy"></i> Salin Kode';
+            if (typeof (window as any).lucide !== 'undefined') {
+              (window as any).lucide.createIcons();
+            }
+          }, 2000);
+        }
+      });
+    }
+  });
+</script>

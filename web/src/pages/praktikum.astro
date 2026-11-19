@@ -1,0 +1,289 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { courseMetadata, weeksData } from '../data/courseData';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+---
+
+<Layout title="Panduan Praktikum 13 Modul (12 Bab) | Analisis Deret Waktu FT UNIB" description="Buku Petunjuk Praktikum Terintegrasi Python & Julia untuk Laboratorium Sistem Tenaga.">
+  <!-- Header Banner -->
+  <section class="praktikum-header">
+    <div class="container">
+      <div class="header-breadcrumbs">
+        <a href={getUrl('/')} class="crumb-link">&larr; Kembali ke Beranda</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-current">Panduan Praktikum Laboratorium</span>
+      </div>
+
+      <div class="header-main-flex">
+        <div>
+          <span class="pill-badge">
+            <i data-lucide="terminal"></i> LAB MANUAL &amp; WORKBOOK OBE
+          </span>
+          <h1 class="header-title">
+            Panduan Praktikum <span class="gradient-text">13 Modul Komputasi Cerdas</span>
+          </h1>
+          <p class="header-desc">
+            Panduan eksperimen laboratorium komputasi cerdas terintegrasi Python (`statsmodels`, `pmdarima`, `PyTorch`, `LightGBM`) dan Julia yang dikemas dalam 12 bab buku praktikum untuk menyelesaikan masalah riil peramalan sistem tenaga, estimasi state-space, dan deteksi anomali smart grid.
+          </p>
+        </div>
+
+        <div class="header-action-card glass-panel">
+          <div class="pdf-tag">
+            <i data-lucide="file-text"></i> DOKUMEN RESMI LAB
+          </div>
+          <p class="pdf-info">Buku Panduan Praktikum Lengkap (12 Bab Format Standar OBE)</p>
+          <a href={getUrl(courseMetadata.labManualPdf)} target="_blank" class="btn btn-primary btn-block">
+            <i data-lucide="download"></i> Unduh Buku Praktikum (PDF)
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lab Modules Grid -->
+  <section class="praktikum-grid-section">
+    <div class="container">
+      <div class="section-title-wrap">
+        <h2 class="section-heading">
+          Daftar 13 Modul <span class="gradient-text-cyan">Praktikum Mandiri &amp; Terbimbing</span>
+        </h2>
+        <p class="section-subheading">
+          Setiap modul dilengkapi studi kasus nyata data interkoneksi beban listrik PLN, pembangkitan PLTS, dan analisis gangguan transien.
+        </p>
+      </div>
+
+      <div class="lab-cards-grid">
+        {weeksData.map((w, idx) => (
+          <div class="lab-card glass-panel">
+            <div class="lab-card-top">
+              <div class="lab-card-badges">
+                <span class="modul-badge">Modul {idx + 1}</span>
+                <span class="week-ref-badge">Minggu {w.week}</span>
+              </div>
+              <h3 class="lab-topic-title">
+                {w.labTopic}
+              </h3>
+              <p class="lab-summary-text">
+                {w.summary}
+              </p>
+            </div>
+
+            <div class="lab-card-bottom">
+              <div class="lab-subcpmk-tag">
+                <i data-lucide="check" class="check-icon"></i>
+                <span>{w.subCpmk}</span>
+              </div>
+              <div class="lab-card-actions">
+                <a href={getUrl(`/materi/minggu-${w.week}`)} class="lab-action-link">
+                  <i data-lucide="code"></i> Lihat Kode &amp; Rumus &rarr;
+                </a>
+                <a href={getUrl(courseMetadata.labManualPdf)} target="_blank" class="btn btn-sm btn-outline">
+                  Petunjuk Modul
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .praktikum-header {
+    padding: 60px 0 40px;
+    background: radial-gradient(circle at 70% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .header-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    font-size: 0.85rem;
+  }
+
+  .crumb-link {
+    color: var(--neon-cyan);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .crumb-sep {
+    color: var(--text-dim);
+  }
+
+  .crumb-current {
+    color: var(--text-muted);
+  }
+
+  .header-main-flex {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .header-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    margin: 14px 0 12px;
+    line-height: 1.2;
+  }
+
+  .header-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 650px;
+  }
+
+  .header-action-card {
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pdf-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--neon-amber);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .pdf-info {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    font-weight: 600;
+  }
+
+  .btn-block {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .praktikum-grid-section {
+    padding: 60px 0 80px;
+  }
+
+  .lab-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 24px;
+  }
+
+  .lab-card {
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .lab-card:hover {
+    border-color: var(--border-cyan-glow);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px -10px rgba(6, 182, 212, 0.2);
+  }
+
+  .lab-card-badges {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .modul-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--neon-emerald);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+  }
+
+  .week-ref-badge {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .lab-topic-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+
+  .lab-summary-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+
+  .lab-subcpmk-tag {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: #93c5fd;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  .check-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--neon-cyan);
+    margin-top: 2px;
+  }
+
+  .lab-card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .lab-action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .lab-action-link:hover {
+    color: #38bdf8;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 900px) {
+    .header-main-flex {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

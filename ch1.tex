@@ -1,0 +1,363 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+% Package setup
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Custom Color Palette (Modern Deep Blue & Amber Accent)
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+% Beamer Color Configuration
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+% Code Listing Configuration
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+
+% Presentation Metadata
+\title[\textbf{Deret Waktu (Minggu 1)}]{\textbf{Pengantar Analisis Deret Waktu dalam Teknik Elektro}}
+\subtitle{Karakteristik Data, Komponen Sinyal, dan Dekomposisi Temporal}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 1 / Semester Ganjil 2026}
+
+\begin{document}
+
+% -------------------------------------------------------------
+% SLIDE 1: TITLE SLIDE
+% -------------------------------------------------------------
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 2: OUTLINE / AGENDA
+% -------------------------------------------------------------
+\begin{frame}{Agenda Perkuliahan Minggu ke-1}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 1)}
+                Mahasiswa mampu mengidentifikasi karakteristik data temporal sistem kelistrikan, membedakan tipe dependensi waktu, serta melakukan dekomposisi komponen data secara komputasional.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Urgensi Deret Waktu di Teknik Elektro}
+                \item \textbf{Definisi \& Notasi Matematis}
+                \item \textbf{4 Komponen Utama Sinyal Temporal}
+                \item \textbf{Model Dekomposisi: Aditif vs Multiplikatif}
+                \item \textbf{Tantangan Data Riil Sistem Tenaga}
+                \item \textbf{Hands-on Komputasi (Python / Octave)}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 3: KONTEKS DI TEKNIK ELEKTRO
+% -------------------------------------------------------------
+\begin{frame}{Mengapa Analisis Deret Waktu Krusial di Teknik Elektro?}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{1. Operasi \& Perencanaan Sistem Tenaga}
+                \begin{itemize}
+                    \item \textbf{Load Forecasting}: Peramalan beban puncak untuk menjamin \textit{spinning reserve} dan stabilitas tegangan.
+                    \item \textbf{Economic Dispatch}: Menentukan pembangkit paling ekonomis setiap jam.
+                \end{itemize}
+            \end{block}
+            \begin{block}{2. Integrasi Energi Terbarukan (EBT)}
+                \begin{itemize}
+                    \item Pembangkitan PLTS (intermitensi radiasi matahari) dan PLTB (kecepatan angin) bersifat stokastik.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{3. Smart Grid \& Telemetri IoT}
+                \begin{itemize}
+                    \item Jutaan data \textit{Smart Meter} per detik: deteksi pencurian daya \& anomali beban.
+                \end{itemize}
+            \end{block}
+            \begin{block}{4. Diagnostik Mesin \& Proteksi}
+                \begin{itemize}
+                    \item Sinyal getaran bantalan motor, deret waktu gas DGA pada trafo, dan harmonisa arus.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 4: DEFINISI DAN NOTASI MATEMATIS
+% -------------------------------------------------------------
+\begin{frame}{Definisi Matematis Deret Waktu}
+    \begin{block}{Definisi Formal}
+        Deret waktu (\textit{Time Series}) adalah himpunan observasi berurutan yang dicatat secara kronologis pada interval waktu diskrit yang teratur $t \in \mathcal{T}$:
+        \begin{equation}
+            \{X_t\} = \{X_1, X_2, X_3, \dots, X_N\} \quad \text{atau} \quad X(t), \; t = 1, 2, \dots, N
+        \end{equation}
+    \end{block}
+
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Ciri Khas vs Data Tabular Standar:}
+            \begin{itemize}
+                \item \textbf{Autokorelasi}: $X_t$ tidak independen dari $X_{t-1}, X_{t-2}$.
+                \item \textbf{Sensitivitas Urutan}: Pengacakan baris data (\textit{shuffling}) akan merusak struktur informasi fisiknya.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Frekuensi Pencatatan Elektro:}
+            \begin{itemize}
+                \item Sub-detik (milidetik): PMU (\textit{Phasor Measurement Unit}).
+                \item Menitan: Inverter PLTS, Sensor IoT.
+                \item Per-jam: Profil beban harian PLN.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 5: 4 KOMPONEN DERET WAKTU
+% -------------------------------------------------------------
+\begin{frame}{4 Komponen Pembentuk Sinyal Deret Waktu}
+    Secara klasik, setiap deret waktu $y_t$ tersusun dari empat komponen dinamis:
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{\textbf{1. Tren ($T_t$) - Long-Term Direction}}
+                Kecenderungan arah data dalam jangka panjang (naik/turun) akibat pertumbuhan ekonomi, penambahan pelanggan industri, atau populasi.
+            \end{block}
+            \begin{block}{\textbf{2. Musiman ($S_t$) - Seasonality}}
+                Fluktuasi periodik yang berulang pada frekuensi tetap (harian: jam beban puncak 18.00--22.00, mingguan: hari kerja vs libur, tahunan: cuaca kemarau/hujan).
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{\textbf{3. Siklus ($C_t$) - Cyclical Pattern}}
+                Osilasi naik-turun yang durasinya tidak tetap (misal siklus resesi ekonomi atau fluktuasi multi-tahunan fenomena El-Niño).
+            \end{block}
+            \begin{block}{\textbf{4. Residu / Derau ($R_t$ / $\epsilon_t$)}}
+                Komponen acak tak terduga (\textit{white noise}) yang disebabkan oleh gangguan acak, sambaran petir, atau padamnya beban tiba-tiba.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 6: MODEL DEKOMPOSISI (ADITIF VS MULTIPLIKATIF)
+% -------------------------------------------------------------
+\begin{frame}{Model Dekomposisi Sinyal: Aditif vs Multiplikatif}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Model Aditif (\textit{Additive Model})}
+                \begin{equation}
+                    y_t = T_t + S_t + R_t
+                \end{equation}
+                \textbf{Karakteristik:}
+                \begin{itemize}
+                    \item Magnitudo variasi musiman ($S_t$) \textbf{konstan} terlepas dari naiknya nilai tren $T_t$.
+                    \item Cocok jika beban puncak naik stabil setiap tahun tanpa peningkatan lebar osilasi.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Model Multiplikatif (\textit{Multiplicative Model})}
+                \begin{equation}
+                    y_t = T_t \times S_t \times R_t
+                \end{equation}
+                \textbf{Karakteristik:}
+                \begin{itemize}
+                    \item Variasi musiman \textbf{proporsional} terhadap level tren (semakin tinggi tren, semakin lebar fluktuasi beban).
+                    \item Sering ditemui pada sistem distribusi yang bertumbuh pesat.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+    \begin{alertblock}{Transformasi Logaritmik}
+        Model multiplikatif dapat diubah menjadi model aditif via transformasi log:
+        $\ln(y_t) = \ln(T_t) + \ln(S_t) + \ln(R_t)$.
+    \end{alertblock}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 7: METODOLOGI DEKOMPOSISI KLASIK
+% -------------------------------------------------------------
+\begin{frame}{Metode Dekomposisi Klasik Berbasis Moving Average}
+    Bagaimana mengekstraksi komponen $T_t, S_t,$ dan $R_t$ dari sinyal mentah $y_t$?
+    
+    \begin{enumerate}
+        \item \textbf{Estimasi Tren ($T_t$)} menggunakan filter pemulus berbobot (\textit{Centered Moving Average} dengan panjang jendela $m$ sama dengan periode musiman, misal $m=24$ untuk data per-jam):
+        \begin{equation}
+            \hat{T}_t = \frac{1}{m} \left( \frac{1}{2}y_{t-m/2} + y_{t-m/2+1} + \dots + y_{t+m/2-1} + \frac{1}{2}y_{t+m/2} \right)
+        \end{equation}
+        \item \textbf{Detrending (Menghilangkan Tren)}:
+        \begin{equation}
+            \text{Aditif: } y_t - \hat{T}_t = S_t + R_t \qquad \text{Multiplikatif: } y_t / \hat{T}_t = S_t \times R_t
+        \end{equation}
+        \item \textbf{Estimasi Musiman ($\hat{S}_t$)}: Rata-ratakan nilai hasil detrending untuk setiap periode musiman (misal seluruh pukul 18.00).
+        \item \textbf{Isolasi Residu ($\hat{R}_t$)}: Sisa data setelah dikurangi tren dan musiman.
+    \end{enumerate}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 8: DATA RESIDUAL & WHITE NOISE
+% -------------------------------------------------------------
+\begin{frame}{Karakteristik Residual yang Ideal (White Noise)}
+    Komponen residu $R_t$ harus berupa proses \textbf{White Noise} jika seluruh pola sinyal telah terekstraksi sempurna:
+    
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Syarat Matematis White Noise}
+                \begin{enumerate}
+                    \item Rata-rata nol: $\mathbb{E}[R_t] = 0$
+                    \item Variansi konstan (Homoskedastik): $\mathrm{Var}(R_t) = \sigma^2$
+                    \item Tidak ada autokorelasi: 
+                    \begin{equation}
+                        \gamma(k) = \mathrm{Cov}(R_t, R_{t-k}) = 0 \quad (\forall k \neq 0)
+                    \end{equation}
+                \end{enumerate}
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{alertblock}{Implikasi dalam Rekayasa Elektro}
+                \begin{itemize}
+                    \item Jika residu masih memiliki pola berkala $\rightarrow$ Masih ada frekuensi harmonisa atau pola musiman yang terlewat.
+                    \item Model peramalan dikatakan \textbf{optimal} apabila sisa error tidak dapat diprediksi lagi (murni acak).
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 9: CONTOH KODE PYTHON
+% -------------------------------------------------------------
+\begin{frame}[fragile]{Implementasi Komputasi: Dekomposisi dengan Python}
+\begin{lstlisting}
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# 1. Membaca dataset beban listrik PLN / Gardu Induk (Interval: 1 Jam)
+df = pd.read_csv('load_data.csv', parse_dates=['timestamp'], index_col='timestamp')
+
+# 2. Melakukan dekomposisi aditif dengan periode musiman harian (period=24 jam)
+decomposition = seasonal_decompose(df['power_mw'], model='additive', period=24)
+
+# 3. Mengekstrak masing-masing komponen
+trend = decomposition.trend
+seasonal = decomposition.seasonal
+residual = decomposition.resid
+
+# 4. Plot visualisasi 4-panel
+fig = decomposition.plot()
+fig.set_size_inches(10, 6)
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 10: TANTANGAN DATA SISTEM KELISTRIKAN
+% -------------------------------------------------------------
+\begin{frame}{Tantangan Nyata Data Deret Waktu di Lapangan}
+    \begin{columns}[T]
+        \begin{column}{0.33\textwidth}
+            \begin{block}{\textbf{1. Multiple Seasonality}}
+                Data beban memiliki siklus jam (24 jam), hari (7 hari), dan tahunan (365 hari) yang bertumpuk secara simultan.
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{\textbf{2. Outlier \& Gangguan}}
+                Sambaran petir, pemadaman sebagian (\textit{blackout}), atau kegagalan transmisi menciptakan lonjakan anomali.
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{\textbf{3. Missing Values}}
+                Data telemetri RTU/SCADA hilang akibat gangguan koneksi komunikasi nirkabel.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.4cm}
+    \begin{center}
+        \textit{Pra-pemrosesan data (*cleaning*, interpolasi, pemfilteran derau) menyumbang 60\% keberhasilan model peramalan!}
+    \end{center}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 11: RANGKUMAN & PERSIAPAN MINGGU 2
+% -------------------------------------------------------------
+\begin{frame}{Rangkuman dan Rencana Materi Minggu Depan}
+    \begin{block}{Takeaways Minggu 1}
+        \begin{itemize}
+            \item Deret waktu adalah urutan data berindeks kronologis dengan dependensi autokorelasi antar observasi.
+            \item Sinyal kelistrikan dapat diurai menjadi 4 komponen: Tren, Musiman, Siklus, dan Residu.
+            \item Dekomposisi mempermudah insinyur mengisolasi fluktuasi periodik dan mengevaluasi kesehatan sistem.
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-2)}
+        \textbf{Stasioneritas \& Analisis Korelasi Sinyal}:
+        \begin{itemize}
+            \item Menguji kestasioneran data menggunakan \textit{Augmented Dickey-Fuller} (ADF) dan KPSS Test.
+            \item Plot Korelogram: Autocorrelation Function (ACF) \& Partial ACF (PACF).
+            \item Teknik Diferensiasi (\textit{Differencing}) untuk menstasionerkan sinyal.
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+% -------------------------------------------------------------
+% SLIDE 12: SESI DISKUSI & TANYA JAWAB
+% -------------------------------------------------------------
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Ada pertanyaan atau tanggapan terkait materi hari ini?}\\[1.2cm]
+        
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Fakultas Teknik\\
+        Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

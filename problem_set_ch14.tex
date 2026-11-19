@@ -1,0 +1,127 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 14: Integrasi Operasi Daya \& Ketidakpastian}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 14: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Peramalan Probabilistik, Kuantisasi Ketidakpastian, dan Manajemen BESS Mikrogrid}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Apa perbedaan mendasar antara peramalan titik (*Point Forecast*) dan peramalan probabilistik (*Probabilistic Forecast*) dalam konteks integrasi pembangkit EBT?
+        \item Tuliskan formulasi fungsi kerugian kuantil (\textit{Pinball / Quantile Loss Function}) untuk kuantil target $\tau \in (0, 1)$!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Mengapa operator transmisi sistem tenaga (PLN P3B) lebih membutuhkan estimasi batas bawah P10 dan batas atas P90 dibandingkan hanya nilai rata-rata estimasi saat menjadwalkan kapasitas cadangan putar (*Spinning Reserve*)?
+        \item Jelaskan konsep strategi operasi \textit{Peak Shaving} dan \textit{Tariff Arbitrage} pada sistem baterai BESS yang memanfaatkan informasi peramalan beban dan harga listrik dinamis!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sebuah mikrogrid industri memiliki data ramalan daya untuk jam ke-14 ($t=14$):
+    \begin{itemize}
+        \item Ramalan Beban Industri: $\hat{P}_{\text{load}} = 500$ kW
+        \item Ramalan Daya PLTS Atap: $\hat{P}_{\text{PV}} = 350$ kW
+        \item Status Baterai: Kapasitas maksimum $E_{\text{cap}} = 1000$ kWh, $\text{SoC}(13) = 60\%$, efisiensi $\eta = 95\%$.
+        \item Maksimum daya pengosongan baterai: $P_{\text{dis}}^{\max} = 100$ kW.
+    \end{itemize}
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah defisit daya bersih sistem ($\Delta P = \hat{P}_{\text{load}} - \hat{P}_{\text{PV}}$).
+        \item Jika baterai diperintahkan mengosongkan daya maksimum ($P_{\text{dis}} = 100$ kW) selama $\Delta t = 1$ jam, hitunglah sisa daya yang harus diimpor dari grid PLN ($P_{\text{grid}}$).
+        \item Hitunglah $\text{SoC}$ baterai yang baru pada jam ke-14 ($\text{SoC}(14)$).
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Tabel berikut merekam hasil peramalan daya PLTB 20 MW menggunakan Quantile Regression pada 3 kondisi cuaca:
+    \begin{center}
+    \begin{tabular}{|l|c|c|c|c|}
+    \hline
+    \rowcolor{boxbg}
+    \textbf{Kondisi Angin} & \textbf{P10 (MW)} & \textbf{P50 (MW)} & \textbf{P90 (MW)} & \textbf{Lebar Interval P90--P10 (MW)} \\ \hline
+    Hari 1: Angin Stabil Laminar & 14.2 & 15.0 & 15.8 & 1.6 MW (Ketidakpastian rendah) \\ \hline
+    Hari 2: Angin Fluktuatif Gusty & 4.1 & 11.5 & 18.2 & 14.1 MW (Ketidakpastian sangat tinggi) \\ \hline
+    \end{tabular}
+    \end{center}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Analisislah dampak ketidakpastian yang sangat lebar pada Hari 2 terhadap biaya komitmen unit pembangkit termal pendamping (*Unit Commitment Cost*)!
+        \item Bagaimana algoritma kendali prediktif (*Model Predictive Control*) menyesuaikan batasan operasional (*constraints*) saat lebar interval ketidakpastian melonjak tajam?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Dua metrik diusulkan untuk mengevaluasi kualitas pita peramalan probabilistik:
+    \begin{itemize}
+        \item \textbf{PICP} (\textit{Prediction Interval Coverage Probability}): Persentase sampel aktual yang jatuh di dalam rentang [P10, P90]. Target ideal = 80\%.
+        \item \textbf{PINAW} (\textit{Prediction Interval Normalized Average Width}): Rata-rata lebar pita interval yang dinormalisasi terhadap kapasitas nominal.
+    \end{itemize}
+    Evaluasilah mengapa model yang memiliki $\text{PICP} = 99\%$ belum tentu merupakan model terbaik jika nilai PINAW-nya sangat besar (misal lebar interval mencakup 90\% kapasitas sistem)!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah formulasi program matematika optimasi linier (\textit{Mixed-Integer Linear Programming} - MILP atau formulasi Python \texttt{cvxpy} / \texttt{scipy.optimize}) untuk manajemen energi mikrogrid 24 jam:
+    \begin{enumerate}[label=\alph*.]
+        \item Rumuskan fungsi objektif minimasi biaya total pembelian energi dari grid PLN dengan tarif waktu penggunaan (*Time-of-Use Tariff*).
+        \item Rumuskan kendala (*constraints*) keseimbangan daya setiap jam.
+        \item Rumuskan kendala dinamika State-of-Charge baterai beserta batas kapasitas minimum ($\text{SoC}_{\min} = 20\%$) dan maksimum ($\text{SoC}_{\max} = 90\%$).
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

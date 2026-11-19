@@ -1,0 +1,96 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Lembar Kerja Mahasiswa \& Problem Set (Minggu 10)}}
+\fancyhead[R]{\small\color{gray}Analisis Deret Waktu -- Teknik Elektro}
+\fancyfoot[L]{\footnotesize\color{gray}Program Studi Teknik Elektro FT UNIB}
+\fancyfoot[R]{\footnotesize\thepage}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.25cm]
+    {\LARGE \textbf{\color{primaryblue}LEMBAR KERJA \& PROBLEM SET MINGGU 10}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Analisis Spektral dan Transformasi Fourier/FFT}}
+\end{center}
+
+\vspace{0.2cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.5cm}p{5.5cm}p{2.5cm}p{4.5cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Kelas/Kelompok} & : \dotfill & \textbf{Tanggal} & : \dotfill \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\section{Panduan Pengerjaan}
+Problem set ini dirancang berjenjang berdasarkan Taksonomi Bloom (Level C1 sampai C6) untuk mengukur capaian \textbf{Sub-CPMK 10}. Kerjakan secara mandiri, rapi, dan sistematis.
+
+\section{Problem Set (Level C1 -- C6)}
+
+\begin{enumerate}[leftmargin=1.8em, label=\textbf{Soal \arabic*.}]
+    
+    % C1 - Remembering
+    \item \textbf{[C1 -- Mengingat / \textit{Remembering}]} \\
+    Jelaskan secara intuitif konsep Transformasi Fourier. Apa yang dimaksud dengan transformasi data dari ranah waktu (time domain) ke ranah frekuensi (frequency domain)?
+    \vspace{2.2cm}
+
+    % C2 - Understanding
+    \item \textbf{[C2 -- Memahami / \textit{Understanding}]} \\
+    Apa perbedaan mendasar antara Transformasi Fourier Diskrit (DFT) dan Fast Fourier Transform (FFT)? Mengapa FFT sangat revolusioner dalam analisis sinyal digital?
+    \vspace{2.8cm}
+
+    % C3 - Applying
+    \item \textbf{[C3 -- Menerapkan / \textit{Applying}]} \\
+    Diberikan sinyal listrik sampling diskrit 4 titik: $x = [2, 0, 2, 0]$. Hitung nilai komputasi DFT pada k=0 (komponen DC / frekuensi nol) menggunakan definisi rumus dasar DFT.
+    \vspace{2.8cm}
+
+    \newpage
+
+    % C4 - Analyzing
+    \item \textbf{[C4 -- Menganalisis / \textit{Analyzing}]} \\
+    Seorang analis melihat grafik \textit{periodogram} dari spektrum frekuensi data osilasi generator dan menemukan puncak tinggi (\textit{peak}) pada frekuensi 0.5 Hz. Analisis apa makna fisik dari temuan puncak frekuensi tersebut terhadap kestabilan sistem tenaga?
+    \vspace{3.5cm}
+
+    % C5 - Evaluating
+    \item \textbf{[C5 -- Mengevaluasi / \textit{Evaluating}]} \\
+    Evaluasi kelemahan fundamental dari Transformasi Fourier standar ketika digunakan untuk menganalisis sinyal deret waktu kelistrikan yang sifatnya highly non-stationary (misalnya sinyal transien gangguan hubung singkat). Mengapa spektrum frekuensi Fourier dianggap kurang informatif pada sinyal jenis ini?
+    \vspace{3.5cm}
+
+    % C6 - Creating
+    \item \textbf{[C6 -- Merancang / \textit{Creating}]} \\
+    Rancang sebuah prosedur analisis identifikasi kualitas daya (Power Quality) harmonisa tegangan berdasar sinyal data rekaman osiloskop dengan memanfaatkan modul fungsi FFT. Prosedur harus mencakup \textit{windowing}, penghitungan komponen harmonisa orde 1 sampai orde 5, dan estimasi nilai THD.
+    \vspace{4.5cm}
+
+\end{enumerate}
+
+\end{document}

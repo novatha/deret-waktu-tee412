@@ -1,0 +1,163 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 13)}]{\textbf{Deteksi Anomali \& Kegagalan Sistem Tenaga}}
+\subtitle{Isolation Forest, Rekonstruksi LSTM Autoencoder, dan Deteksi Pencurian Listrik}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 13 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-13}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 12)}
+                Mahasiswa mampu mengidentifikasi taksonomi anomali pada data sensor kelistrikan, merancang model deteksi tanpa pengawasan (*Unsupervised Anomaly Detection*) berbasis Isolation Forest dan Autoencoder, serta mengevaluasi metrik presisi/recall.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Taksonomi Anomali Data Kelistrikan}
+                \item \textbf{Metode Statistik: Z-Score \& CUSUM}
+                \item \textbf{Algoritma Isolation Forest}
+                \item \textbf{Deep Learning: LSTM Autoencoder}
+                \item \textbf{Metrik Evaluasi: Precision, Recall, \& F1-Score}
+                \item \textbf{Studi Kasus: Deteksi Pencurian Smart Meter}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Taksonomi Anomali pada Sinyal Sistem Tenaga}
+    \begin{columns}[T]
+        \begin{column}{0.33\textwidth}
+            \begin{block}{1. Point Anomalies}
+                Titik tunggal yang melompat ekstrem sesaat (misal sambaran petir, spike tegangan transien).
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{2. Contextual Anomalies}
+                Nilai berada dalam batas normal namun aneh dalam konteks waktu (misal beban puncak 500 kW terjadi pada pukul 03.00 pagi).
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{3. Collective Anomalies}
+                Sekumpulan urutan yang polanya menyimpang (misal penurunan flat konsumsi meter pintar akibat manipulasi bypass kWh).
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Deteksi Anomali Berbasis Rekonstruksi (LSTM Autoencoder)}
+    Autoencoder dilatih untuk memadatkan dan merekonstruksi \textbf{hanya pola sinyal normal}:
+    \begin{block}{Prinsip Galat Rekonstruksi}
+        \begin{equation}
+            \text{Error Rekonstruksi } \mathcal{L}(t) = \| \mathbf{x}_t - \hat{\mathbf{x}}_t \|^2
+        \end{equation}
+        \begin{itemize}
+            \item \textbf{Kondisi Normal}: Jaringan mampu merekonstruksi dengan sangat akurat ($\mathcal{L}(t) < \tau$).
+            \item \textbf{Kondisi Anomali / Rusak}: Jaringan gagal merekonstruksi pola yang belum pernah dipelajari, sehingga $\mathcal{L}(t) > \tau$ (Alarm Anomali!).
+        \end{itemize}
+    \end{block}
+    \begin{center}
+        \textbf{Penentuan Ambang Batas}: $\tau = \mu_{\text{train\_error}} + 3 \cdot \sigma_{\text{train\_error}}$.
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: LSTM Autoencoder Anomaly Detector}
+\begin{lstlisting}
+import numpy as np
+from sklearn.metrics import precision_recall_fscore_support
+
+# Model Autoencoder dilatih pada data operasi normal (X_train_normal)
+autoencoder.fit(X_train_normal, X_train_normal, epochs=50, batch_size=32, verbose=False)
+
+# Evaluasi pada data uji (mengandung anomali pencurian daya)
+X_pred = autoencoder.predict(X_test)
+mse_loss = np.mean(np.power(X_test - X_pred, 2), axis=(1, 2))
+
+# Ambang Batas Deteksi Dinamis
+threshold = np.mean(train_loss) + 3.0 * np.std(train_loss)
+y_pred_anomaly = (mse_loss > threshold).astype(int)
+
+# Metrik Evaluasi
+p, r, f1, _ = precision_recall_fscore_support(y_test_ground_truth, y_pred_anomaly, average='binary')
+print(f"Hasil Deteksi -> Precision: {p:.3f}, Recall: {r:.3f}, F1-Score: {f1:.3f}")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman \& Persiapan Minggu ke-14}
+    \begin{block}{Poin Kunci Minggu 13}
+        \begin{itemize}
+            \item Anomali kelistrikan memiliki karakteristik kontekstual dan kolektif yang unik.
+            \item Isolation Forest unggul untuk anomali titik dan deteksi cepat tanpa asumsi distribusi.
+            \item LSTM Autoencoder merepresentasikan standar terbaik untuk mendeteksi manipulasi pencurian listrik dan degradasi kesehatan aset transformator.
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-14)}
+        \textbf{Integrasi Peramalan pada Operasi Sistem Tenaga}: Unit Commitment, penjadwalan baterai BESS pada smart microgrid, dan kuantisasi interval ketidakpastian.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Pertanyaan \& Diskusi Deteksi Anomali Sistem Kelistrikan}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

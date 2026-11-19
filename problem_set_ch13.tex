@@ -1,0 +1,127 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 13: Deteksi Anomali Sistem Tenaga}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 13: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Deteksi Anomali Sinyal Kelistrikan, Isolation Forest, dan LSTM Autoencoder}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Sebutkan dan berikan definisi 3 tipe anomali data deret waktu: \textit{Point Anomaly, Contextual Anomaly,} dan \textit{Collective Anomaly}!
+        \item Berikan 1 contoh riil pada sistem kelistrikan untuk masing-masing tipe anomali tersebut.
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Jelaskan prinsip kerja deteksi anomali berbasis rekonstruksi menggunakan jaringan \textbf{LSTM Autoencoder}! Mengapa model hanya dilatih pada dataset kondisi operasi normal?
+        \item Mengapa metrik akurasi standar (*Standard Accuracy*) sangat menyesatkan ketika digunakan untuk mengevaluasi model deteksi pencurian listrik di mana rasio pelanggan curang hanya 1\% dari total populasi (*Class Imbalance Problem*)?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sebuah sistem deteksi pencurian listrik diuji pada 1.000 pelanggan Smart Meter dengan matriks kebingungan (\textit{Confusion Matrix}) sebagai berikut:
+    \begin{center}
+    \begin{tabular}{|l|c|c|}
+    \hline
+    \rowcolor{boxbg}
+    \textbf{Kondisi Aktual $\backslash$ Prediksi} & \textbf{Prediksi Anomali (Curang)} & \textbf{Prediksi Normal} \\ \hline
+    \textbf{Aktual Curang (Positif = 50)} & $\text{TP} = 45$ & $\text{FN} = 5$ \\ \hline
+    \textbf{Aktual Normal (Negatif = 950)} & $\text{FP} = 15$ & $\text{TN} = 935$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah nilai \textbf{Precision} ($P = \frac{\text{TP}}{\text{TP} + \text{FP}}$).
+        \item Hitunglah nilai \textbf{Recall / Sensitivity} ($R = \frac{\text{TP}}{\text{TP} + \text{FN}}$).
+        \item Hitunglah nilai \textbf{F1-Score} ($F_1 = 2 \cdot \frac{P \cdot R}{P + R}$).
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Gambar berikut merepresentasikan kurva galat rekonstruksi (\textit{Reconstruction Mean Squared Error}) pada data konsumsi listrik pelanggan industri selama 30 hari:
+    \begin{itemize}
+        \item Hari 1--15: Error stabil di sekitar $\mathcal{L} \in [0.02, 0.05]$ (Ambang batas $\tau = 0.10$).
+        \item Hari 16--25: Error melonjak tajam menjadi $\mathcal{L} \in [0.45, 0.80]$.
+        \item Hari 26--30: Error kembali normal $\mathcal{L} \in [0.03, 0.04]$.
+    \end{itemize}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Analisislah jenis anomali yang terjadi pada interval hari 16--25.
+        \item Jika diketahui meter fisik tidak mencatat adanya arus pada fasa-T selama periode tersebut, apa indikasi modus kecurangan teknis yang terjadi?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Dua metode diusulkan untuk sistem peringatan dini kegagalan isolasi transformator tenaga 150 kV:
+    \begin{itemize}
+        \item \textbf{Metode A}: Uji Batas Statis (Alarm berbunyi jika konsentrasi gas Asetilena C$_2$H$_2 > 5$ ppm).
+        \item \textbf{Metode B}: \textit{Dynamic Rate-of-Change Anomaly Detection} berbasis LSTM Autoencoder yang memonitor laju kenaikan gas per jam.
+    \end{itemize}
+    Evaluasilah kelemahan Metode A ketika terjadi kegagalan busur api bertahap (*incipient arcing fault*) yang laju konsentrasinya melonjak cepat namun belum melewati batas 5 ppm!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah program Python lengkap menggunakan \texttt{scikit-learn} dan \texttt{pyod} atau TensorFlow/PyTorch:
+    \begin{enumerate}[label=\alph*.]
+        \item Membaca dataset smart meter konsumsi daya per 15 menit.
+        \item Melakukan segmentasi jendela geser (*sliding window segmentation*) dengan panjang window 96 titik (1 hari penuh).
+        \item Membangun arsitektur LSTM Autoencoder (Encoder: LSTM 64 $\to$ LSTM 32 $\to$ Bottleneck 16; Decoder: LSTM 32 $\to$ LSTM 64 $\to$ Dense 96).
+        \item Menentukan ambang batas anomali adaptif berbasis persentil 99\% dan memplot grafik penandaan titik anomali pada profil konsumsi energi.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

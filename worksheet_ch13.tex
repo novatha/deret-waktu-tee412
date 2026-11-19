@@ -1,0 +1,96 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Lembar Kerja Mahasiswa \& Problem Set (Minggu 13)}}
+\fancyhead[R]{\small\color{gray}Analisis Deret Waktu -- Teknik Elektro}
+\fancyfoot[L]{\footnotesize\color{gray}Program Studi Teknik Elektro FT UNIB}
+\fancyfoot[R]{\footnotesize\thepage}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.25cm]
+    {\LARGE \textbf{\color{primaryblue}LEMBAR KERJA \& PROBLEM SET MINGGU 13}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Deep Learning Sekuensial (RNN, LSTM, GRU)}}
+\end{center}
+
+\vspace{0.2cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.5cm}p{5.5cm}p{2.5cm}p{4.5cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Kelas/Kelompok} & : \dotfill & \textbf{Tanggal} & : \dotfill \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\section{Panduan Pengerjaan}
+Problem set ini dirancang berjenjang berdasarkan Taksonomi Bloom (Level C1 sampai C6) untuk mengukur capaian \textbf{Sub-CPMK 13}. Kerjakan secara mandiri, rapi, dan sistematis.
+
+\section{Problem Set (Level C1 -- C6)}
+
+\begin{enumerate}[leftmargin=1.8em, label=\textbf{Soal \arabic*.}]
+    
+    % C1 - Remembering
+    \item \textbf{[C1 -- Mengingat / \textit{Remembering}]} \\
+    Sebutkan dan jelaskan secara singkat komponen pintu memori (\textit{gates}) yang ada dalam arsitektur \textit{Long Short-Term Memory} (LSTM)!
+    \vspace{2.2cm}
+
+    % C2 - Understanding
+    \item \textbf{[C2 -- Memahami / \textit{Understanding}]} \\
+    Mengapa Jaringan Saraf Tiruan \textit{Recurrent} konvensional (Vanilla RNN) kurang cocok digunakan untuk prediksi deret waktu berjangka panjang dibandingkan varian LSTM atau GRU (\textit{Gated Recurrent Unit})?
+    \vspace{2.8cm}
+
+    % C3 - Applying
+    \item \textbf{[C3 -- Menerapkan / \textit{Applying}]} \\
+    Jika Anda merancang sebuah layer LSTM untuk menerima input deret waktu yang terdiri dari 24 jam ke belakang (time steps = 24) dengan 3 fitur per jam (suhu, kelembaban, radiasi matahari). Berapakah dimensi \textit{shape} input matriks ke layer Keras/PyTorch secara berurutan?
+    \vspace{2.8cm}
+
+    \newpage
+
+    % C4 - Analyzing
+    \item \textbf{[C4 -- Menganalisis / \textit{Analyzing}]} \\
+    Analisis fenomena \textit{Vanishing Gradient Problem} saat melatih model RNN yang dalam (deep). Bagaimana secara sistematis mekanisme \textit{Cell State} pada LSTM menjadi solusi kunci untuk mengalirkan memori jangka panjang tanpa mengalami pelemahan gradien eksponensial?
+    \vspace{3.5cm}
+
+    % C5 - Evaluating
+    \item \textbf{[C5 -- Mengevaluasi / \textit{Evaluating}]} \\
+    Evaluasi dan bandingkan parameter efisiensi komputasional arsitektur LSTM berbanding GRU saat dideploy (diimplementasikan) ke mikrokontroler \textit{edge computing} seperti Raspberry Pi untuk meramal daya pemakaian beban rumah. Model mana yang lebih disukai dan mengapa?
+    \vspace{3.5cm}
+
+    % C6 - Creating
+    \item \textbf{[C6 -- Merancang / \textit{Creating}]} \\
+    Rancang sebuah arsitektur model \textit{Deep Neural Network} sekuensial hibrid yang terdiri dari kombinasi 1D-CNN (\textit{Convolutional Neural Network}) untuk mengekstraksi fitur spasial/lokal dari data frekuensi tinggi dan dilanjutkan layer LSTM untuk menangkap memori sekuensial, dengan target meramalkan profil harga listrik \textit{day-ahead market}.
+    \vspace{4.5cm}
+
+\end{enumerate}
+
+\end{document}

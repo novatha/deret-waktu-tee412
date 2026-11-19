@@ -1,0 +1,251 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 4)}]{\textbf{Pemodelan Stokastik Linier: AR, MA, dan ARMA}}
+\subtitle{Representasi Operator Polinomial, Analisis Kestabilan Bidang Z, dan Kriteria AIC/BIC}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 4 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-4}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 4)}
+                Mahasiswa mampu menyusun formulasi matematis model AR($p$), MA($q$), dan ARMA($p,q$), menganalisis kestabilan dan invertibilitas pada bidang Z, serta memilih ordo optimal menggunakan kriteria informasi AIC/BIC.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Model AutoRegressive (AR($p$))}
+                \item \textbf{Model Moving Average (MA($q$))}
+                \item \textbf{Model Gabungan ARMA($p,q$)}
+                \item \textbf{Kestabilan \& Bidang Z (Karakteristik Fisik)}
+                \item \textbf{Kriteria Informasi: AIC, AICc, dan BIC}
+                \item \textbf{Diagnostik Residu \& Implementasi Python}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Model AutoRegressive (AR($p$))}
+    Nilai sekarang $y_t$ diregresikan terhadap nilai masa lalu $y_{t-1}, \dots, y_{t-p}$:
+    \begin{block}{Persamaan AR($p$)}
+        \begin{equation}
+            y_t = c + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \dots + \phi_p y_{t-p} + \epsilon_t \quad \text{di mana } \epsilon_t \sim \mathcal{WN}(0, \sigma^2)
+        \end{equation}
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Notasi Operator Lag ($B$):}
+            \begin{equation}
+                (1 - \phi_1 B - \phi_2 B^2 - \dots - \phi_p B^p)y_t = c + \epsilon_t
+            \end{equation}
+            $\Phi(B)y_t = c + \epsilon_t$
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Pola Correlogram AR($p$):}
+            \begin{itemize}
+                \item \textbf{ACF}: Meluruh secara eksponensial (\textit{tail off}).
+                \item \textbf{PACF}: Terpotong tajam (\textit{cut off}) tepat setelah $lag = p$.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Estimasi Parameter AR($p$) Murni: Persamaan Yule-Walker}
+    Untuk model AR($p$) murni, parameter $\phi_1, \phi_2, \dots, \phi_p$ dapat diestimasi secara deterministik menggunakan autokorelasi sampel ($\rho_k$) melalui sistem persamaan \textbf{Yule-Walker}:
+    \begin{block}{Bentuk Matriks Yule-Walker (Sistem Toeplitz)}
+        \begin{equation}
+            \begin{bmatrix}
+                1 & \rho_1 & \rho_2 & \dots & \rho_{p-1} \\
+                \rho_1 & 1 & \rho_1 & \dots & \rho_{p-2} \\
+                \rho_2 & \rho_1 & 1 & \dots & \rho_{p-3} \\
+                \vdots & \vdots & \vdots & \ddots & \vdots \\
+                \rho_{p-1} & \rho_{p-2} & \rho_{p-3} & \dots & 1
+            \end{bmatrix}
+            \begin{bmatrix}
+                \phi_1 \\ \phi_2 \\ \phi_3 \\ \vdots \\ \phi_p
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+                \rho_1 \\ \rho_2 \\ \rho_3 \\ \vdots \\ \rho_p
+            \end{bmatrix}
+            \quad \Longrightarrow \quad \mathbf{R} \boldsymbol{\phi} = \mathbf{r}
+        \end{equation}
+    \end{block}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Solusi analitik didapatkan via Inversi Matriks: $\boldsymbol{\phi} = \mathbf{R}^{-1} \mathbf{r}$
+        \item Estimasi variansi \textit{white noise}: $\sigma^2 = \gamma_0 \left( 1 - \sum_{i=1}^p \phi_i \rho_i \right)$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Model Moving Average (MA($q$))}
+    Nilai sekarang $y_t$ dimodelkan sebagai kombinasi linier dari kesalahan acak masa lalu:
+    \begin{block}{Persamaan MA($q$)}
+        \begin{equation}
+            y_t = \mu + \epsilon_t + \theta_1 \epsilon_{t-1} + \theta_2 \epsilon_{t-2} + \dots + \theta_q \epsilon_{t-q}
+        \end{equation}
+        Dalam operator lag: $y_t = \mu + \Theta(B)\epsilon_t$ dengan $\Theta(B) = 1 + \theta_1 B + \dots + \theta_q B^q$.
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Pola Correlogram MA($q$):}
+            \begin{itemize}
+                \item \textbf{ACF}: Terpotong tajam (\textit{cut off}) setelah $lag = q$.
+                \item \textbf{PACF}: Meluruh lambat (\textit{tail off}).
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Invertibilitas MA:}
+            Memastikan derau acak masa lalu dapat diestimasi dari observasi sinyal nyata yang terukur.
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Kestabilan Sistem Dinamis pada Bidang Z}
+    Sebagai insinyur elektro, model ARMA identik dengan filter IIR (Infinite Impulse Response):
+    \begin{block}{Syarat Stasioneritas \& Kestabilan}
+        Akar-akar polinomial karakteristik $\Phi(B) = 0$ harus berada \textbf{di luar lingkaran satuan} ($|B_i| > 1$) pada bidang $B$, atau akar-akar pada bidang Z ($z = B^{-1}$) harus berada \textbf{di dalam lingkaran satuan} ($|z_i| < 1$):
+        \begin{equation}
+            1 - \phi_1 z^{-1} - \phi_2 z^{-2} - \dots - \phi_p z^{-p} = 0 \quad \Longrightarrow \quad |z_i| < 1
+        \end{equation}
+    \end{block}
+    \begin{alertblock}{Contoh Kasus AR(1): $y_t = \phi_1 y_{t-1} + \epsilon_t$}
+        \begin{itemize}
+            \item Jika $|\phi_1| < 1$: Sistem stabil dan stasioner.
+            \item Jika $|\phi_1| = 1$: Sistem \textit{Random Walk} (Non-stasioner/Marginally Stable).
+            \item Jika $|\phi_1| > 1$: Sistem tak stabil (*Explosive System*).
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Kriteria Informasi untuk Seleksi Ordo (AIC \& BIC)}
+    Untuk memilih kombinasi ordo $(p, q)$ terbaik tanpa terjadi \textit{overfitting}:
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textbf{Akaike Information Criterion (AIC)}}
+                \begin{equation}
+                    \text{AIC} = -2\ln(\hat{L}) + 2k
+                \end{equation}
+                $k = p + q + 1$ (jumlah parameter terestimasi), $\hat{L}$ adalah nilai maksimum fungsi *likelihood*.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textbf{Bayesian Information Criterion (BIC)}}
+                \begin{equation}
+                    \text{BIC} = -2\ln(\hat{L}) + k\ln(N)
+                \end{equation}
+                Memberikan penalti lebih ketat untuk model yang terlalu kompleks pada dataset besar ($N$).
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+    \begin{center}
+        \textbf{Kaidah Keputusan}: Pilih model dengan nilai AIC / BIC terkecil!
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: Estimasi Model ARMA}
+\begin{lstlisting}
+from statsmodels.tsa.arima.model import ARIMA
+import pandas as pd
+
+# Load data stasioner (misal sinyal getaran motor)
+df = pd.read_csv('vibration_stationary.csv')
+
+# Grid Search ordo (p, q) berdasarkan nilai AIC minimum
+best_aic, best_order = float("inf"), None
+for p in range(1, 4):
+    for q in range(1, 4):
+        try:
+            model = ARIMA(df['signal'], order=(p, 0, q)).fit()
+            if model.aic < best_aic:
+                best_aic = model.aic
+                best_order = (p, q)
+        except:
+            continue
+
+print(f"Model Terbaik: ARMA{best_order} dengan AIC: {best_aic:.2f}")
+
+# Fitting model optimal & tampilkan akar karakteristik
+final_model = ARIMA(df['signal'], order=(best_order[0], 0, best_order[1])).fit()
+print(final_model.summary())
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman \& Persiapan Minggu ke-5}
+    \begin{block}{Poin Kunci Minggu 4}
+        \begin{itemize}
+            \item Model AR mengaitkan sinyal masa kini dengan histori masa lalu; model MA mengaitkan dengan histori galat derau.
+            \item Kestabilan ARMA identik dengan kestabilan filter digital IIR (kutub di dalam lingkaran satuan bidang Z).
+            \item Nilai AIC dan BIC menjadi kompas penentu ordo parsimonius (*Occam's razor*).
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-5)}
+        \textbf{Model ARIMA \& SARIMA Box-Jenkins}: Integrasi diferensiasi ($d$) dan komponen musiman $(P,D,Q)_s$ untuk data beban listrik nyata berkala mingguan.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Pertanyaan \& Diskusi Terkait Pemodelan ARMA}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

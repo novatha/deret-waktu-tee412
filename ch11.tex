@@ -1,0 +1,191 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 11)}]{\textbf{Deep Learning Sekuensial: RNN, LSTM, dan GRU}}
+\subtitle{Arsitektur Gerbang Memori, Masalah Vanishing Gradient, dan Peramalan Daya EBT Surya/Angin}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 11 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-11}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 10)}
+                Mahasiswa mampu menyusun tensor 3D sekuensial, memahami mekanisme gerbang arsitektur LSTM dan GRU, mengatasi masalah kelenyapan gradien (*vanishing gradient*), serta melatih jaringan *Deep Learning* untuk peramalan daya pembangkit EBT fluktuatif.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Keterbatasan Jaringan Saraf Konvensional (MLP)}
+                \item \textbf{Recurrent Neural Network (RNN) Standar}
+                \item \textbf{Masalah Vanishing \& Exploding Gradient}
+                \item \textbf{Arsitektur Long Short-Term Memory (LSTM)}
+                \item \textbf{Arsitektur Gated Recurrent Unit (GRU)}
+                \item \textbf{Implementasi PyTorch: Peramalan Daya PLTS}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Dari MLP ke Recurrent Neural Network (RNN)}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Mengapa MLP Kurang Efektif?}
+                \begin{itemize}
+                    \item Mengasumsikan seluruh sampel input independen satu sama lain.
+                    \item Tidak memiliki memori internal untuk mempertahankan informasi riwayat urutan temporal yang panjang.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Mekanisme RNN}
+                Memiliki status tersembunyi (\textit{Hidden State} $h_t$) yang berulang (*recurrent loop*):
+                \begin{equation}
+                    h_t = \tanh(W_{hh} h_{t-1} + W_{xh} x_t + b_h)
+                \end{equation}
+                \begin{equation}
+                    \hat{y}_t = W_{hy} h_t + b_y
+                \end{equation}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Arsitektur Long Short-Term Memory (LSTM)}
+    Mengatasi *vanishing gradient* dengan jalur sel memori bebas hambatan (*Constant Error Carousel*):
+    \begin{block}{Mekanisme 3 Gerbang LSTM}
+        \begin{equation*}
+        \begin{aligned}
+            \text{Forget Gate: } &f_t = \sigma(W_f [h_{t-1}, x_t] + b_f) \quad \text{(Membuang memori usang)} \\
+            \text{Input Gate: } &i_t = \sigma(W_i [h_{t-1}, x_t] + b_i), \quad \tilde{C}_t = \tanh(W_c [h_{t-1}, x_t] + b_c) \\
+            \text{Cell State: } &C_t = f_t \odot C_{t-1} + i_t \odot \tilde{C}_t \quad \text{(Memperbarui akumulasi memori)} \\
+            \text{Output Gate: } &o_t = \sigma(W_o [h_{t-1}, x_t] + b_o), \quad h_t = o_t \odot \tanh(C_t)
+        \end{aligned}
+        \end{equation*}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Gated Recurrent Unit (GRU): Varian Lebih Ringkas}
+    Menggabungkan *Cell State* dan *Hidden State* serta mereduksi jumlah gerbang menjadi 2:
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Persamaan GRU}
+                \begin{equation*}
+                \begin{aligned}
+                    \text{Reset Gate: } &r_t = \sigma(W_r [h_{t-1}, x_t]) \\
+                    \text{Update Gate: } &z_t = \sigma(W_z [h_{t-1}, x_t]) \\
+                    \text{Candidate: } &\tilde{h}_t = \tanh(W [r_t \odot h_{t-1}, x_t]) \\
+                    \text{Hidden State: } &h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \tilde{h}_t
+                \end{aligned}
+                \end{equation*}
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{alertblock}{Perbandingan Rekayasa: LSTM vs GRU}
+                \begin{itemize}
+                    \item \textbf{GRU}: Parameter 25\% lebih sedikit, konvergensi lebih cepat pada dataset terbatas (misal data sensor mikrogrid).
+                    \item \textbf{LSTM}: Lebih tangguh menangani ketergantungan temporal jangka panjang yang sangat rumit.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi PyTorch: Arsitektur LSTM Model}
+\begin{lstlisting}
+import torch
+import torch.nn as nn
+
+class SolarLSTM(nn.Module):
+    def __init__(self, n_features=4, hidden_size=64, num_layers=2, pred_len=24):
+        super(SolarLSTM, self).__init__()
+        self.lstm = nn.LSTM(input_size=n_features, hidden_size=hidden_size,
+                            num_layers=num_layers, batch_first=True, dropout=0.2)
+        self.fc = nn.Linear(hidden_size, pred_len)
+
+    def forward(self, x):
+        # Input x shape: (batch_size, seq_len, n_features)
+        lstm_out, _ = self.lstm(x)
+        # Ambil hidden state terakhir dari sequence
+        last_hidden = lstm_out[:, -1, :]
+        out = self.fc(last_hidden) # Output: (batch_size, pred_len)
+        return out
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman \& Persiapan Minggu ke-12}
+    \begin{block}{Poin Kunci Minggu 11}
+        \begin{itemize}
+            \item LSTM dan GRU mengatasi kelemahan mendasar RNN klasik dalam menangkap memori jangka panjang.
+            \item Gerbang non-linier bertindak sebagai saklar kendali aliran informasi internal jaringan.
+            \item Penskalaan data 3D Tensor $(N, T, D)$ wajib dinormalisasi secara hati-hati agar gradien stabil.
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-12)}
+        \textbf{Arsitektur Sekuensial Lanjut}: 1D-Temporal CNN, Encoder-Decoder (Seq2Seq), dan Attention Mechanism / Transformer untuk peramalan multi-bus simultan.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Pertanyaan \& Diskusi Deep Learning Sekuensial}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

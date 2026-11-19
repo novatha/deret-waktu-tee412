@@ -1,0 +1,123 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 5: Model ARIMA \& SARIMA Box-Jenkins}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 5: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Model ARIMA($p,d,q$), SARIMA Musiman, Metodologi Box-Jenkins, dan Uji Ljung-Box}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Sebutkan dan jelaskan arti masing-masing notasi dari model musiman $\text{SARIMA}(p,d,q)(P,D,Q)_s$!
+        \item Sebutkan 3 tahapan utama dalam Metodologi Box-Jenkins secara berurutan!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Tuliskan secara matematis bentuk persamaan operator beda untuk model $\text{ARIMA}(1,1,1)$ dan jabarkan persamaan tersebut ke dalam bentuk eksplisit $y_t = f(y_{t-1}, y_{t-2}, \epsilon_t, \epsilon_{t-1})$!
+        \item Mengapa uji hipotesis \textbf{Ljung-Box} pada residual $\hat{\epsilon}_t$ mengharapkan nilai $p\text{-value} > 0.05$ (gagal menolak $H_0$) agar model dinyatakan layak (\textit{adequate})?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Diberikan model peramalan beban $\text{ARIMA}(1,1,0)$ tanpa konstanta:
+    \begin{equation*}
+        (1 - 0.6B)(1 - B)y_t = \epsilon_t, \quad \epsilon_t \sim \mathcal{WN}(0, \sigma^2 = 4)
+    \end{equation*}
+    Diketahui observasi beban dua jam terakhir adalah $y_{t-1} = 210$ MW dan $y_t = 215$ MW.
+    \begin{enumerate}[label=\alph*.]
+        \item Jabarkan persamaan peramalan 1-langkah ke depan $\hat{y}_{t+1|t}$.
+        \item Hitunglah nilai prediksi titik beban untuk 1 jam ke depan ($\hat{y}_{t+1|t}$) dan 2 jam ke depan ($\hat{y}_{t+2|t}$).
+        \item Hitunglah interval kepercayaan 95\% ($\pm 1.96 \sigma$) untuk ramalan $\hat{y}_{t+1|t}$.
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Seorang insinyur perencana transmisi menguji model $\text{SARIMA}(0,1,1)(0,1,1)_{24}$ untuk memprediksi profil beban listrik harian. Hasil estimasi parameter dan diagnostik disajikan sebagai berikut:
+    \begin{itemize}
+        \item Parameter Reguler: $\hat{\theta}_1 = -0.45 \ (p\text{-val} = 0.001)$
+        \item Parameter Musiman: $\hat{\Theta}_1 = -0.78 \ (p\text{-val} = 0.0001)$
+        \item Uji Ljung-Box Residual: Pada $lag = 24$, nilai statistik $Q = 14.2 \ (p\text{-val} = 0.65)$; Pada $lag = 48$, nilai statistik $Q = 28.5 \ (p\text{-val} = 0.55)$.
+        \item Histogram Residual: Menyerupai kurva Gaussian lonceng dengan skewness $0.04$ dan kurtosis $2.98$.
+    \end{itemize}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Analisislah signifikansi statistik dari parameter $\theta_1$ dan $\Theta_1$!
+        \item Berdasarkan hasil uji Ljung-Box dan distribusi histogram, simpulkan apakah model ini sudah optimal dan siap diintegrasikan ke sistem kontrol SCADA!
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Data konsumsi listrik sebuah rumah sakit memiliki dua siklus musiman yang bertumpuk: (1) Musiman Harian ($s_1 = 24$ jam) dan (2) Musiman Mingguan ($s_2 = 168$ jam).
+    \begin{itemize}
+        \item \textbf{Model SARIMA Standar}: Hanya mampu mengakomodasi satu periode musiman $s=24$.
+        \item \textbf{Model BATS / TBATS}: Mampu mengakomodasi \textit{Multiple Complex Seasonality} ($s_1=24, s_2=168$) dengan representasi harmonik Fourier.
+    \end{itemize}
+    Evaluasilah keterbatasan matematis model SARIMA standar dalam menangani musiman ganda dan diskusikan mengapa residual SARIMA standar seringkali gagal uji Ljung-Box pada lag kelipatan 168!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah sebuah \textbf{skrip otomatisasi peramalan} (Python dengan \texttt{pmdarima} atau Octave) yang melakukan prosedur end-to-end:
+    \begin{enumerate}[label=\alph*.]
+        \item Membaca data time series, membagi 80\% latih dan 20\% uji.
+        \item Menjalankan pencarian otomatis kombinasi ordo musiman ($p,d,q$ dan $P,D,Q,s=24$) dengan kriteria evaluasi AICc.
+        \item Memvalidasi independensi residual (plot Q-Q dan p-value Ljung-Box).
+        \item Menghasilkan grafik peramalan 168 jam ke depan bersama batas atas dan batas bawah interval kepercayaan 95\% serta menghitung RMSE pengujian.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

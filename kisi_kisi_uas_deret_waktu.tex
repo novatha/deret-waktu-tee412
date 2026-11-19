@@ -1,0 +1,108 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+\definecolor{headerrow}{RGB}{24, 43, 73}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Kisi-Kisi Persiapan UAS}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Mata Kuliah: Analisis Deret Waktu dan Peramalan}
+\fancyfoot[R]{\footnotesize Halaman \thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\newcommand{\hdr}[1]{\cellcolor{headerrow}\color{white}\textbf{#1}}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}KISI-KISI UJIAN AKHIR SEMESTER (UAS)}}\\[0.15cm]
+    {\Large \textbf{\color{goldaccent}ANALISIS DERET WAKTU DAN PERAMALAN (TEE-412)}}\\[0.1cm]
+    {\normalsize Program Studi S1 Teknik Elektro -- Fakultas Teknik Universitas Bengkulu}
+\end{center}
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Pelaksanaan Ujian Akhir Semester}]
+\small
+\begin{itemize}[leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{Cakupan Materi:} Pertemuan Minggu 9 s.d. Minggu 14 (Evaluasi CPMK-3, CPMK-4, dan CPMK-5).
+    \item \textbf{Durasi Pengerjaan:} 120 Menit (6 Soal Terstruktur, Total 100 Poin).
+    \item \textbf{Sifat Ujian:} Ujian Tertulis. Mahasiswa diperbolehkan membawa \textbf{1 (satu) lembar kertas A4 (bolak-balik)} berisi catatan/rumus tulisan tangan (bukan hasil cetak/fotokopi).
+    \item \textbf{Peralatan Tambahan:} Wajib membawa \textbf{Kalkulator Ilmiah} (\textit{Scientific Calculator}). Dilarang menggunakan ponsel atau perangkat komputasi berkoneksi internet.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.35cm}
+\section{Panduan Belajar \& Topik Utama UAS}
+
+Soal UAS dirancang untuk mengukur kemampuan analisis spektral, rekayasa fitur pembelajaran mesin, perancangan arsitektur \textit{deep learning} sekuensial, deteksi anomali, serta integrasi peramalan probabilistik pada operasi sistem tenaga (Taksonomi Bloom C1--C6).
+
+\vspace{0.2cm}
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.5em, itemsep=7pt]
+    \item \textbf{Analisis Domain Frekuensi \& Transformasi Wavelet (Minggu 9)}
+    \begin{itemize}[label=$\circ$]
+        \item Memahami keterbatasan DFT/FFT pada sinyal transien non-stasioner serta perbedaan resolusi waktu--frekuensi antara STFT dan DWT.
+        \item Mampu menentukan pita frekuensi sub-band dekomposisi DWT ($A_L, D_1, \dots, D_L$) berdasarkan frekuensi pencuplikan $f_s$ untuk identifikasi harmonisa dan gangguan kelistrikan.
+    \end{itemize}
+
+    \item \textbf{Rekayasa Fitur Temporal \& Machine Learning (Minggu 10)}
+    \begin{itemize}[label=$\circ$]
+        \item Memahami bahaya \textit{data leakage} pada \textit{random K-Fold CV} serta perbedaan \textit{Expanding Window} dan \textit{Rolling Window Cross-Validation}.
+        \item Mampu menyusun fitur \textit{lag}, statistik \textit{rolling window} secara kausal, dan menghitung \textit{cyclical encoding} ($\sin/\cos$) untuk fitur waktu jam/hari.
+    \end{itemize}
+
+    \item \textbf{Arsitektur Deep Learning Sekuensial: RNN, LSTM, \& GRU (Minggu 11)}
+    \begin{itemize}[label=$\circ$]
+        \item Memahami peran \textit{Cell State} dan gerbang memori (\textit{Forget, Input, Output Gate}) dalam mengatasi \textit{vanishing gradient}.
+        \item Mampu menentukan dimensi tensor sekuensial $(B, T, d_x)$, menghitung jumlah parameter lapisan LSTM, serta melakukan kalkulasi satu langkah pembaruan $(C_t, h_t)$.
+    \end{itemize}
+
+    \item \textbf{Peramalan Multi-Horizon: 1D-CNN, Seq2Seq, \& Attention (Minggu 12)}
+    \begin{itemize}[label=$\circ$]
+        \item Menganalisis kelebihan dan kelemahan strategi peramalan \textit{multi-step ahead} (\textit{Recursive} vs. \textit{Direct / Seq2Seq}).
+        \item Membandingkan kompleksitas komputasi dan jangkauan dependensi antara 1D-CNN, LSTM, dan mekanisme \textit{Self-Attention / Transformer} (termasuk inovasi efisiensi seperti \textit{PatchTST/Informer}).
+    \end{itemize}
+
+    \item \textbf{Deteksi Anomali Sistem Tenaga \& Evaluasi Imbalanced Data (Minggu 13)}
+    \begin{itemize}[label=$\circ$]
+        \item Membedakan \textit{Point, Contextual,} dan \textit{Collective Anomaly} pada data \textit{smart meter} dan sensor gardu.
+        \item Mampu menentukan ambang deteksi galat rekonstruksi Autoencoder ($\tau = \mu + k\sigma$), menghitung \textbf{Precision, Recall, F1-Score}, serta mengevaluasi jebakan metrik \textit{Accuracy} pada kelas timpang.
+    \end{itemize}
+
+    \item \textbf{Peramalan Probabilistik \& Optimasi Operasi BESS Mikrogrid (Minggu 14)}
+    \begin{itemize}[label=$\circ$]
+        \item Mampu menghitung fungsi kerugian kuantil (\textbf{Pinball Loss}) untuk batas P10--P90 serta menginterpretasikan implikasinya pada cadangan putar (\textit{spinning reserve}).
+        \item Mampu memformulasikan model optimasi \textbf{Model Predictive Control (MPC)} untuk penjadwalan baterai BESS (fungsi objektif biaya ToU, neraca daya, dinamika energi, dan kendala batas SoC).
+    \end{itemize}
+\end{enumerate}
+
+\vspace{0.3cm}
+\begin{center}
+    \colorbox{goldaccent}{\parbox{0.92\textwidth}{\centering\textbf{\color{white}Pesan Dosen:}\\ \small Pastikan Anda menguasai alasan rekayasa di balik pemilihan model, pencegahan \textit{data leakage}, dan terampil melakukan perhitungan matriks/metrik secara teliti.}}
+\end{center}
+
+\end{document}

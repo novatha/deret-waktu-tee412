@@ -1,0 +1,179 @@
+---
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+---
+
+<footer class="footer-wrapper">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col-main">
+        <div class="footer-brand">
+          <div class="brand-badge-sm">TSA</div>
+          <div>
+            <h4 class="brand-title-sm">ANALISIS DERET WAKTU &amp; PERAMALAN</h4>
+            <p class="brand-sub-sm">Smart Grid Forecasting &amp; Applied Stochastic Engineering</p>
+          </div>
+        </div>
+        <p class="footer-desc">
+          Portal pembelajaran dan laboratorium komputasi cerdas terintegrasi untuk mahasiswa S1 Teknik Elektro, Fakultas Teknik, Universitas Bengkulu.
+        </p>
+        <div class="lecturer-tag">
+          <i data-lucide="user-check"></i>
+          <span>Dosen Pengampu: <strong>Ir. Novalio Daratha, S.T., M.Sc., Ph.D.</strong></span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h5 class="col-title">Navigasi Akademik</h5>
+        <ul class="col-links">
+          <li><a href={getUrl('/')}>Beranda Perkuliahan</a></li>
+          <li><a href={getUrl('/rps')}>Silabus &amp; RPS Berbasis OBE</a></li>
+          <li><a href={getUrl('/materi')}>Katalog 13 Modul Slide &amp; Soal</a></li>
+          <li><a href={getUrl('/praktikum')}>Buku Panduan Praktikum (PDF)</a></li>
+          <li><a href={getUrl('/sandbox')}>Interactive Virtual Studio</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5 class="col-title">Fokus Kompetensi (CPMK)</h5>
+        <ul class="col-links">
+          <li><span>⚡ Model ARIMA / SARIMA / SARIMAX</span></li>
+          <li><span>🔮 Discrete Kalman Filter State-Space</span></li>
+          <li><span>📊 Analisis Spektral &amp; Wavelet DWT</span></li>
+          <li><span>🧠 Deep Learning LSTM &amp; Transformer</span></li>
+          <li><span>🔋 Optimasi BESS &amp; Smart Grid</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="copyright">
+        &copy; 2026 Program Studi S1 Teknik Elektro • Fakultas Teknik Universitas Bengkulu.
+      </div>
+      <div class="site-link">
+        <a href="https://www.ndaratha.my.id">ndaratha.my.id</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-wrapper {
+    margin-top: 80px;
+    background: #04070e;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 60px 0 30px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .brand-badge-sm {
+    width: 36px;
+    height: 36px;
+    background: var(--gradient-emerald-cyan);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    color: #04121e;
+    font-size: 0.85rem;
+  }
+
+  .brand-title-sm {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--text-main);
+  }
+
+  .brand-sub-sm {
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+  }
+
+  .footer-desc {
+    font-size: 0.85rem;
+    color: var(--text-subtle);
+    line-height: 1.6;
+    max-width: 440px;
+    margin-bottom: 16px;
+  }
+
+  .lecturer-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--neon-cyan);
+    background: rgba(6, 182, 212, 0.08);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+  }
+
+  .col-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+  }
+
+  .col-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .col-links a, .col-links span {
+    font-size: 0.85rem;
+    color: var(--text-subtle);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .col-links a:hover {
+    color: var(--neon-emerald);
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  .site-link a {
+    color: var(--neon-emerald);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+  }
+</style>

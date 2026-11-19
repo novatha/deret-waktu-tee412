@@ -1,0 +1,713 @@
+---
+import Layout from '../layouts/Layout.astro';
+import WeekCard from '../components/WeekCard.astro';
+import ForecastingStudio from '../components/ForecastingStudio.astro';
+import { courseMetadata, weeksData } from '../data/courseData';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+---
+
+<Layout title="Analisis Deret Waktu & Peramalan Beban | S1 Teknik Elektro UNIB">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-pill-box">
+            <span class="pill-badge">
+              <i data-lucide="zap"></i> S1 TEKNIK ELEKTRO UNIB • KURIKULUM OBE 2026
+            </span>
+          </div>
+
+          <h1 class="hero-headline">
+            Analisis Deret Waktu &amp; <br />
+            <span class="gradient-text">Rekayasa Peramalan Beban</span>
+          </h1>
+
+          <p class="hero-lead">
+            Portal pembelajaran interaktif dan laboratorium komputasi cerdas. Menghubungkan teori stokastik klasik, pemodelan State-Space (Kalman Filter), hingga arsitektur Deep Learning mutakhir (LSTM &amp; Transformer) untuk operasi andal smart grid dan integrasi energi terbarukan.
+          </p>
+
+          <!-- Quick Action Buttons -->
+          <div class="hero-cta-group">
+            <a href={getUrl(courseMetadata.rpsPdf)} target="_blank" class="btn btn-primary">
+              <i data-lucide="download"></i> Unduh RPS Lengkap (PDF)
+            </a>
+            <a href={getUrl(courseMetadata.labManualPdf)} target="_blank" class="btn btn-outline">
+              <i data-lucide="book-open"></i> Panduan Praktikum (PDF)
+            </a>
+            <a href="#virtual-lab" class="btn btn-cyan">
+              <i data-lucide="activity"></i> Buka Virtual Lab Studio
+            </a>
+          </div>
+
+          <!-- Key Metrics Counter -->
+          <div class="hero-stats-row">
+            <div class="stat-card">
+              <span class="stat-number">16</span>
+              <span class="stat-label">Minggu OBE (13 Modul + UTS/Proyek/UAS)</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">3 SKS</span>
+              <span class="stat-label">Bobot OBE Terpadu</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">13</span>
+              <span class="stat-label">Slide Beamer PDF</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">13</span>
+              <span class="stat-label">Problem Sets &amp; LKM C1–C6</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Infobox Card -->
+        <div class="hero-infocard-wrapper">
+          <div class="infocard-glass glass-panel">
+            <div class="infocard-badge-header">
+              <span class="status-indicator"></span>
+              <span>Informasi Akademik Mata Kuliah</span>
+            </div>
+
+            <div class="infocard-rows">
+              <div class="info-row">
+                <span class="i-label">Mata Kuliah</span>
+                <span class="i-val highlight-emerald">{courseMetadata.courseName}</span>
+              </div>
+              <div class="info-row">
+                <span class="i-label">Kode &amp; SKS</span>
+                <span class="i-val">{courseMetadata.courseCode} • {courseMetadata.credits}</span>
+              </div>
+              <div class="info-row">
+                <span class="i-label">Dosen Pengampu</span>
+                <span class="i-val">{courseMetadata.lecturer.name}</span>
+              </div>
+              <div class="info-row">
+                <span class="i-label">Laboratorium</span>
+                <span class="i-val">Komputasi Cerdas &amp; Sistem Tenaga</span>
+              </div>
+              <div class="info-row">
+                <span class="i-label">Program Studi</span>
+                <span class="i-val">S1 Teknik Elektro, FT UNIB</span>
+              </div>
+              <div class="info-row">
+                <span class="i-label">Stack Komputasi</span>
+                <span class="i-val font-mono">Python • Julia • PyTorch • LightGBM</span>
+              </div>
+            </div>
+
+            <div class="infocard-footer-action">
+              <a href={getUrl('/rps')} class="btn-block-link">
+                Lihat Matriks Silabus &amp; CPMK Lengkap &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Virtual Forecasting Studio Section (Interactive Lab) -->
+  <section id="virtual-lab" class="studio-section-wrapper">
+    <div class="container">
+      <div class="section-title-wrap">
+        <span class="pill-badge-cyan">
+          <i data-lucide="cpu"></i> INTERACTIVE COMPUTATION ENGINE
+        </span>
+        <h2 class="section-heading">
+          Virtual Time Series &amp; <span class="gradient-text">Forecasting Studio</span>
+        </h2>
+        <p class="section-subheading">
+          Uji langsung algoritma estimasi deret waktu pada data kelistrikan: filter derau sensor dengan Kalman Filter, bandingkan peramalan Holt-Winters, SARIMA, dan Deep LSTM.
+        </p>
+      </div>
+
+      <ForecastingStudio />
+    </div>
+  </section>
+
+  <!-- Curriculum & 13-Module Teaching Materials Grid -->
+  <section id="curriculum" class="curriculum-section">
+    <div class="container">
+      <div class="section-title-wrap">
+        <span class="pill-badge">
+          <i data-lucide="layers"></i> 13 MODULES • 16 WEEKS CURRICULUM MATRIX
+        </span>
+        <h2 class="section-heading">
+          Struktur Modul &amp; <span class="gradient-text">Bahan Pembelajaran</span>
+        </h2>
+        <p class="section-subheading">
+          Akses menyeluruh terhadap 13 modul materi perkuliahan (Minggu 1–7 &amp; 9–14, dilengkapi UTS Minggu 8 serta Proyek/UAS Minggu 15–16), slide presentasi Beamer, lembar soal terstruktur level C1–C6 Bloom, serta lembar kerja praktikum (LKM).
+        </p>
+      </div>
+
+      <!-- Filter Controls & Live Search -->
+      <div class="filter-toolbar glass-panel">
+        <div class="filter-chips-wrap" id="filter-chips">
+          <button class="filter-chip active" data-filter="all">Semua Modul (13)</button>
+          <button class="filter-chip" data-filter="Foundation">Dasar &amp; Stasioneritas</button>
+          <button class="filter-chip" data-filter="Classical Models">Parametrik &amp; Kalman</button>
+          <button class="filter-chip" data-filter="Spectral Analysis">Spektral &amp; Wavelet</button>
+          <button class="filter-chip" data-filter="Machine Learning">Feature &amp; ML</button>
+          <button class="filter-chip" data-filter="Deep Learning">Deep Learning (LSTM)</button>
+          <button class="filter-chip" data-filter="Power Operations">Operasi Grid &amp; EBT</button>
+        </div>
+
+        <div class="search-input-wrap">
+          <i data-lucide="search" class="search-icon-pos"></i>
+          <input 
+            type="text" 
+            id="search-input" 
+            class="search-text-input" 
+            placeholder="Cari ARIMA, Kalman, Wavelet, LSTM, atau rumus..." 
+          />
+        </div>
+      </div>
+
+      <!-- 14-Week Cards Grid -->
+      <div class="weeks-grid-container" id="weeks-grid">
+        {weeksData.map((week) => (
+          <WeekCard week={week} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- OBE Framework & Competencies -->
+  <section class="obe-section">
+    <div class="container">
+      <div class="section-title-wrap">
+        <span class="pill-badge-amber">
+          <i data-lucide="award"></i> OUTCOME-BASED EDUCATION (OBE)
+        </span>
+        <h2 class="section-heading">
+          Capaian Pembelajaran &amp; <span class="gradient-text-amber">Metode Evaluasi</span>
+        </h2>
+        <p class="section-subheading">
+          Standar capaian lulusan berorientasi akreditasi internasional IABEE dengan integrasi praktikum komputasi mandiri.
+        </p>
+      </div>
+
+      <div class="obe-grid">
+        <!-- CPMK List -->
+        <div class="obe-card-left glass-panel">
+          <h3 class="obe-card-title">
+            <i data-lucide="target"></i> Capaian Pembelajaran Mata Kuliah (CPMK)
+          </h3>
+          <div class="cpmk-items-list">
+            {courseMetadata.cpmkList.map((cpmk) => (
+              <div class="cpmk-item-box">
+                <div class="cpmk-header">
+                  <span class="cpmk-code-tag">{cpmk.code}</span>
+                </div>
+                <p class="cpmk-desc-text">{cpmk.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Assessment Weights -->
+        <div class="obe-card-right glass-panel">
+          <h3 class="obe-card-title">
+            <i data-lucide="pie-chart"></i> Komposisi Penilaian Akademik
+          </h3>
+          
+          <div class="rubric-bars-list">
+            <div class="rubric-row">
+              <div class="rubric-info">
+                <span>Praktikum &amp; Laporan Laboratorium</span>
+                <strong class="text-emerald">25%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill fill-emerald" style="width: 25%;"></div></div>
+            </div>
+
+            <div class="rubric-row">
+              <div class="rubric-info">
+                <span>Tugas Mandiri &amp; Lembar Kerja (LKM)</span>
+                <strong class="text-cyan">20%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill fill-cyan" style="width: 20%;"></div></div>
+            </div>
+
+            <div class="rubric-row">
+              <div class="rubric-info">
+                <span>Ujian Tengah Semester (UTS Proyek)</span>
+                <strong class="text-violet">20%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill fill-violet" style="width: 20%;"></div></div>
+            </div>
+
+            <div class="rubric-row">
+              <div class="rubric-info">
+                <span>Ujian Akhir Semester (UAS Capstone)</span>
+                <strong class="text-rose">20%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill fill-rose" style="width: 20%;"></div></div>
+            </div>
+
+            <div class="rubric-row">
+              <div class="rubric-info">
+                <span>Kuis &amp; Homework Problem Sets (C1–C6)</span>
+                <strong class="text-amber">15%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill fill-amber" style="width: 15%;"></div></div>
+            </div>
+          </div>
+
+          <div class="obe-download-cta">
+            <a href={getUrl(courseMetadata.rpsPdf)} target="_blank" class="btn btn-block btn-primary">
+              <i data-lucide="file-check"></i> Unduh Dokumen Lengkap RPS OBE (PDF)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Hero Section */
+  .hero-section {
+    padding: 70px 0 50px;
+    position: relative;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.85fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .hero-pill-box {
+    margin-bottom: 20px;
+  }
+
+  .hero-headline {
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+
+  .hero-lead {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 30px;
+    max-width: 640px;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+
+  .hero-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .stat-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+    font-weight: 900;
+    font-family: var(--font-display);
+    color: var(--neon-emerald);
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+
+  /* Hero Infobox */
+  .infocard-glass {
+    padding: 28px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    background: rgba(13, 20, 38, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .infocard-badge-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--neon-cyan);
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 16px;
+  }
+
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    background-color: var(--neon-cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--neon-cyan);
+  }
+
+  .infocard-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.86rem;
+  }
+
+  .i-label {
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .i-val {
+    color: var(--text-main);
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .highlight-emerald {
+    color: var(--neon-emerald);
+    font-weight: 700;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--neon-cyan);
+  }
+
+  .infocard-footer-action {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .btn-block-link {
+    display: block;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--neon-emerald);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .btn-block-link:hover {
+    color: #34d399;
+    text-decoration: underline;
+  }
+
+  /* Section Common Titles */
+  .section-title-wrap {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 36px;
+  }
+
+  .section-heading {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 12px 0 10px;
+    line-height: 1.2;
+  }
+
+  .section-subheading {
+    font-size: 0.95rem;
+    color: var(--text-subtle);
+    line-height: 1.6;
+  }
+
+  /* Studio Section */
+  .studio-section-wrapper {
+    padding: 70px 0;
+    background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
+  }
+
+  /* Curriculum Section */
+  .curriculum-section {
+    padding: 70px 0;
+  }
+
+  .filter-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    margin-bottom: 30px;
+    border-radius: var(--radius-lg);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .filter-chips-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .filter-chip {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-chip:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+  }
+
+  .filter-chip.active {
+    background: var(--neon-emerald);
+    color: #04121e;
+    border-color: var(--neon-emerald);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+  }
+
+  .search-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 280px;
+  }
+
+  .search-icon-pos {
+    position: absolute;
+    left: 12px;
+    width: 16px;
+    height: 16px;
+    color: var(--text-dim);
+    pointer-events: none;
+  }
+
+  .search-text-input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    background: rgba(9, 13, 22, 0.8);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--text-main);
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .search-text-input:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+  }
+
+  .weeks-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 24px;
+  }
+
+  /* OBE Section */
+  .obe-section {
+    padding: 70px 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .obe-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+  }
+
+  .obe-card-left, .obe-card-right {
+    padding: 30px;
+    border-radius: var(--radius-xl);
+  }
+
+  .obe-card-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+    color: var(--text-main);
+  }
+
+  .cpmk-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .cpmk-item-box {
+    background: rgba(9, 13, 22, 0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+  }
+
+  .cpmk-code-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--neon-cyan);
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .cpmk-desc-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .rubric-bars-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .rubric-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .rubric-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .text-emerald { color: var(--neon-emerald); }
+  .text-cyan { color: var(--neon-cyan); }
+  .text-violet { color: var(--neon-violet); }
+  .text-rose { color: var(--neon-rose); }
+  .text-amber { color: var(--neon-amber); }
+
+  .progress-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+
+  .fill-emerald { background: var(--gradient-emerald-cyan); }
+  .fill-cyan { background: var(--gradient-cyan-blue); }
+  .fill-violet { background: var(--gradient-violet-pink); }
+  .fill-rose { background: var(--neon-rose); }
+  .fill-amber { background: var(--neon-amber); }
+
+  .obe-download-cta {
+    margin-top: 28px;
+  }
+
+  .btn-block {
+    width: 100%;
+    justify-content: center;
+  }
+
+  @media (max-width: 1024px) {
+    .hero-grid, .obe-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-headline {
+      font-size: 2.2rem;
+    }
+    .hero-stats-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<script>
+  // Filter & Live Search Client-Side Script
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterChips = document.querySelectorAll('.filter-chip');
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const cards = document.querySelectorAll('.week-card') as NodeListOf<HTMLElement>;
+
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    function applyFilterAndSearch() {
+      cards.forEach((card) => {
+        const category = card.getAttribute('data-category') || '';
+        const title = card.getAttribute('data-title') || '';
+        const topics = card.getAttribute('data-topics') || '';
+        const week = card.getAttribute('data-week') || '';
+
+        const matchesCategory = currentFilter === 'all' || category === currentFilter;
+        const matchesSearch = 
+          searchQuery === '' ||
+          title.includes(searchQuery) ||
+          topics.includes(searchQuery) ||
+          week === searchQuery;
+
+        if (matchesCategory && matchesSearch) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    filterChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        filterChips.forEach((c) => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentFilter = chip.getAttribute('data-filter') || 'all';
+        applyFilterAndSearch();
+      });
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e: any) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        applyFilterAndSearch();
+      });
+    }
+  });
+</script>

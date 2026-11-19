@@ -1,0 +1,125 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 2: Stasioneritas \& Analisis Sinyal Temporal}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 2: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Stasioneritas, Uji ADF/KPSS, Correlogram (ACF/PACF), dan Diferensiasi}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Tuliskan secara matematis 3 (tiga) syarat formal suatu proses stokastik $y_t$ dikatakan \textit{Weakly Stationary} (stasioner kovarians)!
+        \item Apa yang dimaksud dengan konsep \textit{Unit Root} pada persamaan karakteristik autoregresif? Jelaskan kaitannya dengan lokasi \textit{pole} pada bidang kompleks Z dan stabilitas sistem LTI (Linear Time-Invariant)!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Jelaskan perbedaan mendasar antara hipotesis nol ($H_0$) pada uji \textbf{ADF} (\textit{Augmented Dickey-Fuller}) vs uji \textbf{KPSS} (\textit{Kwiatkowski-Phillips-Schmidt-Shin})!
+        \item Mengapa uji ADF saja terkadang tidak cukup untuk mendeteksi non-stasioneritas pada data deret waktu yang memiliki fluktuasi transien lokal (*power quality event*)?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Diberikan sampel data tegangan busbar (dalam p.u.) selama 5 interval waktu:
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \rowcolor{boxbg}
+    \textbf{Waktu ($t$)} & 1 & 2 & 3 & 4 & 5 \\ \hline
+    \textbf{Tegangan $V_t$ (p.u.)} & 0.98 & 1.02 & 1.00 & 1.04 & 1.01 \\ \hline
+    \end{tabular}
+    \end{center}
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah nilai rata-rata sampel $\bar{V}$ dan variansi sampel $\gamma_0 = \mathrm{Var}(V_t)$.
+        \item Hitunglah koefisien autokovariansi sampel pada $lag = 1$ ($\hat{\gamma}_1$) dan koefisien autokorelasi sampel $\hat{\rho}_1 = \hat{\gamma}_1 / \hat{\gamma}_0$.
+        \item Lakukan diferensiasi ordo-1 ($\Delta V_t = V_t - V_{t-1}$) untuk $t=2, 3, 4, 5$.
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Hasil pengujian stasioneritas pada sinyal daya reaktif ($Q$) sebuah industri peleburan baja berkapasitas besar menghasilkan output berikut:
+    \begin{itemize}
+        \item \textbf{Data Mentah}: Uji ADF $p\text{-value} = 0.68$, Uji KPSS $p\text{-value} = 0.01$. Plot ACF meluruh linear sangat lambat hingga $lag = 50$.
+        \item \textbf{Setelah Diferensiasi Ordo-1 ($d=1$)}: Uji ADF $p\text{-value} = 0.001$, Uji KPSS $p\text{-value} = 0.12$. Plot ACF terpotong (*cutoff*) setelah $lag = 2$.
+        \item \textbf{Setelah Diferensiasi Ordo-2 ($d=2$)}: Uji ADF $p\text{-value} = 0.0001$, namun variansi sinyal meningkat dari $\sigma^2_{\Delta 1} = 4.2$ menjadi $\sigma^2_{\Delta 2} = 11.8$, dan koefisien ACF pada $lag=1$ bernilai $\rho_1 = -0.52$.
+    \end{itemize}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Analisislah status kestasioneran pada data mentah vs setelah $d=1$ dengan merujuk pada \textbf{Matriks 4 Kuadran Keputusan ADF vs KPSS}! Berada di kuadran manakah data mentah tersebut (DSP, TSP, atau Stasioner Murni)?
+        \item Jelaskan fenomena apa yang terjadi saat data didiferensiasi hingga ordo-2 ($d=2$). Mengapa variansi justru meningkat dan apa bahaya \textit{over-differencing} terhadap model peramalan?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Dua insinyur menguji profil frekuensi sistem interkoneksi 50 Hz yang mengalami deviasi akibat integrasi PLTS berskala besar:
+    \begin{itemize}
+        \item \textbf{Insinyur A} menyatakan sinyal frekuensi sudah stasioner karena nilai rata-rata selalu berada di sekitar 50.00 Hz sepanjang hari.
+        \item \textbf{Insinyur B} membantah dan menunjukkan bahwa variansi deviasi frekuensi saat siang hari ($\sigma_{\text{siang}}^2 = 0.15 \text{ Hz}^2$) jauh lebih besar daripada malam hari ($\sigma_{\text{malam}}^2 = 0.01 \text{ Hz}^2$).
+    \end{itemize}
+    Evaluasilah argumen kedua insinyur tersebut berdasarkan definisi matematis stasioneritas kuat vs lemah. Tuliskan formulasi transformasi matematis (Box-Cox) yang harus diterapkan untuk menstabilkan variansi sebelum pemodelan!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah sebuah fungsi Python/Octave mandiri bernama \texttt{stationarity\_pipeline(y, max\_lags)} yang secara otomatis:
+    \begin{enumerate}[label=\alph*.]
+        \item Menghitung nilai ADF test dan KPSS test.
+        \item Jika $p_{\text{ADF}} > 0.05$ atau $p_{\text{KPSS}} < 0.05$, lakukan diferensiasi berulang $d \in \{1, 2\}$ hingga kondisi stasioner tercapai.
+        \item Mengembalikan data stasioner, ordo $d$ optimal, dan mencetak matriks ACF/PACF hingga $lag = \texttt{max\_lags}$.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

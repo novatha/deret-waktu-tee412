@@ -1,0 +1,119 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Color Definitions
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Lembar Kerja Mahasiswa \& Problem Set (Minggu 1)}}
+\fancyhead[R]{\small\color{gray}Analisis Deret Waktu -- Teknik Elektro}
+\fancyfoot[L]{\footnotesize\color{gray}Program Studi Teknik Elektro FT UNIB}
+\fancyfoot[R]{\footnotesize\thepage}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.25cm]
+    {\LARGE \textbf{\color{primaryblue}LEMBAR KERJA \& PROBLEM SET MINGGU 1}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Karakteristik Data, Komponen Sinyal, dan Dekomposisi Deret Waktu}}
+\end{center}
+
+\vspace{0.2cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.5cm}p{5.5cm}p{2.5cm}p{4.5cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Kelas/Kelompok} & : \dotfill & \textbf{Tanggal} & : \dotfill \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\section{Panduan Pengerjaan}
+Problem set ini dirancang berjenjang berdasarkan Taksonomi Bloom (Level C1 sampai C6) untuk mengukur capaian \textbf{Sub-CPMK 1} (Karakteristik dan Dekomposisi Deret Waktu Kelistrikan). Kerjakan secara mandiri, rapi, dan sistematis.
+
+\section{Problem Set (Level C1 -- C6)}
+
+\begin{enumerate}[leftmargin=1.8em, label=\textbf{Soal \arabic*.}]
+    
+    % C1 - Remembering
+    \item \textbf{[C1 -- Mengingat / \textit{Remembering}]} \\
+    Sebutkan dan jelaskan secara singkat empat komponen pembentuk deret waktu ($y_t$) dalam konteks sinyal keteknikan elektro! Berikan masing-masing 1 contoh riil pada sistem tenaga listrik.
+    \vspace{2.2cm}
+
+    % C2 - Understanding
+    \item \textbf{[C2 -- Memahami / \textit{Understanding}]} \\
+    Jelaskan perbedaan mendasar antara model dekomposisi \textbf{Aditif} ($y_t = T_t + S_t + R_t$) dan model \textbf{Multiplikatif} ($y_t = T_t \times S_t \times R_t$). Bagaimana Anda memutuskan model mana yang tepat digunakan hanya dengan melihat plot visual kurva profil konsumsi beban listrik tahunan suatu kota yang populasinya berkembang pesat?
+    \vspace{2.8cm}
+
+    % C3 - Applying
+    \item \textbf{[C3 -- Menerapkan / \textit{Applying}]} \\
+    Diberikan data beban listrik harian (dalam MW) pada sebuah gardu distribusi selama 5 hari berturut-turut pada jam beban puncak (pukul 19.00 WIB):
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \textbf{Hari ke- ($t$)} & 1 & 2 & 3 & 4 & 5 \\ \hline
+    \textbf{Beban $y_t$ (MW)} & 120 & 126 & 124 & 132 & 138 \\ \hline
+    \end{tabular}
+    \end{center}
+    Hitunglah estimasi tren pada hari ke-3 ($\hat{T}_3$) menggunakan metode \textit{Simple Centered Moving Average} dengan ordo $m = 3$ ($3$-SMA), dan tentukan nilai komponen \textit{detrended} $D_3 = y_3 - \hat{T}_3$ jika diasumsikan model aditif.
+    \vspace{2.8cm}
+
+    \newpage
+
+    % C4 - Analyzing
+    \item \textbf{[C4 -- Menganalisis / \textit{Analyzing}]} \\
+    Seorang insinyur SCADA melakukan dekomposisi data konsumsi energi pada gedung kampus. Setelah tren dan musiman harian diisolasi, plot residual $\hat{R}_t$ menunjukkan bentuk gelombang sinusoidal dengan periode berulang setiap 12 jam serta beberapa \textit{spike} tajam di atas $3\sigma$.
+    \begin{enumerate}[label=\alph*.]
+        \item Apakah residual $\hat{R}_t$ tersebut sudah dapat dikategorikan sebagai \textit{White Noise}? Jelaskan analisis Anda berdasarkan 3 syarat matematis \textit{white noise}!
+        \item Apa indikasi fisik kelistrikan yang menyebabkan munculnya pola sinusoidal 12 jam tersebut?
+    \end{enumerate}
+    \vspace{3.5cm}
+
+    % C5 - Evaluating
+    \item \textbf{[C5 -- Mengevaluasi / \textit{Evaluating}]} \\
+    Dua tim mahasiswa melakukan dekomposisi pada dataset pembangkitan Pembangkit Listrik Tenaga Surya (PLTS) 1 MWp selama 1 tahun.
+    \begin{itemize}
+        \item \textbf{Tim A} menggunakan dekomposisi Aditif langsung pada data mentah daya output (kW).
+        \item \textbf{Tim B} menerapkan transformasi logaritmik $\ln(y_t + 1)$ sebelum melakukan dekomposisi aditif.
+    \end{itemize}
+    Evaluasilah kelebihan dan kelemahan pendekatan Tim A vs Tim B, mengingat daya PLTS selalu bernilai 0 kW pada malam hari (pukul 18.30 -- 05.30 WIB) dan memiliki fluktuasi sangat tinggi pada siang hari akibat tutupan awan (\textit{cloud passing}). Metode mana yang Anda rekomendasikan?
+    \vspace{3.5cm}
+
+    % C6 - Creating
+    \item \textbf{[C6 -- Merancang / \textit{Creating}]} \\
+    Rancanglah sebuah \textbf{pseudocode} algoritma mandiri (tanpa menggunakan pustaka \texttt{statsmodels} bawaan) untuk melakukan dekomposisi aditif klasik pada data beban listrik per-jam ($y_t, t=1,2,\dots,N$) dengan periode musiman $m=24$ jam. Pseudocode harus memuat:
+    \begin{enumerate}[label=\alph*.]
+        \item Tahap ekstraksi tren $\hat{T}_t$ dengan $2 \times 24$-CMA (\textit{Centered Moving Average} seimbang).
+        \item Tahap \textit{detrending}.
+        \item Tahap kalkulasi indeks musiman $\hat{S}_t$ (rata-rata per-jam $00.00$ s.d. $23.00$ yang dinormalisasi agar $\sum_{k=1}^{24} \hat{S}_k = 0$).
+        \item Tahap isolasi residual $\hat{R}_t$.
+    \end{enumerate}
+    \vspace{4.5cm}
+
+\end{enumerate}
+
+\end{document}

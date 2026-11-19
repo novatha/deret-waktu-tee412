@@ -1,0 +1,189 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 12)}]{\textbf{Arsitektur Sekuensial Lanjut: CNN-1D, Seq2Seq, \& Attention}}
+\subtitle{Temporal Convolutional Networks, Encoder-Decoder, dan Pengenalan Transformer}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 12 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-12}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 11)}
+                Mahasiswa mampu merancang arsitektur Temporal Convolutional Network (1D-CNN), menerapkan model Encoder-Decoder (Seq2Seq) untuk peramalan multi-step, serta memahami mekanisme Self-Attention dan arsitektur Transformer dasar.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{1D-CNN untuk Ekstraksi Fitur Temporal}
+                \item \textbf{Causal Convolutions \& Dilated Convolutions}
+                \item \textbf{Arsitektur Encoder-Decoder (Seq2Seq)}
+                \item \textbf{Prinsip Dasar Self-Attention Mechanism}
+                \item \textbf{Pengenalan Transformer Deret Waktu (Informer / PatchTST)}
+                \item \textbf{Studi Kasus: Peramalan Profil Tegangan Multi-Bus}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{1D Convolutional Neural Network (1D-CNN)}
+    Mengekstraksi pola gelombang dan bentuk fitur (*shapelets*) lokal sinyal secara paralel:
+    \begin{block}{Operasi Konvolusi 1D Temporal}
+        \begin{equation}
+            y[t] = (x * w)[t] = \sum_{k=-K}^K x[t - k] \cdot w[k]
+        \end{equation}
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Causal Convolution}: Memastikan filter konvolusi pada langkah waktu $t$ hanya melihat masa lalu ($t, t-1, \dots$) tanpa membocorkan masa depan.
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Dilated Convolution}: Memperluas area pandang (*receptive field*) secara eksponensial ($d = 1, 2, 4, 8, \dots$) tanpa menambah parameter bobot.
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Arsitektur Encoder-Decoder (Seq2Seq)}
+    Standar industri untuk peramalan multi-cakrawala (*Multi-Horizon Forecasting*):
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{1. Encoder Network}
+                Membaca deret waktu histori input ($x_1, x_2, \dots, x_{T_{\text{in}}}$) dan memadatkannya menjadi satu representasi vektor konteks (\textit{Context Vector} $C$).
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{2. Decoder Network}
+                Mengurai vektor konteks $C$ secara berulang untuk membangkitkan lintasan peramalan masa depan ($\hat{y}_{T+1}, \hat{y}_{T+2}, \dots, \hat{y}_{T+T_{\text{out}}}$).
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+    \begin{alertblock}{Bottleneck Konteks}
+        Jika rentang input sangat panjang, satu vektor konteks $C$ tunggal tidak sanggup menampung seluruh detail fluktuasi $\to$ Membutuhkan \textbf{Attention Mechanism}!
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Mekanisme Self-Attention \& Transformer}
+    Mengizinkan setiap langkah waktu berinteraksi langsung dengan langkah waktu lain:
+    \begin{block}{Formula Scaled Dot-Product Attention}
+        \begin{equation}
+            \text{Attention}(Q, K, V) = \text{softmax}\left( \frac{QK^T}{\sqrt{d_k}} \right) V
+        \end{equation}
+        $Q$ (Query), $K$ (Key), dan $V$ (Value) adalah proyeksi linier dari deret waktu input.
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \textbf{Keunggulan Utama Transformer:}
+            \begin{itemize}
+                \item Paralelisasi pelatihan penuh (bukan rekursif sekuensial).
+                \item Mampu menangkap dependensi ribuan langkah waktu (*long-range interactions*).
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{Model Terkini (2024--2026):}
+            \textit{PatchTST}, \textit{Informer}, dan \textit{iTransformer} untuk peramalan grid pintar skala benua.
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi PyTorch: 1D-CNN Temporal Forecaster}
+\begin{lstlisting}
+import torch
+import torch.nn as nn
+
+class TemporalCNN(nn.Module):
+    def __init__(self, in_channels=1, num_filters=32, kernel_size=3, pred_steps=24):
+        super(TemporalCNN, self).__init__()
+        self.conv1 = nn.Conv1d(in_channels, num_filters, kernel_size=kernel_size, padding=1)
+        self.relu = nn.ReLU()
+        self.conv2 = nn.Conv1d(num_filters, num_filters*2, kernel_size=kernel_size, padding=1)
+        self.pool = nn.AdaptiveAvgPool1d(1)
+        self.fc = nn.Linear(num_filters*2, pred_steps)
+
+    def forward(self, x):
+        # x shape: (batch_size, in_channels, seq_len)
+        x = self.relu(self.conv1(x))
+        x = self.relu(self.conv2(x))
+        x = self.pool(x).squeeze(-1)
+        out = self.fc(x)
+        return out
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Rangkuman \& Persiapan Minggu ke-13}
+    \begin{block}{Poin Kunci Minggu 12}
+        \begin{itemize}
+            \item 1D-CNN sangat efisien mengekstraksi bentuk gelombang lokal dan sangat cepat dilatih.
+            \item Seq2Seq menyediakan kerangka peramalan multi-langkah (*multi-horizon*) yang fleksibel.
+            \item Mekanisme Attention memungkinkan model berfokus pada kejadian kritis di masa lalu (misal lonjakan beban puncak kemarin).
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-13)}
+        \textbf{Deteksi Anomali Sistem Kelistrikan}: Deteksi pencurian listrik, kegagalan sensor meter pintar, dan anjloknya tegangan menggunakan Isolation Forest dan LSTM Autoencoder.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Pertanyaan \& Diskusi Arsitektur Sekuensial Lanjut}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga \& Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

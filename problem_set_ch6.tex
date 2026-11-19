@@ -1,0 +1,120 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 6: Model Eksogen SARIMAX \& VAR}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 6: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Model Eksogen SARIMAX, Korelasi Silang (CCF), dan Vector AutoRegression (VAR)}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Apa perbedaan mendasar antara variabel endogen ($y_t$) dan variabel eksogen ($X_t$) dalam pemodelan deret waktu sistem tenaga?
+        \item Sebutkan fungsi uji Kausalitas Granger (\textit{Granger Causality Test}) dalam sistem multivariat!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Mengapa kita perlu memeriksa fungsi korelasi silang (CCF) antara temperatur lingkungan dan beban sistem AC sebelum membangun model SARIMAX?
+        \item Apa yang dimaksud dengan fenomena \textit{Thermal Inertia Lag} pada gedung komersial dan bagaimana hal tersebut tercermin pada grafik CCF?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sebuah model SARIMAX(1,0,0) diestimasi untuk menghubungkan beban listrik ($y_t$, MW) dengan suhu udara ($T_t$, $^\circ\text{C}$):
+    \begin{equation*}
+        y_t = 50.0 + 3.2 T_t + \eta_t, \quad \text{di mana } \eta_t = 0.7 \eta_{t-1} + \epsilon_t, \quad \epsilon_t \sim \mathcal{WN}(0, \sigma^2=1.0)
+    \end{equation*}
+    Pada saat $t=100$, diketahui $y_{100} = 152.0$ MW dan $T_{100} = 30.0^\circ\text{C}$. Prakiraan cuaca untuk jam berikutnya ($t=101$) memprediksi suhu naik menjadi $T_{101} = 32.5^\circ\text{C}$.
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah nilai residual regresi $\eta_{100}$ pada saat $t=100$.
+        \item Hitunglah nilai estimasi galat autoregresif untuk jam berikutnya $\hat{\eta}_{101|100}$.
+        \item Hitunglah peramalan titik beban listrik untuk jam ke-101 ($\hat{y}_{101|100}$).
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Dua gardu induk yang saling terhubung (Gardu A: $y_{1,t}$ dan Gardu B: $y_{2,t}$) dimodelkan menggunakan sistem Vector AutoRegression ordo-1 (VAR(1)):
+    \begin{equation*}
+        \begin{bmatrix} y_{1,t} \\ y_{2,t} \end{bmatrix} = \begin{bmatrix} 10.0 \\ 15.0 \end{bmatrix} + \begin{bmatrix} 0.6 & 0.2 \\ 0.1 & 0.7 \end{bmatrix} \begin{bmatrix} y_{1,t-1} \\ y_{2,t-1} \end{bmatrix} + \begin{bmatrix} \epsilon_{1,t} \\ \epsilon_{2,t} \end{bmatrix}
+    \end{equation*}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah nilai eigen (\textit{eigenvalues}) dari matriks koefisien $\mathbf{A}_1 = \begin{bmatrix} 0.6 & 0.2 \\ 0.1 & 0.7 \end{bmatrix}$.
+        \item Berdasarkan nilai eigen tersebut, simpulkan apakah sistem multivariat 2-gardu tersebut bersifat stabil dan stasioner!
+        \item Jelaskan secara fisis makna koefisien $a_{12} = 0.2$ dan $a_{21} = 0.1$ terhadap dinamika transfer beban antar kedua gardu.
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Untuk memprediksi beban listrik 24 jam ke depan, insinyur membutuhkan ramalan variabel eksogen (misal ramalan suhu BMKG).
+    \begin{itemize}
+        \item \textbf{Skenario Ideal}: Ramalan suhu cuaca 100\% akurat sempurna.
+        \item \textbf{Skenario Nyata}: Ramalan suhu mengandung kesalahan perkiraan (*forecast error of exogenous variable*).
+    \end{itemize}
+    Evaluasilah bagaimana perambatan kesalahan (*error propagation*) dari variabel eksogen dapat mempengaruhi akurasi akhir peramalan SARIMAX. Kapan model SARIMA univariat murni justru bisa mengungguli SARIMAX?
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah sebuah arsitektur skrip (Python dengan pustaka \texttt{statsmodels.tsa.api.VAR} atau Octave) yang mengolah data 3 sinyal sensor kualitas daya (Tegangan RMS, Arus RMS, dan Total Harmonic Distortion - THD) secara simultan:
+    \begin{enumerate}[label=\alph*.]
+        \item Melakukan uji stasioneritas multivariat.
+        \item Memilih ordo $p$ optimal menggunakan kriteria AIC / Schwarz-Bayesian (BIC).
+        \item Menghitung dan memplot \textit{Impulse Response Function} (IRF) untuk melihat respon THD jika terjadi lonjakan arus transien sesaat.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

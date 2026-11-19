@@ -1,0 +1,128 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=primaryblue,citecolor=primaryblue,urlcolor=primaryblue]{hyperref}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Problem Set Minggu 10: Feature Engineering \& Machine Learning}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Dosen: Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}
+\fancyfoot[R]{\footnotesize Halaman \thepage\ dari 3}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+
+\begin{document}
+
+\begin{center}
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK}}\\[0.1cm]
+    {\large \textbf{\color{secondaryblue}JURUSAN TEKNIK ELEKTRO}}\\[0.2cm]
+    {\LARGE \textbf{\color{primaryblue}PROBLEM SET 10: ANALISIS DERET WAKTU DAN PERAMALAN}}\\[0.1cm]
+    {\normalsize \textbf{Topik: Rekayasa Fitur Temporal, Model XGBoost, dan Validasi Silang Bebas Leakage}}
+\end{center}
+
+\vspace{0.1cm}
+
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Informasi Tugas \& Identitas Mahasiswa}]
+\small
+\begin{tabular}{p{2.2cm}p{5.5cm}p{2.2cm}p{5.0cm}}
+\textbf{Nama} & : \dotfill & \textbf{NPM} & : \dotfill \\
+\textbf{Prodi/Kelas} & : S1 Teknik Elektro & \textbf{Hari/Tanggal} & : \dotfill \\
+\textbf{Dosen} & : Ir. Novalio Daratha, Ph.D. & \textbf{Batas Waktu} & : 1 Minggu \\
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+\begin{enumerate}[leftmargin=1.5em, label=\textbf{Soal \arabic*.}]
+
+    \item \textbf{[Level C1 -- Mengingat / \textit{Remembering}]} \hfill \textbf{(Bobot: 10\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Jelaskan apa yang dimaksud dengan teknik \textit{Sliding Window} dalam mengubah data deret waktu sekuensial menjadi format matriks pembelajaran terawasi (*Supervised Learning Matrix*)!
+        \item Mengapa fitur jam $H \in \{0, 1, \dots, 23\}$ perlu di-encode menggunakan fungsi trigonometri ($\sin$ dan $\cos$)?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C2 -- Memahami / \textit{Understanding}]} \hfill \textbf{(Bobot: 15\%)}
+    \begin{enumerate}[label=\alph*.]
+        \item Apa yang dimaksud dengan \textbf{Lookahead Data Leakage} dalam pemodelan deret waktu dan bagaimana kesalahan ini bisa terjadi jika kita menggunakan fungsi \texttt{StandardScaler.fit\_transform()} sebelum membagi dataset train/test?
+        \item Jelaskan keunggulan algoritma berbasis pohon (\textit{Gradient Boosted Decision Trees} seperti XGBoost/LightGBM) dibandingkan regresi linier klasik dalam menangani relasi non-linier antara temperatur cuaca ekstrem dan konsumsi daya listrik pendingin gedung!
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \item \textbf{[Level C3 -- Menerapkan / \textit{Applying}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Diberikan cuplikan data beban listrik harian (MW) selama 6 jam berturut-turut:
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    \rowcolor{boxbg}
+    \textbf{Jam ($t$)} & 08.00 & 09.00 & 10.00 & 11.00 & 12.00 & 13.00 \\ \hline
+    \textbf{Beban $y_t$ (MW)} & 140 & 155 & 160 & 165 & 150 & 170 \\ \hline
+    \end{tabular}
+    \end{center}
+    \begin{enumerate}[label=\alph*.]
+        \item Hitunglah nilai fitur \textit{Lag-1} ($y_{t-1}$) dan \textit{Lag-2} ($y_{t-2}$) untuk $t = 10.00, 11.00, 12.00, 13.00$.
+        \item Hitunglah fitur statistik jendela bergerak (\textit{Rolling Mean} 3 jam: $\bar{y}_{\text{roll3}, t} = \frac{1}{3}(y_{t-1} + y_{t-2} + y_{t-3})$) untuk target peramalan $y_{13.00}$. (Catatan: Pastikan tidak menyertakan $y_{13.00}$ dalam kalkulasi!).
+        \item Hitung nilai fitur siklis $\sin\left(\frac{2\pi \times 13}{24}\right)$ dan $\cos\left(\frac{2\pi \times 13}{24}\right)$.
+    \end{enumerate}
+
+    \newpage
+
+    \item \textbf{[Level C4 -- Menganalisis / \textit{Analyzing}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Sebuah model XGBoost dilatih untuk peramalan beban jangka pendek. Analisis nilai \textbf{Feature Importance} (Gain) menghasilkan peringkat lima fitur teratas:
+    \begin{enumerate}
+        \item \texttt{lag\_24} (Gain: 58.2\%)
+        \item \texttt{temperature} (Gain: 18.5\%)
+        \item \texttt{lag\_168} (Gain: 12.1\%)
+        \item \texttt{hour\_sin} (Gain: 6.4\%)
+        \item \texttt{rolling\_std\_24} (Gain: 2.8\%)
+    \end{enumerate}
+    \textbf{Tugas Analisis:}
+    \begin{enumerate}[label=\alph*.]
+        \item Berikan interpretasi fisis kelistrikan mengapa \texttt{lag\_24} dan \texttt{lag\_168} memberikan kontribusi dominan (total $>70\%$) terhadap ketepatan prediksi model!
+        \item Mengapa fitur temperatur tetap penting meskipun kontribusinya berada di bawah \texttt{lag\_24}? Apa dampaknya pada peramalan saat terjadi gelombang panas mendadak di akhir pekan?
+    \end{enumerate}
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C5 -- Mengevaluasi / \textit{Evaluating}]} \hfill \textbf{(Bobot: 15\%)} \\
+    Dua insinyur mengimplementasikan skema peramalan multi-langkah (*Multi-Step Ahead Forecasting*) untuk 24 jam ke depan menggunakan XGBoost:
+    \begin{itemize}
+        \item \textbf{Insinyur A}: Menggunakan strategi \textit{Recursive Multi-Step} (Satu model memprediksi $t+1$, hasilnya diumpan balik sebagai fitur lag untuk memprediksi $t+2$, dst).
+        \item \textbf{Insinyur B}: Menggunakan strategi \textit{Direct Multi-Step} (Melatih 24 model independen yang terpisah: Model 1 untuk $t+1$, Model 2 untuk $t+2$, ..., Model 24 untuk $t+24$).
+    \end{itemize}
+    Evaluasilah komparasi kedua strategi tersebut ditinjau dari fenomena akumulasi kesalahan (*error accumulation*), kebutuhan waktu pelatihan komputasi, dan kestabilan variansi peramalan!
+
+    \vspace{0.4cm}
+
+    \item \textbf{[Level C6 -- Merancang / \textit{Creating}]} \hfill \textbf{(Bobot: 20\%)} \\
+    Rancanglah sebuah \textbf{pipeline Python lengkap} menggunakan \texttt{scikit-learn} dan \texttt{xgboost} yang mengimplementasikan:
+    \begin{enumerate}[label=\alph*.]
+        \item Pembuatan fitur lag otomatis ($t-1$ hingga $t-48$), fitur kalender siklis ($\sin/\cos$), dan fitur cuaca.
+        \item Skema validasi \texttt{TimeSeriesSplit(n\_splits=5)}.
+        \item Penyetelan hiperparameter (\textit{Hyperparameter Tuning} untuk \texttt{max\_depth}, \texttt{learning\_rate}, \texttt{n\_estimators}) menggunakan metode \texttt{RandomizedSearchCV}.
+        \item Menghitung dan menampilkan metrik evaluasi rata-rata (RMSE dan MAPE) dari seluruh lipatan (*folds*) validasi.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

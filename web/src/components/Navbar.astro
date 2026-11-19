@@ -1,0 +1,163 @@
+---
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const getUrl = (path: string) => `${base}${path}`;
+---
+
+<header class="navbar-wrapper">
+  <nav class="navbar glass-panel">
+    <a href={getUrl('/')} class="nav-brand">
+      <div class="brand-badge">
+        <span class="brand-icon">TSA</span>
+      </div>
+      <div class="brand-info">
+        <span class="brand-title">DERET WAKTU</span>
+        <span class="brand-subtitle">Analisis &amp; Peramalan • S1 Elektro UNIB</span>
+      </div>
+    </a>
+
+    <ul class="nav-menu">
+      <li><a href={getUrl('/')} class="nav-link">Beranda</a></li>
+      <li><a href={getUrl('/rps')} class="nav-link">Silabus &amp; RPS</a></li>
+      <li><a href={getUrl('/materi')} class="nav-link">13 Modul Perkuliahan</a></li>
+      <li><a href={getUrl('/praktikum')} class="nav-link">Panduan Praktikum</a></li>
+      <li>
+        <a href={getUrl('/sandbox')} class="nav-link nav-btn-studio">
+          <span class="pulse-dot"></span> Virtual Lab Studio
+        </a>
+      </li>
+    </ul>
+
+    <div class="nav-actions">
+      <a href="https://www.ndaratha.my.id" class="btn btn-sm btn-outline">
+        <i data-lucide="globe"></i> ndaratha.my.id
+      </a>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .navbar-wrapper {
+    position: sticky;
+    top: 16px;
+    z-index: 1000;
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background: rgba(12, 18, 34, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .brand-badge {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-emerald-cyan);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+  }
+
+  .brand-icon {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #04121e;
+    letter-spacing: -0.04em;
+  }
+
+  .brand-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--text-main);
+    line-height: 1.1;
+  }
+
+  .brand-subtitle {
+    font-size: 0.72rem;
+    color: var(--text-subtle);
+    letter-spacing: 0.01em;
+  }
+
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    list-style: none;
+  }
+
+  .nav-link {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .nav-link:hover {
+    color: var(--neon-cyan);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .nav-btn-studio {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--neon-emerald);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: var(--radius-pill);
+  }
+
+  .nav-btn-studio:hover {
+    background: var(--gradient-emerald-cyan);
+    color: #04121e;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--neon-emerald);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--neon-emerald);
+    animation: blinkDot 1.5s infinite ease-in-out;
+  }
+
+  @media (max-width: 960px) {
+    .nav-menu {
+      display: none;
+    }
+  }
+</style>

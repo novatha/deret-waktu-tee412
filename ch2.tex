@@ -1,0 +1,269 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Custom Color Palette
+\definecolor{mainblue}{RGB}{24, 43, 73}
+\definecolor{accentblue}{RGB}{41, 128, 185}
+\definecolor{accentgold}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{44, 62, 80}
+\definecolor{lightbg}{RGB}{248, 250, 252}
+\definecolor{bordergray}{RGB}{200, 210, 220}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{codegreen}{RGB}{39, 174, 96}
+\definecolor{tableheader}{RGB}{24, 43, 73}
+
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=accentblue, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!80, fg=white}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightbg, fg=darkgray}
+\setbeamercolor{block title alerted}{bg=accentgold, fg=white}
+\setbeamercolor{block body alerted}{bg=accentgold!10, fg=darkgray}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\tiny\color{darkgray},
+    keywordstyle=\bfseries\color{accentblue},
+    stringstyle=\color{accentgold},
+    commentstyle=\itshape\color{codegreen},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{bordergray},
+    numbers=none
+}
+
+\title[\textbf{Deret Waktu (Minggu 2)}]{\textbf{Stasioneritas, Uji Hipotesis, dan Korelasi Sinyal}}
+\subtitle{Uji ADF/KPSS, Analisis Correlogram (ACF/PACF), dan Diferensiasi Sinyal}
+\author[\textbf{Ir. Novalio Daratha, Ph.D.}]{\textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.}}
+\institute[FT UNIB]{Program Studi Teknik Elektro -- Fakultas Teknik\\Universitas Bengkulu}
+\date{Minggu 2 / Semester Ganjil 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda Perkuliahan Minggu ke-2}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capaian Pembelajaran (Sub-CPMK 2)}
+                Mahasiswa mampu memformulasikan konsep stasioneritas kovarians, melakukan uji signifikansi statistik (ADF dan KPSS), menganalisis plot correlogram (ACF/PACF), serta menerapkan transformasi diferensiasi dan stabilisasi variansi sinyal.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item \textbf{Konsep Stasioneritas (Kuat vs Lemah)}
+                \item \textbf{Unit Root, Lingkaran Satuan Z, dan Sistem LTI}
+                \item \textbf{Formulasi Uji Statistik ADF vs KPSS}
+                \item \textbf{Matriks 4 Kuadran Keputusan ADF-KPSS}
+                \item \textbf{Fungsi Autokorelasi (ACF dan PACF)}
+                \item \textbf{Transformasi Diferensiasi dan Box-Cox}
+                \item \textbf{Implementasi Python dan Studi Kasus}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Definisi Matematis Stasioneritas}
+    Sebagian besar pemodelan statistik deret waktu mengharuskan data bersifat \textbf{Weakly Stationary (Stasioner Kovarians)}:
+    \begin{block}{3 Syarat Utama Stasioneritas Kovarians}
+        \begin{enumerate}
+            \item \textbf{Ekspektasi Rata-rata Konstan}: $\mathbb{E}[y_t] = \mu \quad (\forall t)$
+            \item \textbf{Variansi Terbatas dan Konstan}: $\mathrm{Var}(y_t) = \mathbb{E}[(y_t - \mu)^2] = \sigma^2 < \infty \quad (\forall t)$
+            \item \textbf{Autokovarians Hanya Bergantung Lag ($k$)}:
+            \[
+                \gamma(k) = \mathrm{Cov}(y_t, y_{t-k}) = \mathbb{E}[(y_t - \mu)(y_{t-k} - \mu)]
+            \]
+        \end{enumerate}
+    \end{block}
+    \begin{alertblock}{Mengapa Data Listrik Sering Non-Stasioner?}
+        Adanya tren pertumbuhan konsumsi industri (\textit{mean-shift}), pola musiman 24 jam (\textit{seasonal unit root}), dan penetrasi EBT fluktuatif (\textit{variance-shift}).
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Unit Root, Bidang Kompleks Z, dan Stabilitas Sistem}
+    Dalam perspektif Teknik Elektro (Sistem Kendali dan Pemrosesan Sinyal Diskrit):
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Persamaan Karakteristik Sistem}
+                Ditinjau model AR(1): $y_t = \phi y_{t-1} + \epsilon_t \Rightarrow (1 - \phi B)y_t = \epsilon_t$.
+                \begin{itemize}
+                    \item Pole sistem berada pada $z = \phi$.
+                    \item \textbf{Sistem Stabil / Stasioner}: $|\phi| < 1$ (Pole di dalam lingkaran satuan).
+                    \item \textbf{Unit Root (Batas Kestabilan)}: $\phi = 1 \Rightarrow$ Integrator murni / \textit{Random Walk} (Non-stasioner).
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Dampak Unit Root pada Respon Sistem}
+                Jika $\phi = 1$, gangguan impuls $\epsilon_t$ tidak akan pernah meluruh:
+                \[
+                    y_t = y_0 + \sum_{i=1}^t \epsilon_i \quad \Longrightarrow \quad \mathrm{Var}(y_t) = t \cdot \sigma^2 \to \infty
+                \]
+                Variansi membesar linier terhadap waktu!
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Formulasi Matematis Uji Hipotesis: ADF vs KPSS}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textbf{Augmented Dickey-Fuller (ADF)}}
+                Menguji keberadaan \textit{Unit Root} ($\gamma = 0$):
+                \[
+                    \Delta y_t = \alpha + \beta t + \gamma y_{t-1} + \sum_{i=1}^p \delta_i \Delta y_{t-i} + \epsilon_t
+                \]
+                \begin{itemize}
+                    \item $H_0$: $\gamma = 0$ (Memiliki unit root / Non-stasioner)
+                    \item $H_1$: $\gamma < 0$ (Stasioner)
+                    \item \textbf{Kaidah}: Tolak $H_0$ jika $p\text{-value} < 0.05$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textbf{Uji KPSS (LM Test)}}
+                Model dekomposisi: $y_t = r_t + \beta t + \epsilon_t$, dengan $r_t = r_{t-1} + u_t$ dan $u_t \sim \mathcal{N}(0, \sigma_u^2)$.
+                \[
+                    \text{LM} = \sum_{t=1}^T \frac{S_t^2}{T^2 s^2(l)}, \quad S_t = \sum_{i=1}^t e_i
+                \]
+                \begin{itemize}
+                    \item $H_0$: $\sigma_u^2 = 0$ (Stasioner di sekitar tren)
+                    \item $H_1$: $\sigma_u^2 > 0$ (Non-stasioner)
+                    \item \textbf{Kaidah}: Tolak $H_0$ jika $p\text{-value} < 0.05$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Matriks 4 Kuadran Keputusan Diagnostik ADF vs KPSS}
+    Kombinasi kedua uji memberikan konfirmasi kepastian status fisik sinyal:
+    \begin{table}[h!]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|l|c|c|p{4.8cm}|}
+    \hline
+    \rowcolor{tableheader}
+    \color{white}\textbf{Kasus} & \color{white}\textbf{Uji ADF ($p$-val)} & \color{white}\textbf{Uji KPSS ($p$-val)} & \color{white}\textbf{Kesimpulan dan Tindakan Rekayasa} \\ \hline
+    \textbf{Kuadran I} & $p < 0.05$ (Tolak $H_0$) & $p > 0.05$ (Gagal tolak) & \textbf{Stasioner Murni} (Siap dimodelkan langsung). \\ \hline
+    \textbf{Kuadran II} & $p > 0.05$ (Gagal tolak) & $p < 0.05$ (Tolak $H_0$) & \textbf{Difference-Stationary (DSP)}: Wajib diferensiasi $\Delta y_t$. \\ \hline
+    \textbf{Kuadran III} & $p > 0.05$ (Gagal tolak) & $p > 0.05$ (Gagal tolak) & \textbf{Trend-Stationary (TSP)}: Cukup hilangkan tren linier (\textit{detrending}). \\ \hline
+    \textbf{Kuadran IV} & $p < 0.05$ (Tolak $H_0$) & $p < 0.05$ (Tolak $H_0$) & \textbf{Inkonsisten}: Terjadi \textit{Structural Break} / perubahan rezim sistem. \\ \hline
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Analisis Correlogram: ACF dan PACF}
+    \begin{block}{Autocorrelation Function (ACF) vs Partial ACF (PACF)}
+        \begin{itemize}
+            \item \textbf{ACF ($\rho_k$)}: Mengukur korelasi linier langsung dan tidak langsung antara $y_t$ dan $y_{t-k}$.
+            \[
+                \rho_k = \frac{\mathrm{Cov}(y_t, y_{t-k})}{\sqrt{\mathrm{Var}(y_t)\mathrm{Var}(y_{t-k})}} = \frac{\gamma_k}{\gamma_0}
+            \]
+            \item \textbf{PACF ($\phi_{kk}$)}: Mengukur korelasi murni antara $y_t$ dan $y_{t-k}$ setelah mengeliminasi efek perantara $y_{t-1}, y_{t-2}, \dots, y_{t-k+1}$.
+        \end{itemize}
+    \end{block}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Ciri Data Non-Stasioner:}
+            Plot ACF meluruh sangat lambat (\textit{slow linear decay}).
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Ciri Data Stasioner:}
+            Plot ACF meluruh cepat secara eksponensial (\textit{exponential decay}) atau terpotong (\textit{cutoff}).
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Transformasi Sinyal: Diferensiasi dan Stabilisasi Variansi}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{1. Menstasionerkan Mean (Diferensiasi)}
+                \begin{itemize}
+                    \item \textbf{Reguler ($d=1$)}: $\Delta y_t = (1-B)y_t = y_t - y_{t-1}$
+                    \item \textbf{Musiman ($D=1, s=24$)}: $\Delta_{24} y_t = (1-B^{24})y_t$
+                    \item \textbf{Diferensiasi Ganda}: $\Delta \Delta_{24} y_t = (1-B)(1-B^{24})y_t$
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{2. Menstasionerkan Variansi (Box-Cox)}
+                Jika variansi membesar seiring level beban:
+                \[
+                    w_t = \frac{y_t^\lambda - 1}{\lambda} \quad (\text{jika } \lambda \neq 0)
+                \]
+                \[
+                    w_t = \ln(y_t) \quad (\text{jika } \lambda = 0)
+                \]
+            \end{block}
+            \begin{alertblock}{Over-differencing Hazard}
+                Diferensiasi $d > 2$ memicu $\rho_1 \approx -0.5$, menaikkan variansi derau, dan merusak model.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Implementasi Python: Evaluasi Komparatif ADF-KPSS}
+\begin{semiverbatim}
+\color{accentblue}\textbf{def} \color{darkgray}evaluasi_stasioneritas(series, nama="Sinyal"):
+    s = series.dropna()
+    adf_p = adfuller(s, autolag='AIC')[1]
+    kpss_p = kpss(s, regression='c', nlags='auto')[1]
+    
+    print(f"[{nama}] ADF p-val: \{adf_p:.4e\} | KPSS: \{kpss_p:.4f\}")
+    \color{accentblue}\textbf{if} \color{darkgray}adf_p < 0.05 \color{accentblue}\textbf{and} \color{darkgray}kpss_p > 0.05:
+        print(" -> Kesimpulan: STASIONER MURNI (Kuadran I)")
+    \color{accentblue}\textbf{elif} \color{darkgray}adf_p > 0.05 \color{accentblue}\textbf{and} \color{darkgray}kpss_p < 0.05:
+        print(" -> Kesimpulan: NON-STASIONER (DSP) -> Diferensiasi")
+    \color{accentblue}\textbf{elif} \color{darkgray}adf_p > 0.05 \color{accentblue}\textbf{and} \color{darkgray}kpss_p > 0.05:
+        print(" -> Kesimpulan: TREND-STATIONARY (TSP) -> Detrending")
+
+evaluasi_stasioneritas(df['power'], "Data Asli")
+evaluasi_stasioneritas(df['power'].diff(), "Setelah Diferensiasi d=1")
+\end{semiverbatim}
+\end{frame}
+
+\begin{frame}{Rangkuman dan Persiapan Minggu ke-3}
+    \begin{block}{Poin Kunci Minggu 2}
+        \begin{itemize}
+            \item Stasioneritas kovarians mensyaratkan mean konstan, variansi konstan, dan autokovarians hanya bergantung pada jeda waktu (\textit{lag}).
+            \item Matriks keputusan 4 kuadran ADF vs KPSS menjamin diagnosis yang konfirmatif dan akurat.
+            \item Diferensiasi reguler dan musiman menstasionerkan nilai rata-rata, sedangkan transformasi Box-Cox menstasionerkan variansi.
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{alertblock}{Materi Minggu Depan (Minggu ke-3)}
+        \textbf{Metode Pemulusan Data (\textit{Exponential Smoothing})}: Simple Exponential Smoothing, Holt's Linear Trend, dan Holt-Winters Seasonal untuk peramalan beban listrik jangka pendek.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.5cm}
+        {\Huge \color{mainblue} \textbf{Terima Kasih}}\\[0.4cm]
+        {\large Pertanyaan dan Diskusi Terkait Stasioneritas dan Analisis Sinyal}\\[1.2cm]
+        \textbf{Laboratorium Sistem Tenaga dan Komputasi Cerdas}\\
+        Jurusan Teknik Elektro -- Universitas Bengkulu
+    \end{center}
+\end{frame}
+
+\end{document}

@@ -45,6 +45,34 @@ const getUrl = (path: string) => `${base}${path}`;
     </div>
   </section>
 
+  <!-- Curated CSV Datasets Strip -->
+  <section style="padding: 32px 0 10px;">
+    <div class="container">
+      <div class="glass-panel" style="padding: 22px 24px; border-radius: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+          <div>
+            <span class="pill-badge" style="margin-bottom: 6px;">
+              <i data-lucide="database"></i> DATASET PRAKTIKUM &amp; UPLOAD VIRTUAL STUDIO
+            </span>
+            <h2 style="font-size: 1.25rem; font-weight: 700; margin: 4px 0 2px;">3 Dataset Kelistrikan Terkurasi (.CSV, 168 Jam)</h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Unduh dataset berikut untuk praktikum Google Colab atau uji langsung via tombol <strong>Upload CSV</strong> di <a href={getUrl('/sandbox')} style="color: var(--neon-cyan);">Virtual Lab Studio</a>.</p>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
+          <a href={getUrl('/datasets/beban_cuaca_regional_168h.csv')} download class="btn btn-sm btn-outline" style="justify-content: flex-start;">
+            <i data-lucide="download"></i> beban_cuaca_regional_168h.csv
+          </a>
+          <a href={getUrl('/datasets/plts_500kwp_iradiasi_168h.csv')} download class="btn btn-sm btn-outline" style="justify-content: flex-start;">
+            <i data-lucide="download"></i> plts_500kwp_iradiasi_168h.csv
+          </a>
+          <a href={getUrl('/datasets/smartmeter_anomaly_168h.csv')} download class="btn btn-sm btn-outline" style="justify-content: flex-start;">
+            <i data-lucide="download"></i> smartmeter_anomaly_168h.csv
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Lab Modules Grid -->
   <section class="praktikum-grid-section">
     <div class="container">

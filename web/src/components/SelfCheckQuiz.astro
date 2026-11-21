@@ -1,0 +1,264 @@
+---
+import type { QuizQuestion } from '../data/selfCheckQuizzes';
+
+interface Props {
+  week: number;
+  questions: QuizQuestion[];
+}
+
+const { week, questions } = Astro.props;
+---
+
+{questions && questions.length > 0 && (
+  <div class="detail-card glass-panel self-check-card" id={`self-check-w${week}`}>
+    <div class="quiz-header-row">
+      <div class="card-icon-header" style="margin-bottom: 0;">
+        <i data-lucide="clipboard-check" class="icon-emerald"></i>
+        <h3>Kuis Self-Check Interaktif (C1–C3)</h3>
+      </div>
+      <div class="quiz-score-pill" id="quiz-score-pill">Skor: 0 / {questions.length}</div>
+    </div>
+    <p class="quiz-intro">
+      Uji pemahaman konsep inti Minggu {week} sebelum masuk ke sesi praktikum Colab atau mengerjakan Problem Set.
+    </p>
+
+    <div class="quiz-questions-list">
+      {questions.map((q, qIdx) => (
+        <div class="quiz-item" data-qidx={qIdx} data-answer={q.answerIndex} data-explanation={q.explanation}>
+          <div class="quiz-q-top">
+            <span class="quiz-level-tag">{q.level}</span>
+            <p class="quiz-q-text">{qIdx + 1}. {q.question}</p>
+          </div>
+          <div class="quiz-options">
+            {q.options.map((opt, optIdx) => (
+              <button type="button" class="quiz-opt-btn" data-opt={optIdx}>
+                <span class="opt-letter">{String.fromCharCode(65 + optIdx)}</span>
+                <span>{opt}</span>
+              </button>
+            ))}
+          </div>
+          <div class="quiz-feedback" style="display: none;"></div>
+        </div>
+      ))}
+    </div>
+
+    <div class="quiz-footer-row">
+      <button type="button" id="btn-reset-quiz" class="btn btn-sm btn-outline">
+        <i data-lucide="refresh-cw"></i> Ulangi Kuis
+      </button>
+    </div>
+  </div>
+)}
+
+<style>
+  .quiz-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .quiz-score-pill {
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #34d399;
+  }
+
+  .quiz-intro {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+  }
+
+  .quiz-questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .quiz-item {
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .quiz-q-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .quiz-level-tag {
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(56, 189, 248, 0.16);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    margin-top: 2px;
+  }
+
+  .quiz-q-text {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary, #f8fafc);
+    line-height: 1.45;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .quiz-opt-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary, #cbd5e1);
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .quiz-opt-btn:hover:not(:disabled) {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: rgba(56, 189, 248, 0.45);
+    color: #f8fafc;
+  }
+
+  .quiz-opt-btn.is-correct {
+    background: rgba(16, 185, 129, 0.18);
+    border-color: #10b981;
+    color: #ecfdf5;
+    font-weight: 600;
+  }
+
+  .quiz-opt-btn.is-wrong {
+    background: rgba(244, 63, 94, 0.16);
+    border-color: #f43f5e;
+    color: #ffe4e6;
+  }
+
+  .opt-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 700;
+    font-size: 0.78rem;
+    flex-shrink: 0;
+  }
+
+  .quiz-feedback {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .quiz-feedback.ok {
+    background: rgba(16, 185, 129, 0.12);
+    border-left: 3px solid #10b981;
+    color: #a7f3d0;
+  }
+
+  .quiz-feedback.err {
+    background: rgba(244, 63, 94, 0.12);
+    border-left: 3px solid #f43f5e;
+    color: #fecdd3;
+  }
+
+  .quiz-footer-row {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const card = document.querySelector('.self-check-card');
+    if (!card) return;
+    const items = Array.from(card.querySelectorAll('.quiz-item'));
+    const scorePill = card.querySelector('#quiz-score-pill');
+    const resetBtn = card.querySelector('#btn-reset-quiz');
+
+    const answered = new Map<number, boolean>();
+
+    const updateScore = () => {
+      let correct = 0;
+      answered.forEach((v) => { if (v) correct++; });
+      if (scorePill) scorePill.textContent = `Skor: ${correct} / ${items.length}`;
+    };
+
+    items.forEach((item) => {
+      const qIdx = Number(item.getAttribute('data-qidx'));
+      const ansIdx = Number(item.getAttribute('data-answer'));
+      const explanation = item.getAttribute('data-explanation') || '';
+      const buttons = Array.from(item.querySelectorAll('.quiz-opt-btn')) as HTMLButtonElement[];
+      const fb = item.querySelector('.quiz-feedback') as HTMLElement | null;
+
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (answered.has(qIdx)) return;
+          const chosen = Number(btn.getAttribute('data-opt'));
+          const isRight = chosen === ansIdx;
+          answered.set(qIdx, isRight);
+
+          buttons.forEach((b) => {
+            b.disabled = true;
+            const idx = Number(b.getAttribute('data-opt'));
+            if (idx === ansIdx) b.classList.add('is-correct');
+            else if (idx === chosen && !isRight) b.classList.add('is-wrong');
+          });
+
+          if (fb) {
+            fb.style.display = 'block';
+            fb.className = `quiz-feedback ${isRight ? 'ok' : 'err'}`;
+            fb.textContent = `${isRight ? 'Benar!' : 'Belum tepat.'} ${explanation}`;
+          }
+          updateScore();
+        });
+      });
+    });
+
+    resetBtn?.addEventListener('click', () => {
+      answered.clear();
+      items.forEach((item) => {
+        const buttons = Array.from(item.querySelectorAll('.quiz-opt-btn')) as HTMLButtonElement[];
+        const fb = item.querySelector('.quiz-feedback') as HTMLElement | null;
+        buttons.forEach((b) => {
+          b.disabled = false;
+          b.classList.remove('is-correct', 'is-wrong');
+        });
+        if (fb) {
+          fb.style.display = 'none';
+          fb.textContent = '';
+        }
+      });
+      updateScore();
+    });
+  });
+</script>

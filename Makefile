@@ -20,12 +20,14 @@ latex:
 	@$(MAKE) clean
 
 sync-pdf:
-	@mkdir -p web/public/documents web/public/notebooks
+	@mkdir -p web/public/documents web/public/notebooks web/public/datasets
 	@for f in $(PUBLIC_PDF); do \
 		if [ -f "$$f" ]; then cp "$$f" web/public/documents/; fi; \
 	done
+	@if [ -f labs/template_laporan_ieee.tex ]; then cp labs/template_laporan_ieee.tex labs/template_laporan_ieee.pdf web/public/documents/; fi
 	@if ls labs/*.ipynb >/dev/null 2>&1; then cp labs/*.ipynb web/public/notebooks/; fi
-	@echo "Synced public PDFs & lab notebooks to web/public/ (private-exams/ excluded)."
+	@if ls labs/datasets/*.csv >/dev/null 2>&1; then cp labs/datasets/*.csv web/public/datasets/; fi
+	@echo "Synced public PDFs, IEEE template, notebooks, & CSV datasets to web/public/ (private-exams/ excluded)."
 
 web:
 	cd web && ASTRO_TELEMETRY_DISABLED=1 npm run build

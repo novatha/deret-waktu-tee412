@@ -44,6 +44,8 @@ export const courseMetadata = {
   utsBlueprintPdf: "/documents/kisi_kisi_mahasiswa_deret_waktu.pdf",
   uasBlueprintPdf: "/documents/kisi_kisi_uas_deret_waktu.pdf",
   capstoneGuidePdf: "/documents/panduan_proyek_akhir_deret_waktu.pdf",
+  ieeeTemplateTex: "/documents/template_laporan_ieee.tex",
+  ieeeTemplatePdf: "/documents/template_laporan_ieee.pdf",
   githubRepo: "novatha/deret-waktu-tee412",
   totalWeeks: 13,
   totalSemesterWeeks: 16,

@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import SelfCheckQuiz from '../../components/SelfCheckQuiz.astro';
 import { weeksData, getColabUrl, type WeekMaterial } from '../../data/courseData';
+import { selfCheckQuizzes } from '../../data/selfCheckQuizzes';
 
 export function getStaticPaths() {
   return weeksData.map((week) => ({
@@ -24,6 +26,7 @@ const getUrl = (path: string) => `${base}${path}`;
 const currentIndex = weeksData.findIndex(w => w.week === week.week);
 const prevWeek = currentIndex > 0 ? weeksData[currentIndex - 1] : undefined;
 const nextWeek = currentIndex >= 0 && currentIndex < weeksData.length - 1 ? weeksData[currentIndex + 1] : undefined;
+const weekQuiz = selfCheckQuizzes[week.week] || [];
 ---
 
 <Layout title={`Minggu ${week.week}: ${week.title} | Deret Waktu FT UNIB`} description={week.summary}>
@@ -153,6 +156,9 @@ const nextWeek = currentIndex >= 0 && currentIndex < weeksData.length - 1 ? week
               <pre class="code-block"><code id="code-snippet-raw">{week.codeSnippet}</code></pre>
             </div>
           )}
+
+          <!-- Interactive Self-Check Quiz (C1-C3) -->
+          <SelfCheckQuiz week={week.week} questions={weekQuiz} />
         </div>
 
         <!-- Right: Module Meta & Topics -->

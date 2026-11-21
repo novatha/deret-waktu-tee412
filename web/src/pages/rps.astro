@@ -47,6 +47,14 @@ const getUrl = (path: string) => `${base}${path}`;
             <i data-lucide="award"></i> Panduan Proyek Akhir IEEE (PDF)
           </a>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+            <a href={getUrl(courseMetadata.ieeeTemplateTex)} download class="btn btn-sm btn-outline">
+              <i data-lucide="code"></i> Template IEEE (.tex)
+            </a>
+            <a href={getUrl(courseMetadata.ieeeTemplatePdf)} target="_blank" class="btn btn-sm btn-outline">
+              <i data-lucide="file-text"></i> Contoh IEEE (PDF)
+            </a>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
             <a href={getUrl(courseMetadata.utsBlueprintPdf)} target="_blank" class="btn btn-sm btn-outline">
               <i data-lucide="clipboard-list"></i> Kisi-Kisi UTS
             </a>

@@ -44,6 +44,7 @@ export const courseMetadata = {
   utsBlueprintPdf: "/documents/kisi_kisi_mahasiswa_deret_waktu.pdf",
   uasBlueprintPdf: "/documents/kisi_kisi_uas_deret_waktu.pdf",
   capstoneGuidePdf: "/documents/panduan_proyek_akhir_deret_waktu.pdf",
+  githubRepo: "novatha/deret-waktu-tee412",
   totalWeeks: 13,
   totalSemesterWeeks: 16,
   totalLabChapters: 12,
@@ -55,6 +56,13 @@ export const courseMetadata = {
     { code: "CPMK-5", desc: "Mampu mendeteksi anomali kegagalan sistem tenaga (Autoencoder) serta mengintegrasikan peramalan probabilistik ke optimasi dispatching baterai mikrogrid." }
   ]
 };
+
+export function getColabUrl(notebookUrl?: string): string | undefined {
+  if (!notebookUrl) return undefined;
+  const filename = notebookUrl.split('/').pop();
+  if (!filename) return undefined;
+  return `https://colab.research.google.com/github/${courseMetadata.githubRepo}/blob/main/labs/${filename}`;
+}
 
 export const weeksData: WeekMaterial[] = [
   {

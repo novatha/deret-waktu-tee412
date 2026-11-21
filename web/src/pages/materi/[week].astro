@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { weeksData, type WeekMaterial } from '../../data/courseData';
+import { weeksData, getColabUrl, type WeekMaterial } from '../../data/courseData';
 
 export function getStaticPaths() {
   return weeksData.map((week) => ({
@@ -63,6 +63,11 @@ const nextWeek = currentIndex >= 0 && currentIndex < weeksData.length - 1 ? week
             {week.worksheetPdf && (
               <a href={getUrl(week.worksheetPdf)} target="_blank" class="btn btn-sm btn-outline">
                 <i data-lucide="file-text"></i> Unduh Worksheet (PDF)
+              </a>
+            )}
+            {week.notebookUrl && (
+              <a href={getColabUrl(week.notebookUrl)} target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline">
+                <i data-lucide="external-link"></i> Buka Notebook di Google Colab
               </a>
             )}
             {week.notebookUrl && (

@@ -16,6 +16,10 @@ const { fullHeight = false } = Astro.props;
       <p class="studio-subtitle">Eksplorasi pembentukan beban sistem tenaga, pemfilteran derau sensor (Kalman Filter), dan peramalan multi-cakrawala (Holt-Winters &amp; SARIMA).</p>
     </div>
     <div class="header-actions">
+      <input type="file" id="csv-file-input" accept=".csv,text/csv" style="display: none;" />
+      <button id="btn-upload-csv" class="btn btn-sm btn-outline">
+        <i data-lucide="upload"></i> Upload CSV
+      </button>
       <button id="btn-export-csv" class="btn btn-sm btn-outline">
         <i data-lucide="download"></i> Export Data (.CSV)
       </button>
@@ -38,7 +42,9 @@ const { fullHeight = false } = Astro.props;
           <option value="solar_pv">☀️ Radiasi &amp; Daya PLTS 500 kWp (kW)</option>
           <option value="wind_power">💨 Daya Pembangkit Listrik Angin PLTB (kW)</option>
           <option value="transformer_temp">🌡️ Suhu Hotspot Transformator Gardu (°C)</option>
+          <option value="custom_csv" disabled>📂 Dataset CSV Unggahan Mahasiswa</option>
         </select>
+        <div id="csv-upload-status" style="display: none; margin-top: 6px; font-size: 0.78rem; color: #38bdf8;"></div>
       </div>
 
       <div class="form-group">
@@ -421,7 +427,7 @@ const { fullHeight = false } = Astro.props;
 
   // State
   let chartInstance: any = null;
-  const numPoints = 96; // 96 hours (4 days of hourly data)
+  let numPoints = 96; // 96 hours default (adapts dynamically for uploaded CSVs)
   let currentDataset = 'pln_load';
   let currentModel = 'kalman';
   let noiseSigma = 12;
@@ -434,11 +440,70 @@ const { fullHeight = false } = Astro.props;
     pln_load: 'MW',
     solar_pv: 'kW',
     wind_power: 'kW',
-    transformer_temp: '°C'
+    transformer_temp: '°C',
+    custom_csv: 'unit'
   };
 
   let cachedData: { hours: number[]; timestamps: string[]; truth: number[]; sensor: number[] } | null = null;
+  let uploadedCsvData: { filename: string; hours: number[]; timestamps: string[]; truth: number[]; sensor: number[] } | null = null;
   let cachedEstimate: number[] = [];
+
+  function parseUploadedCsv(rawText: string, filename: string) {
+    const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (lines.length < 20) {
+      throw new Error('Minimal 20 baris data numerik diperlukan pada berkas CSV.');
+    }
+    const delim = lines[0].includes(';') && !lines[0].includes(',') ? ';' : ',';
+    const firstCols = lines[0].split(delim).map((c) => c.trim().replace(/^"|"$/g, ''));
+    const hasHeader = firstCols.some((c) => isNaN(Number(c)));
+    const headers = hasHeader ? firstCols.map((h) => h.toLowerCase()) : firstCols.map((_, i) => `col_${i}`);
+    const dataRows = (hasHeader ? lines.slice(1) : lines).map((l) =>
+      l.split(delim).map((c) => c.trim().replace(/^"|"$/g, ''))
+    );
+
+    // Detect numeric columns
+    const numericCols: number[] = [];
+    for (let c = 0; c < headers.length; c++) {
+      let valid = 0;
+      for (let r = 0; r < Math.min(20, dataRows.length); r++) {
+        const v = Number(dataRows[r][c]);
+        if (dataRows[r][c] !== '' && Number.isFinite(v)) valid++;
+      }
+      if (valid >= Math.min(10, Math.floor(dataRows.length * 0.5))) numericCols.push(c);
+    }
+    if (numericCols.length === 0) {
+      throw new Error('Tidak ditemukan kolom numerik yang valid pada berkas CSV.');
+    }
+
+    const findCol = (keywords: string[]) =>
+      numericCols.find((idx) => keywords.some((kw) => headers[idx].includes(kw)));
+
+    const truthIdx = findCol(['groundtruth', 'truth', 'actual', 'load', 'power', 'daya', 'beban', 'value']) ?? numericCols[0];
+    const sensorIdx = findCol(['sensor', 'meas', 'noisy', 'obs']) ?? truthIdx;
+    const timeIdx = headers.findIndex((h, idx) => !numericCols.includes(idx) || h.includes('time') || h.includes('date') || h.includes('jam'));
+
+    const sliceRows = dataRows.slice(-168); // Batasi hingga 168 titik terakhir agar responsif
+    const hours: number[] = [];
+    const timestamps: string[] = [];
+    const truth: number[] = [];
+    const sensor: number[] = [];
+
+    sliceRows.forEach((cols, i) => {
+      const yT = Number(cols[truthIdx]);
+      const yS = Number(cols[sensorIdx]);
+      if (Number.isFinite(yT) && Number.isFinite(yS)) {
+        hours.push(hours.length);
+        timestamps.push(timeIdx >= 0 && cols[timeIdx] ? cols[timeIdx] : `T+${hours.length}`);
+        truth.push(Math.round(yT * 100) / 100);
+        sensor.push(Math.round(yS * 100) / 100);
+      }
+    });
+
+    if (truth.length < 20) {
+      throw new Error('Jumlah baris numerik valid kurang dari 20 titik.');
+    }
+    return { filename, hours, timestamps, truth, sensor };
+  }
 
   // Solve small linear system A * x = b via Gaussian elimination with partial pivoting
   function solveLinearSystem(A: number[][], b: number[]): number[] {
@@ -522,8 +587,9 @@ const { fullHeight = false } = Astro.props;
     const upperBand = new Array(numPoints).fill(null);
     const lowerBand = new Array(numPoints).fill(null);
 
-    const fitCutoff = numPoints - forecastHorizon;
-    const S = 24;
+    const effHorizon = Math.min(forecastHorizon, Math.max(4, Math.floor(numPoints / 3)));
+    const fitCutoff = numPoints - effHorizon;
+    const S = Math.min(24, Math.max(4, Math.floor(fitCutoff / 2)));
 
     if (currentModel === 'kalman') {
       let xHat = sensor[0];
@@ -761,7 +827,11 @@ const { fullHeight = false } = Astro.props;
 
   // Update Studio
   function updateStudio(regenerate = false) {
-    if (regenerate || !cachedData) {
+    if (currentDataset === 'custom_csv' && uploadedCsvData) {
+      numPoints = uploadedCsvData.truth.length;
+      cachedData = uploadedCsvData;
+    } else if (regenerate || !cachedData) {
+      numPoints = 96;
       cachedData = generateData();
     }
     const { timestamps, truth, sensor } = cachedData;
@@ -903,8 +973,57 @@ const { fullHeight = false } = Astro.props;
   function attachEvents() {
     document.getElementById('dataset-select')?.addEventListener('change', (e: any) => {
       currentDataset = e.target.value;
+      const csvStatus = document.getElementById('csv-upload-status');
+      if (csvStatus && currentDataset !== 'custom_csv') {
+        csvStatus.style.display = 'none';
+      }
       updateNoiseLabel();
       updateStudio(true);
+    });
+
+    const fileInput = document.getElementById('csv-file-input') as HTMLInputElement | null;
+    document.getElementById('btn-upload-csv')?.addEventListener('click', () => {
+      fileInput?.click();
+    });
+
+    fileInput?.addEventListener('change', (e: any) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = parseUploadedCsv(String(reader.result || ''), file.name);
+          uploadedCsvData = parsed;
+          currentDataset = 'custom_csv';
+          const selectEl = document.getElementById('dataset-select') as HTMLSelectElement | null;
+          if (selectEl) {
+            const opt = selectEl.querySelector('option[value="custom_csv"]') as HTMLOptionElement | null;
+            if (opt) {
+              opt.disabled = false;
+              opt.textContent = `📂 CSV: ${file.name} (${parsed.truth.length} titik)`;
+            }
+            selectEl.value = 'custom_csv';
+          }
+          const csvStatus = document.getElementById('csv-upload-status');
+          if (csvStatus) {
+            csvStatus.textContent = `Aktif: ${file.name} (${parsed.truth.length} titik data dimuat)`;
+            csvStatus.style.color = '#10b981';
+            csvStatus.style.display = 'block';
+          }
+          updateNoiseLabel();
+          updateStudio(false);
+        } catch (err: any) {
+          const csvStatus = document.getElementById('csv-upload-status');
+          if (csvStatus) {
+            csvStatus.textContent = `Gagal membaca CSV: ${err?.message || 'Format tidak valid'}`;
+            csvStatus.style.color = '#f43f5e';
+            csvStatus.style.display = 'block';
+          }
+        } finally {
+          fileInput.value = '';
+        }
+      };
+      reader.readAsText(file);
     });
 
     document.getElementById('model-select')?.addEventListener('change', (e: any) => {

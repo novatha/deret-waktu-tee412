@@ -1,0 +1,114 @@
+name: TEE-412 Courseware & Portal CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-courseware:
+    name: Validate Notebooks, Datasets, RPS Weights, & Exam Isolation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify private-exams isolation
+        run: |
+          if [ -n "$(git ls-files private-exams)" ]; then
+            echo "ERROR: Confidential files under private-exams/ are tracked in git!"
+            exit 1
+          fi
+          echo "OK: private-exams/ is strictly untracked."
+
+      - name: Validate notebooks AST, dataset sync, & RPS 100% weights
+        run: |
+          python3 - <<'PY'
+          import ast
+          import csv
+          import filecmp
+          import json
+          import pathlib
+          import re
+          import sys
+
+          # 1. Validate all notebooks JSON & Python AST syntax
+          nb_paths = sorted(pathlib.Path("labs").glob("*.ipynb"))
+          assert len(nb_paths) == 12, f"Expected 12 notebooks, found {len(nb_paths)}"
+          for nb_path in nb_paths:
+              nb = json.loads(nb_path.read_text(encoding="utf-8"))
+              for idx, cell in enumerate(nb.get("cells", [])):
+                  if cell.get("cell_type") == "code":
+                      src = "".join(cell.get("source", []))
+                      cleaned = "\n".join(
+                          line for line in src.splitlines()
+                          if not line.lstrip().startswith(("!", "%"))
+                      )
+                      ast.parse(cleaned, filename=f"{nb_path.name}#cell-{idx}")
+              pub_nb = pathlib.Path("web/public/notebooks") / nb_path.name
+              assert pub_nb.exists() and filecmp.cmp(nb_path, pub_nb, shallow=False), (
+                  f"Notebook out of sync with web/public/notebooks: {nb_path.name}"
+              )
+          print(f"OK: {len(nb_paths)} notebooks parsed cleanly and synced with web/public/notebooks/.")
+
+          # 2. Validate 3 curated CSV datasets & sync with web/public/datasets
+          expected_csvs = {
+              "beban_cuaca_regional_168h.csv": ["Timestamp", "Load_MW", "Temp_C", "Humidity_Pct", "Is_Weekend"],
+              "plts_500kwp_iradiasi_168h.csv": ["Timestamp", "PV_Power_kW", "Irradiance_Wm2", "Panel_Temp_C"],
+              "smartmeter_anomaly_168h.csv": ["Timestamp", "Power_kW", "Voltage_V", "Is_Anomaly_Label"],
+          }
+          for fname, cols in expected_csvs.items():
+              src_csv = pathlib.Path("labs/datasets") / fname
+              pub_csv = pathlib.Path("web/public/datasets") / fname
+              assert src_csv.exists(), f"Missing dataset: {src_csv}"
+              assert pub_csv.exists() and filecmp.cmp(src_csv, pub_csv, shallow=False), (
+                  f"Dataset out of sync with web/public/datasets: {fname}"
+              )
+              with src_csv.open(encoding="utf-8") as fh:
+                  rows = list(csv.reader(fh))
+              assert rows[0] == cols, f"Schema mismatch in {fname}: {rows[0]} != {cols}"
+              assert len(rows) == 169, f"Expected 168 data rows in {fname}, got {len(rows) - 1}"
+          print("OK: 3 curated CSV datasets validated (168 rows each) and synced.")
+
+          # 3. Validate RPS weekly weights equal 100% in both Markdown and LaTeX
+          md = pathlib.Path("RPS_Analisis_Deret_Waktu_Teknik_Elektro.md").read_text(encoding="utf-8")
+          md_w = [int(x) for x in re.findall(r"^\|\s*\*\*\d+\*\*\s*\|.*\|\s*(?:\*\*)?(\d+)%(?:\*\*)?\s*\|$", md, re.M)]
+          assert len(md_w) == 16 and sum(md_w) == 100, f"RPS MD weekly weights invalid: {md_w} (sum={sum(md_w)})"
+
+          tex = pathlib.Path("rps_deret_waktu_elektro.tex").read_text(encoding="utf-8")
+          table = tex.split(r"\begin{longtable}")[1].split(r"\end{longtable}")[0]
+          tex_w = [int(x) for x in re.findall(r"&\s*(?:\\textbf\{)?(\d+)\\%(?:\})?\s*\\\\", table)]
+          assert len(tex_w) == 16 and sum(tex_w) == 100, f"RPS LaTeX weekly weights invalid: {tex_w} (sum={sum(tex_w)})"
+          assert md_w == tex_w, f"RPS MD vs LaTeX weekly weights differ: {md_w} vs {tex_w}"
+          print(f"OK: RPS MD & LaTeX weekly weights match and sum to 100%: {md_w}")
+          PY
+
+  build-portal:
+    name: Build Astro Web Portal
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Build static site
+        working-directory: web
+        env:
+          ASTRO_TELEMETRY_DISABLED: "1"
+        run: npm run build

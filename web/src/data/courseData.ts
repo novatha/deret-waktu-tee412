@@ -6,6 +6,7 @@ export interface WeekMaterial {
   subCpmk: string;
   summary: string;
   theoryTopics: string[];
+  labChapter: string;
   labTopic: string;
   slidePdf: string;
   problemSetPdf: string;
@@ -51,11 +52,11 @@ export const courseMetadata = {
   totalSemesterWeeks: 16,
   totalLabChapters: 12,
   cpmkList: [
-    { code: "CPMK-1", desc: "Mampu menjelaskan konsep fundamental deret waktu, karakteristik stasioneritas, serta mendiagnosis sifat autokorelasi pada data sinyal dan beban kelistrikan." },
-    { code: "CPMK-2", desc: "Mampu memformulasikan, mengestimasi parameter, serta memvalidasi model peramalan klasik parametrik (ARIMA/SARIMA/SARIMAX) dan State-Space (Discrete Kalman Filter)." },
-    { code: "CPMK-3", desc: "Mampu menganalisis sinyal transien pada domain frekuensi dan multiresolusi waktu-frekuensi (FFT, PSD, Discrete Wavelet Transform)." },
-    { code: "CPMK-4", desc: "Mampu merancang pipeline Machine Learning dan Deep Learning mutakhir (XGBoost, LSTM, GRU, 1D-CNN, Attention Transformer) untuk peramalan beban dan EBT." },
-    { code: "CPMK-5", desc: "Mampu mendeteksi anomali kegagalan sistem tenaga (Autoencoder) serta mengintegrasikan peramalan probabilistik ke optimasi dispatching baterai mikrogrid." }
+    { code: "CPMK-1", desc: "Mampu menjelaskan konsep dasar deret waktu keteknikan, komponen pembentuknya, serta melakukan uji stasioneritas dan analisis korelasi (ACF/PACF) pada data sinyal dan beban kelistrikan (CPL-1)." },
+    { code: "CPMK-2", desc: "Mampu memodelkan dan mengevaluasi peramalan menggunakan metode statistik klasik (Smoothing, ARIMA, SARIMAX) serta estimasi State-Space (Discrete Kalman Filter) pada sistem linier (CPL-1, CPL-2)." },
+    { code: "CPMK-3", desc: "Mampu menganalisis sinyal deret waktu non-stasioner pada domain frekuensi dan waktu-frekuensi (FFT, PSD, Discrete Wavelet Transform) untuk ekstraksi fitur dan deteksi anomali sistem elektro (CPL-1, CPL-2)." },
+    { code: "CPMK-4", desc: "Mampu merancang, melatih, dan mengoptimalkan model Machine Learning (XGBoost/LightGBM) dan Deep Learning (LSTM, GRU, 1D-CNN, Autoencoder) untuk peramalan multi-langkah dan deteksi gangguan (CPL-2, CPL-3)." },
+    { code: "CPMK-5", desc: "Mampu menyelesaikan studi kasus rekayasa kelistrikan riil (peramalan beban, EBT PV/angin, degradasi aset, atau optimasi BESS) secara kolaboratif dalam bentuk proyek berbasis tim (Team-Based Project) dan laporan ilmiah IEEE (CPL-3, CPL-4)." }
   ]
 };
 
@@ -81,7 +82,8 @@ export const weeksData: WeekMaterial[] = [
       "Ekstraksi Tren dengan Centered Moving Average (CMA)",
       "Metrik galat evaluasi: MAE, RMSE, MAPE, MASE"
     ],
-    labTopic: "Modul 1: Eksplorasi Visual, Ekstraksi Musiman, dan Dekomposisi Klasik Data Beban Listrik",
+    labChapter: "Bab 1",
+    labTopic: "Bab 1: Eksplorasi Visual, Ekstraksi Musiman, dan Dekomposisi Klasik Data Beban Listrik",
     slidePdf: "/documents/ch1.pdf",
     problemSetPdf: "/documents/problem_set_ch1.pdf",
     worksheetPdf: "/documents/worksheet_ch1.pdf",
@@ -113,7 +115,8 @@ res.plot()`,
       "Transformasi Diferensiasi Pertama & Box-Cox",
       "Fungsi Autokorelasi (ACF) dan Autokorelasi Parsial (PACF)"
     ],
-    labTopic: "Modul 2: Uji Akar Unit dan Analisis Korelogram ACF/PACF",
+    labChapter: "Bab 2",
+    labTopic: "Bab 2: Uji Akar Unit (ADF/KPSS) dan Analisis Korelogram ACF/PACF",
     slidePdf: "/documents/ch2.pdf",
     problemSetPdf: "/documents/problem_set_ch2.pdf",
     worksheetPdf: "/documents/worksheet_ch2.pdf",
@@ -145,7 +148,8 @@ print(f"KPSS Stat: {kpss_res[0]:.4f}, p-value: {kpss_res[1]:.4f}")`,
       "Double Seasonal Holt-Winters (DSHW) untuk Beban Sistem Tenaga",
       "Metrik Evaluasi Peramalan PLTS/Sistem Tenaga (RMSE, MAPE, WAPE)"
     ],
-    labTopic: "Modul 3: Peramalan Beban Jangka Pendek Menggunakan Holt-Winters",
+    labChapter: "Bab 3",
+    labTopic: "Bab 3: Peramalan Beban Jangka Pendek Menggunakan Holt-Winters",
     slidePdf: "/documents/ch3.pdf",
     problemSetPdf: "/documents/problem_set_ch3.pdf",
     worksheetPdf: "/documents/worksheet_ch3.pdf",
@@ -177,7 +181,8 @@ pred_24 = hw_fit.forecast(24)`,
       "Estimasi Parameter: Conditional Least Squares vs Maximum Likelihood (MLE)",
       "Seleksi Model Berbasis Informasi: AIC, AICc, dan BIC"
     ],
-    labTopic: "Modul 4: Estimasi Parameter ARMA, Plot Kestabilan Polinomial, dan Seleksi Ordo AIC",
+    labChapter: "Bab 4",
+    labTopic: "Bab 4: Estimasi Parameter ARMA, Plot Kestabilan Polinomial, dan Seleksi Ordo AIC",
     slidePdf: "/documents/ch4.pdf",
     problemSetPdf: "/documents/problem_set_ch4.pdf",
     worksheetPdf: "/documents/worksheet_ch4.pdf",
@@ -211,7 +216,8 @@ print(f"Akar: {roots}, Stabil: {is_stable}")`,
       "Diagnostik Residu: Ljung-Box Q-Test, Uji Normalitas Jarque-Bera",
       "Perhitungan Interval Kepercayaan Peramalan (95% Confidence Bounds)"
     ],
-    labTopic: "Modul 5: Pemodelan SARIMA 168-Jam Data Beban Kelistrikan dengan Auto-ARIMA",
+    labChapter: "Bab 5",
+    labTopic: "Bab 5: Pemodelan SARIMA 168-Jam Data Beban Kelistrikan dengan Auto-ARIMA",
     slidePdf: "/documents/ch5.pdf",
     problemSetPdf: "/documents/problem_set_ch5.pdf",
     worksheetPdf: "/documents/worksheet_ch5.pdf",
@@ -244,7 +250,8 @@ fc, conf_int = auto_model.predict(n_periods=24, return_conf_int=True)`,
       "Model Transfer Function dan Distributed Lag",
       "Pengantar Vector AutoRegression (VAR) untuk Sistem Multivariat Multi-Bus"
     ],
-    labTopic: "Modul 6: Peramalan Beban dengan Variabel Eksogen Suhu (SARIMAX) dan VAR 2-Bus",
+    labChapter: "Bab 6",
+    labTopic: "Bab 6: Peramalan Beban dengan Variabel Eksogen Suhu (SARIMAX) dan VAR 2-Bus",
     slidePdf: "/documents/ch6.pdf",
     problemSetPdf: "/documents/problem_set_ch6.pdf",
     worksheetPdf: "/documents/worksheet_ch6.pdf",
@@ -277,7 +284,8 @@ print(res.summary())`,
       "Perilaku Asimtotik Kalman Gain (R -> 0 vs R -> inf)",
       "Studi Kasus: Estimasi State-of-Charge (SoC) Baterai Lithium-ion"
     ],
-    labTopic: "Modul 7: Implementasi Discrete Kalman Filter untuk Denoising Sensor Telemetri Tegangan dan Arus",
+    labChapter: "Bab 7",
+    labTopic: "Bab 7: Implementasi Discrete Kalman Filter untuk Denoising Sensor Telemetri Tegangan dan Arus",
     slidePdf: "/documents/ch7.pdf",
     problemSetPdf: "/documents/problem_set_ch7.pdf",
     worksheetPdf: "/documents/worksheet_ch7.pdf",
@@ -318,7 +326,8 @@ print(res.summary())`,
       "Discrete Wavelet Transform (DWT): Multi-Resolution Analysis (MRA)",
       "Denoising Sinyal dengan Universal Soft-Thresholding Donoho"
     ],
-    labTopic: "Modul 8: Analisis Harmonisa FFT Sinyal Inverter dan Denoising Wavelet DWT pada Gangguan Kualitas Daya",
+    labChapter: "Bab 8",
+    labTopic: "Bab 8: Analisis Harmonisa FFT Sinyal Inverter dan Denoising Wavelet DWT pada Gangguan Kualitas Daya",
     slidePdf: "/documents/ch9.pdf",
     problemSetPdf: "/documents/problem_set_ch9.pdf",
     worksheetPdf: "/documents/worksheet_ch9.pdf",
@@ -357,7 +366,8 @@ clean_signal = pywt.waverec(clean_coeffs, 'db4')`,
       "Bahaya Lookahead Data Leakage dan Solusi TimeSeriesSplit Cross-Validation",
       "Analisis Feature Importance (Gain & Shapley Values)"
     ],
-    labTopic: "Modul 9: Pipeline End-to-End Rekayasa Fitur dan Pelatihan Model XGBoost untuk STLF",
+    labChapter: "Bab 9",
+    labTopic: "Bab 9: Pipeline End-to-End Rekayasa Fitur dan Pelatihan Model XGBoost untuk STLF",
     slidePdf: "/documents/ch10.pdf",
     problemSetPdf: "/documents/problem_set_ch10.pdf",
     worksheetPdf: "/documents/worksheet_ch10.pdf",
@@ -396,7 +406,8 @@ model = xgb.XGBRegressor(n_estimators=500, learning_rate=0.03, max_depth=6)`,
       "Arsitektur Gated Recurrent Unit (GRU): Reset Gate dan Update Gate",
       "Penyusunan Tensor 3D (Batch_Size, Seq_Len, Features) pada PyTorch"
     ],
-    labTopic: "Modul 10: Pembuatan Model Deep Learning PyTorch LSTM/GRU untuk Peramalan Daya PLTS 24 Jam",
+    labChapter: "Bab 10A",
+    labTopic: "Bab 10 (Bagian A): Pembuatan Model Deep Learning PyTorch LSTM/GRU untuk Peramalan Daya PLTS 24 Jam",
     slidePdf: "/documents/ch11.pdf",
     problemSetPdf: "/documents/problem_set_ch11.pdf",
     worksheetPdf: "/documents/worksheet_ch11.pdf",
@@ -435,7 +446,8 @@ class RenewableLSTM(nn.Module):
       "Pengenalan Arsitektur Transformer untuk Deret Waktu Skala Besar (PatchTST)",
       "Studi Kasus: Peramalan Profil Tegangan Multi-Bus Simultan"
     ],
-    labTopic: "Modul 11: Implementasi Model Hibrida CNN-LSTM dengan Attention Mechanism untuk Profil Beban Multi-Bus",
+    labChapter: "Bab 10B",
+    labTopic: "Bab 10 (Bagian B): Arsitektur 1D-CNN, Seq2Seq, & Attention untuk Peramalan Profil Beban Multi-Horizon",
     slidePdf: "/documents/ch12.pdf",
     problemSetPdf: "/documents/problem_set_ch12.pdf",
     worksheetPdf: "/documents/worksheet_ch12.pdf",
@@ -475,7 +487,8 @@ class ScaledDotProductAttention(nn.Module):
       "Penentuan Ambang Batas Deteksi Dinamis Berbasis Statistik Galat Latih",
       "Evaluasi Kinerja pada Dataset Imbalance: Precision, Recall, F1-Score, dan AUROC"
     ],
-    labTopic: "Modul 12: Deteksi Pencurian Listrik Smart Meter dan Anomali Transformator dengan LSTM Autoencoder",
+    labChapter: "Bab 11",
+    labTopic: "Bab 11: Deteksi Pencurian Listrik Smart Meter dan Anomali Transformator dengan LSTM Autoencoder",
     slidePdf: "/documents/ch13.pdf",
     problemSetPdf: "/documents/problem_set_ch13.pdf",
     worksheetPdf: "/documents/worksheet_ch13.pdf",
@@ -513,7 +526,8 @@ is_anomaly = recon_error > threshold`,
       "Model Predictive Control (MPC) untuk Penjadwalan BESS pada Smart Microgrid",
       "Strategi Peak Shaving dan Arbitrase Tarif Listrik Waktu Penggunaan (ToU)"
     ],
-    labTopic: "Modul 13: Peramalan Probabilistik Kuantil LightGBM dan Optimasi Dispatch BESS Mikrogrid",
+    labChapter: "Bab 12",
+    labTopic: "Bab 12: Peramalan Probabilistik Kuantil LightGBM dan Optimasi Dispatch BESS Mikrogrid",
     slidePdf: "/documents/ch14.pdf",
     problemSetPdf: "/documents/problem_set_ch14.pdf",
     worksheetPdf: "/documents/worksheet_ch14.pdf",

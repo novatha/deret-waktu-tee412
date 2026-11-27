@@ -9,7 +9,7 @@ const base = import.meta.env.BASE_URL.endsWith('/')
 const getUrl = (path: string) => `${base}${path}`;
 ---
 
-<Layout title="Panduan Praktikum 13 Modul (12 Bab) | Analisis Deret Waktu FT UNIB" description="Buku Petunjuk Praktikum Terintegrasi Python & Julia untuk Laboratorium Sistem Tenaga.">
+<Layout title="Panduan Praktikum 12 Bab (13 Pertemuan) | Analisis Deret Waktu FT UNIB" description="Buku Petunjuk Praktikum Terintegrasi Python & Google Colab untuk Laboratorium Sistem Tenaga.">
   <!-- Header Banner -->
   <section class="praktikum-header">
     <div class="container">
@@ -25,10 +25,10 @@ const getUrl = (path: string) => `${base}${path}`;
             <i data-lucide="terminal"></i> LAB MANUAL &amp; WORKBOOK OBE
           </span>
           <h1 class="header-title">
-            Panduan Praktikum <span class="gradient-text">13 Modul Komputasi Cerdas</span>
+            Panduan Praktikum <span class="gradient-text">12 Bab Komputasi Cerdas</span>
           </h1>
           <p class="header-desc">
-            Panduan eksperimen laboratorium komputasi cerdas terintegrasi Python (`statsmodels`, `pmdarima`, `PyTorch`, `LightGBM`) dan Julia yang dikemas dalam 12 bab buku praktikum untuk menyelesaikan masalah riil peramalan sistem tenaga, estimasi state-space, dan deteksi anomali smart grid.
+            Panduan eksperimen laboratorium komputasi cerdas berbasis Python (<code>statsmodels</code>, <code>pmdarima</code>, <code>PyWavelets</code>, <code>XGBoost</code>, <code>PyTorch</code>, <code>LightGBM</code>, <code>CVXPY</code>) yang dikemas dalam 12 bab buku praktikum &amp; 12 notebook Google Colab untuk 13 minggu perkuliahan (Proyek Akhir turut mendukung opsi Python/Julia).
           </p>
         </div>
 
@@ -78,19 +78,19 @@ const getUrl = (path: string) => `${base}${path}`;
     <div class="container">
       <div class="section-title-wrap">
         <h2 class="section-heading">
-          Daftar 13 Modul <span class="gradient-text-cyan">Praktikum Mandiri &amp; Terbimbing</span>
+          Pemetaan 12 Bab Praktikum <span class="gradient-text-cyan">(13 Pertemuan Perkuliahan)</span>
         </h2>
         <p class="section-subheading">
-          Setiap modul dilengkapi studi kasus nyata data interkoneksi beban listrik PLN, pembangkitan PLTS, dan analisis gangguan transien.
+          Setiap bab dilengkapi notebook Google Colab siap jalan dengan studi kasus nyata data beban listrik PLN, pembangkitan PLTS, dan analisis gangguan transien (Bab 10 mencakup Minggu 11–12).
         </p>
       </div>
 
       <div class="lab-cards-grid">
-        {weeksData.map((w, idx) => (
+        {weeksData.map((w) => (
           <div class="lab-card glass-panel">
             <div class="lab-card-top">
               <div class="lab-card-badges">
-                <span class="modul-badge">Modul {idx + 1}</span>
+                <span class="modul-badge">{w.labChapter}</span>
                 <span class="week-ref-badge">Minggu {w.week}</span>
               </div>
               <h3 class="lab-topic-title">

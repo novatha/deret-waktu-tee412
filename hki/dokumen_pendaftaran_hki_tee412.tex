@@ -69,8 +69,8 @@ Ciptaan ini merupakan ekosistem pembelajaran terbuka terintegrasi untuk mata kul
 \begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.5em, itemsep=3pt]
     \item \textbf{Spesialisasi Domain Sistem Tenaga \& Transisi Energi:} Seluruh formulasi matematis, dataset, dan studi kasus dirancang khusus untuk sistem tenaga modern (beban harian PLN, intermitensi PLTS/PLTB, suhu transformator, SoC baterai BESS, harmonisa motor, dan deteksi pencurian listrik \textit{smart meter}).
     \item \textbf{Virtual Forecasting Studio Berbasis Browser (100\% Kausal):} Menyediakan laboratorium komputasi \textit{real-time} di sisi klien tanpa server backend, menjalankan 4 estimator kausal sejati (\textit{Discrete Kalman Filter}, \textit{Holt-Winters}, \textit{SARIMA}, dan \textit{Recurrent LSTM Emulator}) serta fitur \textbf{Upload CSV Mandiri} dan ekspor hasil eksperimen.
-    \item \textbf{Praktikum \textit{Zero-Setup} Berbasis Cloud:} 12 berkas notebook interaktif (\texttt{.ipynb}) siap dijalankan 1-klik melalui Google Colab, disertai 3 dataset CSV kurasi dan panduan protokol anti-\textit{data leakage}.
-    \item \textbf{Kepatuhan Penuh Kurikulum OBE (LAM Teknik / IABEE):} Menyelaraskan RPS 16 minggu, 13 modul slide Beamer, 13 \textit{Problem Sets} dan 13 \textit{Worksheets} berjenjang Taksonomi Bloom C1--C6, buku panduan praktikum 12 bab, kuis \textit{self-check} interaktif, serta panduan dan template laporan proyek akhir berformat IEEE 2-kolom.
+    \item \textbf{Praktikum \textit{Zero-Setup} Berbasis Cloud:} 12 berkas notebook interaktif (\texttt{.ipynb}) siap dijalankan 1-klik melalui Google Colab, disertai 3 dataset CSV kurasi terintegrasi otomatis (lokal/GitHub raw URL), protokol anti-\textit{data leakage}, dan validasi otomatis GitHub Actions CI.
+    \item \textbf{Kepatuhan Penuh Kurikulum OBE (LAM Teknik / IABEE):} Menyelaraskan RPS 16 minggu (bobot tervalidasi 100\%), 13 modul slide Beamer, 13 \textit{Problem Sets} dan 13 \textit{Worksheets} berjenjang Taksonomi Bloom C1--C6, buku panduan praktikum 12 bab, 39 kuis \textit{self-check} interaktif, panduan \& template laporan proyek akhir IEEE 2-kolom, serta instrumen evaluasi OBE-CQI (PDCA).
 \end{enumerate}
 
 \section{Spesifikasi Teknis Ciptaan 1 -- Program Komputer}
@@ -117,13 +117,44 @@ Panduan Proyek Akhir IEEE & 1 Panduan + Template & Protokol anti-\textit{leakage
 
 Dokumen ini disusun sebagai bahan pendukung pencatatan Hak Cipta di Direktorat Jenderal Kekayaan Intelektual (DJKI) melalui LPPM Universitas Bengkulu. Seluruh naskah bahan ajar, rancangan struktur soal C1--C6, 12 notebook praktikum, serta kode antarmuka dan mesin simulasi portal disusun secara orisinal untuk kepentingan pendidikan tinggi, penelitian, dan pengabdian masyarakat pada Program Studi S1 Teknik Elektro, Fakultas Teknik Universitas Bengkulu.
 
-\vspace{0.6cm}
+\vspace{0.5cm}
 \noindent
 \begin{tabular}{p{9.5cm}p{6cm}}
  & Bengkulu, November 2026 \\
- & Pencipta, \\[1.6cm]
+ & Pencipta, \\[1.5cm]
  & \textbf{Ir. Novalio Daratha, S.T., M.Sc., Ph.D.} \\
  & NIP. 197811102003121002 \\
 \end{tabular}
+
+\newpage
+\section*{Lampiran A: Tangkapan Layar Antarmuka Portal \& Virtual Lab Studio}
+\addcontentsline{toc}{section}{Lampiran A: Tangkapan Layar Antarmuka Portal \& Virtual Lab Studio}
+
+Berikut adalah dokumentasi visual aktual antarmuka \textbf{Ciptaan 1 (Program Komputer)} yang dirender langsung dari build produksi Astro 7 (\url{https://www.ndaratha.my.id/deret-waktu}):
+
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.92\textwidth]{screenshots/01_beranda_portal.png}}
+    \caption{Halaman Beranda Portal Pembelajaran Terbuka Analisis Deret Waktu \& Peramalan (TEE-412).}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.92\textwidth]{screenshots/02_virtual_studio.png}}
+    \caption{Virtual Forecasting Studio berbasis browser (100\% kausal) dengan 4 estimator, metrik RMSE/MAE/MAPE/$R^2$, dan tombol Upload CSV Mandiri.}
+\end{figure}
+
+\newpage
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.92\textwidth]{screenshots/03_modul_kuis.png}}
+    \caption{Halaman Modul Perkuliahan (Minggu 7: Discrete Kalman Filter) menampilkan formulasi KaTeX lokal, pemetaan Taksonomi Bloom C1--C6, kode Python, dan Kuis Self-Check Interaktif.}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.92\textwidth]{screenshots/04_praktikum_colab.png}}
+    \caption{Halaman Panduan Praktikum 12 Bab (13 Pertemuan) dilengkapi katalog 3 dataset CSV kelistrikan terkurasi dan tombol 1-klik Buka di Google Colab.}
+\end{figure}
 
 \end{document}

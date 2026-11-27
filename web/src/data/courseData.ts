@@ -47,6 +47,7 @@ export const courseMetadata = {
   capstoneGuidePdf: "/documents/panduan_proyek_akhir_deret_waktu.pdf",
   ieeeTemplateTex: "/documents/template_laporan_ieee.tex",
   ieeeTemplatePdf: "/documents/template_laporan_ieee.pdf",
+  cqiSurveyPdf: "/documents/kuesioner_evaluasi_obe_cqi.pdf",
   githubRepo: "novatha/deret-waktu-tee412",
   totalWeeks: 13,
   totalSemesterWeeks: 16,

@@ -29,6 +29,9 @@ __pycache__/
 .venv/
 venv/
 
+# Generated merged HKI compilation PDF (rebuild anytime via `make hki-bundle`)
+hki/kompilasi_modul_ajar_obe_tee412.pdf
+
 # OS & Editor files
 .DS_Store
 Thumbs.db

@@ -1,10 +1,11 @@
-.PHONY: all latex sync-pdf web clean
+.PHONY: all latex sync-pdf web hki-bundle clean
 
 PUBLIC_TEX := rps_deret_waktu_elektro.tex \
               modul_praktikum_deret_waktu.tex \
               kisi_kisi_mahasiswa_deret_waktu.tex \
               kisi_kisi_uas_deret_waktu.tex \
               panduan_proyek_akhir_deret_waktu.tex \
+              kuesioner_evaluasi_obe_cqi.tex \
               $(wildcard ch*.tex problem_set_ch*.tex worksheet_ch*.tex)
 
 PUBLIC_PDF := $(PUBLIC_TEX:.tex=.pdf)
@@ -32,6 +33,14 @@ sync-pdf:
 web:
 	cd web && ASTRO_TELEMETRY_DISABLED=1 npm run build
 
+hki-bundle:
+	cd hki && pdflatex -interaction=nonstopmode cover_kompilasi_modul_ajar.tex > /dev/null
+	cd hki && pdflatex -interaction=nonstopmode dokumen_pendaftaran_hki_tee412.tex > /dev/null && pdflatex -interaction=nonstopmode dokumen_pendaftaran_hki_tee412.tex > /dev/null
+	cd hki && pdflatex -interaction=nonstopmode surat_pernyataan_hki_tee412.tex > /dev/null
+	python3 hki/build_hki_bundle.py
+	@$(MAKE) clean
+
 clean:
 	rm -f *.aux *.bbl *.blg *.fdb_latexmk *.fls *.lof *.log *.lot *.nav *.out *.snm *.synctex.gz *.toc *.vrb
 	rm -f private-exams/*.aux private-exams/*.log private-exams/*.out
+	rm -f hki/*.aux hki/*.log hki/*.out hki/*.toc

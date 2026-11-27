@@ -1,0 +1,118 @@
+\documentclass[10.5pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[a4paper,top=1.8cm,bottom=1.8cm,left=1.9cm,right=1.9cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\definecolor{primaryblue}{RGB}{24, 43, 73}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{boxbg}{RGB}{245, 248, 252}
+\definecolor{goldaccent}{RGB}{211, 84, 0}
+\definecolor{headerrow}{RGB}{24, 43, 73}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}Instrumen Umpan Balik Mahasiswa (OBE-CQI)}}
+\fancyhead[R]{\small\color{gray}TEE-412 / Teknik Elektro FT UNIB}
+\fancyfoot[L]{\footnotesize\color{gray}Evaluasi Penjaminan Mutu Berkelanjutan (LAM Teknik / IABEE)}
+\fancyfoot[R]{\footnotesize Halaman \thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\color{primaryblue}\normalfont\large\bfseries}{\thesection.}{0.5em}{}[\titlerule]
+\setlist{nosep}
+\newcommand{\hdr}[1]{\cellcolor{headerrow}\color{white}\textbf{#1}}
+\newcommand{\likert}{$\square\,1 \quad \square\,2 \quad \square\,3 \quad \square\,4 \quad \square\,5$}
+
+\begin{document}
+
+\begin{center}
+    \includegraphics[width=1.9cm]{assets/logo_unib.png}\\[0.2cm]
+    {\large \textbf{\color{primaryblue}UNIVERSITAS BENGKULU -- FAKULTAS TEKNIK -- S1 TEKNIK ELEKTRO}}\\[0.15cm]
+    {\LARGE \textbf{\color{primaryblue}KUESIONER UMPAN BALIK PEMBELAJARAN (OBE-CQI)}}\\[0.08cm]
+    {\large \textbf{\color{goldaccent}ANALISIS DERET WAKTU DAN PERAMALAN (TEE-412)}}\\[0.05cm]
+    {\small Evaluasi Tengah Semester (Minggu 8) \& Akhir Semester (Minggu 16) -- Tanpa Nama (\textit{Anonim})}
+\end{center}
+
+\vspace{0.15cm}
+\begin{tcolorbox}[colback=boxbg,colframe=primaryblue,arc=2mm,title=\textbf{Petunjuk Pengisian \& Skala Penilaian (Likert 1--5)}]
+\small
+Kuesioner ini bersifat \textbf{anonim} dan \textbf{tidak memengaruhi nilai akhir}. Masukan Anda digunakan langsung dalam siklus \textit{Continuous Quality Improvement} (CQI / PDCA) untuk meningkatkan kualitas bahan ajar, praktikum Google Colab, Virtual Lab Studio, dan proyek akhir pada semester berjalan maupun berikutnya.\\[0.1cm]
+\textbf{Periode Evaluasi:} $\square$ Tengah Semester (Minggu 8 -- CPMK 1--2) \qquad $\square$ Akhir Semester (Minggu 16 -- CPMK 3--5)\\
+\textbf{Skala:} \textbf{1} = Sangat Tidak Setuju/Kurang \;|\; \textbf{2} = Tidak Setuju \;|\; \textbf{3} = Cukup \;|\; \textbf{4} = Setuju \;|\; \textbf{5} = Sangat Setuju/Sangat Baik.
+\end{tcolorbox}
+
+\section{Dimensi A: Persepsi Pencapaian CPMK (\textit{Indirect Assessment} OBE)}
+{\small
+\renewcommand{\arraystretch}{1.28}
+\begin{tabular}{|p{0.6cm}|p{10.5cm}|p{4.8cm}|}
+\hline
+\hdr{No} & \hdr{Pernyataan Penguasaan Capaian Pembelajaran} & \hdr{Skala (1--5)} \\ \hline
+A1 & Saya mampu mengidentifikasi komponen deret waktu (tren, musiman, residu), menguji stasioneritas (ADF/KPSS), dan membaca ACF/PACF (\textbf{CPMK-1}). & \likert \\ \hline
+A2 & Saya mampu memodelkan peramalan statistik klasik (Holt-Winters, SARIMA/SARIMAX) serta menerapkan \textit{Discrete Kalman Filter} (\textbf{CPMK-2}). & \likert \\ \hline
+A3 & Saya mampu menganalisis harmonisa dan sinyal transien kelistrikan pada domain frekuensi (FFT/PSD) dan waktu-frekuensi (Wavelet DWT) (\textbf{CPMK-3}). & \likert \\ \hline
+A4 & Saya mampu membangun pipeline ML (XGBoost) dan DL (LSTM/1D-CNN/Autoencoder) bebas \textit{data leakage} untuk beban, PLTS, dan anomali (\textbf{CPMK-4}). & \likert \\ \hline
+A5 & Saya mampu mengintegrasikan model peramalan pada studi kasus sistem tenaga riil dalam kerja tim serta menyusun laporan format IEEE (\textbf{CPMK-5}). & \likert \\ \hline
+\end{tabular}
+}
+
+\section{Dimensi B: Kualitas Bahan Ajar, Kuis Self-Check, \& Portal Web}
+{\small
+\renewcommand{\arraystretch}{1.28}
+\begin{tabular}{|p{0.6cm}|p{10.5cm}|p{4.8cm}|}
+\hline
+\hdr{No} & \hdr{Pernyataan Kualitas Ekosistem Bahan Ajar} & \hdr{Skala (1--5)} \\ \hline
+B1 & Slide Beamer, Problem Sets (C1--C6), dan Worksheets tersusun sistematis serta relevan dengan aplikasi Teknik Elektro modern. & \likert \\ \hline
+B2 & Kuis \textit{Self-Check} interaktif di portal web membantu saya mengecek pemahaman konsep sebelum praktikum maupun ujian. & \likert \\ \hline
+B3 & Portal web (\texttt{ndaratha.my.id/deret-waktu}) mudah diakses, cepat dimuat, dan seluruh dokumen RPS/kisi-kisi mudah ditemukan. & \likert \\ \hline
+\end{tabular}
+}
+
+\section{Dimensi C: Efektivitas Praktikum Google Colab \& Virtual Forecasting Studio}
+{\small
+\renewcommand{\arraystretch}{1.28}
+\begin{tabular}{|p{0.6cm}|p{10.5cm}|p{4.8cm}|}
+\hline
+\hdr{No} & \hdr{Pernyataan Praktikum \& Lingkungan Komputasi} & \hdr{Skala (1--5)} \\ \hline
+C1 & 12 notebook praktikum dapat dibuka 1-klik di Google Colab dan dijalankan lancar tanpa kendala instalasi/error dependensi. & \likert \\ \hline
+C2 & Tiga dataset CSV terkurasi (beban regional, PLTS 500 kWp, smart meter) realistis dan membantu memahami perilaku sistem kelistrikan. & \likert \\ \hline
+C3 & Virtual Forecasting Studio (termasuk fitur \textit{Upload CSV}) membantu memvisualisasikan pengaruh parameter ($Q, R, \alpha, \beta, \gamma$) secara intuitif. & \likert \\ \hline
+\end{tabular}
+}
+
+\section{Dimensi D: Asesmen, Proyek Akhir IEEE, \& Umpan Balik Terbuka}
+{\small
+\renewcommand{\arraystretch}{1.28}
+\begin{tabular}{|p{0.6cm}|p{10.5cm}|p{4.8cm}|}
+\hline
+\hdr{No} & \hdr{Pernyataan Asesmen \& Beban Belajar} & \hdr{Skala (1--5)} \\ \hline
+D1 & Proporsi bobot penilaian (Kuis 10\%, Praktikum 25\%, UTS 20\%, Proyek 25\%, UAS 20\%) adil dan rubrik proyek IEEE transparan. & \likert \\ \hline
+D2 & Beban kerja mingguan (kuliah, praktikum, dan proyek akhir tim) sesuai dengan bobot 3 SKS dan dapat diselesaikan tepat waktu. & \likert \\ \hline
+\end{tabular}
+}
+
+\vspace{0.25cm}
+\noindent\textbf{Pertanyaan Reflektif Terbuka (Isi singkat untuk perbaikan CQI):}
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.5em, itemsep=6pt]
+    \item Materi, rumus, atau bab praktikum mana yang paling sulit dipahami dan memerlukan contoh/pendalaman tambahan?\\
+    \rule{\textwidth}{0.4pt}\\[0.25cm]
+    \rule{\textwidth}{0.4pt}
+    \item Kendala teknis apa (jika ada) yang Anda alami saat menjalankan notebook Google Colab, Virtual Studio, atau menyusun laporan LaTeX IEEE?\\
+    \rule{\textwidth}{0.4pt}\\[0.25cm]
+    \rule{\textwidth}{0.4pt}
+    \item Fitur, dataset, atau topik rekayasa elektro apa yang paling bermanfaat dan/atau Anda sarankan untuk ditambahkan pada semester berikutnya?\\
+    \rule{\textwidth}{0.4pt}\\[0.25cm]
+    \rule{\textwidth}{0.4pt}
+\end{enumerate}
+
+\end{document}
